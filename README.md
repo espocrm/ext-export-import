@@ -1,6 +1,6 @@
-# Template repository for EspoCRM extensions
+# Export and Import Data
 
-Create a repository for your extension from this template.
+Export and import data in EspoCRM
 
 ## Preparing repository
 
