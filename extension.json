@@ -1,8 +1,8 @@
 {
-    "module": "{@name}",
-    "name": "{@nameLabel}",
-    "description": "{@description}",
-    "author": "{@author}",
+    "module": "ExportImport",
+    "name": "ExportImport",
+    "description": "Export and Import Data.",
+    "author": "EspoCRM",
     "acceptableVersions": [
         ">=5.9.0"
     ],
