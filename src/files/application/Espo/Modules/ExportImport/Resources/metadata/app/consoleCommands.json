@@ -1,0 +1,6 @@
+{
+    "exportImport": {
+        "className": "Espo\\Modules\\ExportImport\\Core\\Console\\Commands\\ExportImport",
+        "listed": true
+    }
+}

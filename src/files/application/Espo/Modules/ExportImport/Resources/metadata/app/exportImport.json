@@ -1,0 +1,31 @@
+{
+    "dataPath": "custom/Espo/Modules/ExportImport/Data",
+    "exportPath": "build/ExportImport",
+
+    "toolClassNameMap": {
+        "Export": "Espo\\Modules\\ExportImport\\Tools\\Export",
+        "Import": "Espo\\Modules\\ExportImport\\Tools\\Import",
+        "Erase": "Espo\\Modules\\ExportImport\\Tools\\Erase"
+    },
+
+    "formatList": [
+        "json"
+    ],
+
+    "formatDefs": {
+        "json": {
+            "fileExtension": "json"
+        }
+    },
+
+    "exportProcessorClassNameMap": {
+        "json": "Espo\\Modules\\ExportImport\\Tools\\Export\\Processors\\Json"
+    },
+
+    "exportCollectionClassNameMap": {
+        "Preferences": "Espo\\Modules\\ExportImport\\Tools\\Export\\Collections\\Preferences"
+    },
+
+    "format": "json",
+    "prettyPrint": true
+}

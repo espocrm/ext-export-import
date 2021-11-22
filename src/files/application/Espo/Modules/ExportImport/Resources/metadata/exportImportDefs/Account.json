@@ -1,0 +1,6 @@
+{
+    "exportAdditionalFieldList": [
+        "phoneNumber",
+        "emailAddress"
+    ]
+}

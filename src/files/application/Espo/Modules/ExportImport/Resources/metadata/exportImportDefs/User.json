@@ -1,0 +1,17 @@
+{
+    "exportSkipIdList" : [
+        "1"
+    ],
+    "fields": {
+        "password": {
+            "usePlaceholder": true,
+            "placeholderData": {
+                "action": "\\Espo\\Modules\\DemoData\\Tools\\Data\\Placeholders\\Config\\SetPassword",
+                "value": "1"
+            }
+        },
+        "isActive": {
+            "value": "user.isActive"
+        }
+    }
+}

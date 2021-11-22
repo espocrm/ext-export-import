@@ -1,0 +1,10 @@
+{
+    "fields": {
+        "dateStart": {
+            "value": "datetime.currentMonth"
+        },
+        "dateEnd": {
+            "value": "datetime.currentMonth"
+        }
+    }
+}

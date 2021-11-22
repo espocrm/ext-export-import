@@ -1,0 +1,14 @@
+{
+    "exportAdditionalFieldList": [
+        "itemList"
+    ],
+    "fields": {
+        "itemList": {
+            "value": {
+                "listPriceCurrency": "config.defaultCurrency",
+                "unitPriceCurrency": "config.defaultCurrency",
+                "amountCurrency": "config.defaultCurrency"
+            }
+        }
+    }
+}
