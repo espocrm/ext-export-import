@@ -1,4 +1,6 @@
 {
+    "defsSource": "exportImportDefs",
+
     "dataPath": "custom/Espo/Modules/ExportImport/Data",
     "exportPath": "build/ExportImport",
 

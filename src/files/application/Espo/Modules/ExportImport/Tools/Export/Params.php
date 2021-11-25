@@ -52,6 +52,8 @@ class Params
 
     private $collectionClass = null;
 
+    private $defsSource = null;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -121,6 +123,15 @@ class Params
         $obj = clone $this;
 
         $obj->collectionClass = $collectionClass;
+
+        return $obj;
+    }
+
+    public function withDefsSource(?string $defsSource): self
+    {
+        $obj = clone $this;
+
+        $obj->defsSource = $defsSource;
 
         return $obj;
     }
@@ -199,5 +210,13 @@ class Params
     public function getCollectionClass(): ?CollectionClass
     {
         return $this->collectionClass;
+    }
+
+    /**
+     * Get a source of exportImport defs
+     */
+    public function getDefsSource(): string
+    {
+        return $this->defsSource;
     }
 }

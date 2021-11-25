@@ -32,22 +32,27 @@ use Espo\{
     Core\Exceptions\Error,
 };
 
-use Espo\Modules\ExportImport\Tools\Export\{
+use Espo\Modules\ExportImport\Tools\{
     Params,
-    Collection,
-    EntityExport as EntityExportTool
+    Export\Params as ExportParams,
+    Export\Collection,
+    Export\EntityExport as EntityExportTool
 };
+
+use Exception;
 
 class Export implements
 
     Tool,
     Di\MetadataAware,
     Di\FileManagerAware,
-    Di\InjectableFactoryAware
+    Di\InjectableFactoryAware,
+    Di\LogAware
 {
     use Di\MetadataSetter;
     use Di\FileManagerSetter;
     use Di\InjectableFactorySetter;
+    use Di\LogSetter;
 
     private $defs;
 
@@ -56,22 +61,33 @@ class Export implements
         $this->defs = $defs;
     }
 
-    public function run() : void
+    public function run(Params $params) : void
     {
-        $options = $this->metadata->get('app.exportImport');
+        $format = $params->getFormat() ?? null;
+        $defsSource = $params->getDefsSource() ?? null;
+        $exportPath = $params->getExportPath() ?? null;
 
-        $exportPath = $options['exportPath'] ?? null;
+        if (!$format) {
+            throw new Error('Option "format" is not defined.');
+        }
 
         if (!$exportPath) {
             throw new Error('Export path is not defined.');
         }
 
+        if (!$defsSource) {
+            throw new Error('Option "defsSource" is not defined.');
+        }
+
         $this->fileManager->removeInDir($exportPath);
 
-        $dataDefs = $this->metadata->get(['exportImportDefs']);
+        $defs = $this->metadata->get([$defsSource]);
 
-        foreach ($this->defs->getEntityTypeList() as $entityType) {
-            $entityDataDefs = $dataDefs[$entityType] ?? [];
+        $entityList = $params->getEntityTypeList() ??
+            $this->defs->getEntityTypeList();
+
+        foreach ($entityList as $entityType) {
+            $entityDataDefs = $defs[$entityType] ?? [];
 
             $exportDisabled = $entityDataDefs['exportDisabled'] ?? false;
 
@@ -80,19 +96,25 @@ class Export implements
                 continue;
             }
 
-            $this->exportEntity($entityType, $exportPath);
+            try {
+                $this->exportEntity($entityType, $params);
+            } catch (Exception $e) {
+                $this->log->warning(
+                    'ExportImport [' . $entityType . ']:' . $e->getMessage()
+                );
+            }
         }
     }
 
-    protected function exportEntity(string $entityType, string $exportPath): void
+    protected function exportEntity(string $entityType, Params $params): void
     {
-        $storagePath = $exportPath . '/Entities';
         $collectionClass = $this->getCollectionClass($entityType);
 
-        $exportParams = Params::create($entityType)
-            ->withFormat($this->metadata->get('app.exportImport.format'))
-            ->withPath($storagePath)
+        $exportParams = ExportParams::create($entityType)
+            ->withFormat($params->getFormat())
             ->withAccessControl(false)
+            ->withPath($params->getExportEntityPath())
+            ->withDefsSource($params->getDefsSource())
             ->withCollectionClass($collectionClass);
 
         $export = $this->injectableFactory->create(EntityExportTool::class);

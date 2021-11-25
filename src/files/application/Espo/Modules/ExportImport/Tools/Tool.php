@@ -28,5 +28,5 @@ namespace Espo\Modules\ExportImport\Tools;
 
 interface Tool
 {
-    public function run() : void;
+    public function run(Params $params) : void;
 }

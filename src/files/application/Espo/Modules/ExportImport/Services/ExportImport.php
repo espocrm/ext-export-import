@@ -31,42 +31,34 @@ use Espo\Core\{
     Exceptions\Error,
 };
 
+use Espo\Modules\ExportImport\Tools\Params;
+
 class ExportImport implements
 
     Di\MetadataAware,
-    Di\InjectableFactoryAware
+    Di\InjectableFactoryAware,
+    Di\LogAware
 {
     use Di\InjectableFactorySetter;
     use Di\MetadataSetter;
+    use Di\LogSetter;
 
     public function runExport() : void
     {
-        $className = $this->getClass('export');
-
-        $tool = $this->injectableFactory->create($className);
-
-        $tool->run();
+        $this->runTool('export');
     }
 
     public function runImport() : void
     {
-        $className = $this->getClass('import');
-
-        $tool = $this->injectableFactory->create($className);
-
-        $tool->run();
+        $this->runTool('import');
     }
 
     public function runErase() : void
     {
-        $className = $this->getClass('erase');
-
-        $tool = $this->injectableFactory->create($className);
-
-        $tool->run();
+        $this->runTool('erase');
     }
 
-    protected function getClass($name)
+    protected function getClass($name): string
     {
         $className = $this->metadata->get([
             'app', 'exportImport', 'toolClassNameMap', ucfirst($name)
@@ -77,5 +69,27 @@ class ExportImport implements
         }
 
         return $className;
+    }
+
+    protected function runTool(string $action): void
+    {
+        $className = $this->getClass($action);
+
+        $tool = $this->injectableFactory->create($className);
+
+        $params = $this->createParams();
+
+        $tool->run($params);
+    }
+
+    protected function createParams(?array $extraParams = null): Params
+    {
+        $params = $this->metadata->get(['app', 'exportImport']);
+
+        if ($extraParams) {
+            $params = array_merge($params, $extraParams);
+        }
+
+        return Params::fromRaw($params);
     }
 }

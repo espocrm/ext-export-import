@@ -64,27 +64,20 @@ class Json implements Processor
 
     public function addAdditionalAttributes($entityType, &$attributeList, $fieldList)
     {
-        $additionalFieldList = $this->metadata->get(['exportImportDefs', $entityType, 'exportAdditionalFieldList']);
-
-        if (!$additionalFieldList) {
-
-            return;
-        }
-
-        $additionalAttributeList = [];
-
-        foreach ($additionalFieldList as $field) {
-            $fieldType = $this->metadata->get(['entityDefs', $entityType, 'fields', $field, 'type']);
+        foreach ($fieldList as $fieldName) {
+            $fieldType = $this->metadata->get(['entityDefs', $entityType, 'fields', $fieldName, 'type']);
 
             switch ($fieldType) {
                 case 'email':
                 case 'phone':
-                    $additionalAttributeList[] = $field . 'Data';
+                    $additionalFieldName = $fieldName . 'Data';
+
+                    if (!in_array($additionalFieldName, $attributeList)) {
+                        $attributeList[] = $additionalFieldName;
+                    }
                     break;
             }
         }
-
-        $attributeList = array_merge($attributeList, $additionalAttributeList);
     }
 
     public function loadAdditionalFields(Entity $entity, $fieldList)

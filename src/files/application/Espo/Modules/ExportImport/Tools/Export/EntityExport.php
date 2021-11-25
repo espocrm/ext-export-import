@@ -161,6 +161,7 @@ class EntityExport
             $this->listLoadProcessor->process($entity, $loaderParams);
 
             if ($recordService && method_exists($recordService, 'loadAdditionalFieldsForExport')) {
+                $recordService->loadAdditionalFields($entity);
                 $recordService->loadAdditionalFieldsForExport($entity);
             }
 
