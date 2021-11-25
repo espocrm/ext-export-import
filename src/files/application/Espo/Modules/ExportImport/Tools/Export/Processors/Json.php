@@ -62,24 +62,6 @@ class Json implements Processor
         $this->metadata = $metadata;
     }
 
-    public function addAdditionalAttributes($entityType, &$attributeList, $fieldList)
-    {
-        foreach ($fieldList as $fieldName) {
-            $fieldType = $this->metadata->get(['entityDefs', $entityType, 'fields', $fieldName, 'type']);
-
-            switch ($fieldType) {
-                case 'email':
-                case 'phone':
-                    $additionalFieldName = $fieldName . 'Data';
-
-                    if (!in_array($additionalFieldName, $attributeList)) {
-                        $attributeList[] = $additionalFieldName;
-                    }
-                    break;
-            }
-        }
-    }
-
     public function loadAdditionalFields(Entity $entity, $fieldList)
     {
         foreach ($fieldList as $field) {

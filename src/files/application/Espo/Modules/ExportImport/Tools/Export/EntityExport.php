@@ -148,6 +148,7 @@ class EntityExport
             $processor->addAdditionalAttributes($entityType, $attributeList, $fieldList);
         }
 
+
         $dataResource = fopen('php://temp', 'w');
 
         $loaderParams = LoaderParams::create()
@@ -161,7 +162,6 @@ class EntityExport
             $this->listLoadProcessor->process($entity, $loaderParams);
 
             if ($recordService && method_exists($recordService, 'loadAdditionalFieldsForExport')) {
-                $recordService->loadAdditionalFields($entity);
                 $recordService->loadAdditionalFieldsForExport($entity);
             }
 
@@ -327,14 +327,8 @@ class EntityExport
         $attributeType = $entity->getAttributeParam($attribute, 'type');
 
         switch ($attributeType) {
-            case 'foreignId':
-                if ($entity->get($attribute) === null) {
-                    return false;
-                }
-                break;
-
             case 'foreign':
-                return false; // ???
+                return false;
                 break;
         }
 
