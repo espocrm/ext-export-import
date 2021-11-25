@@ -40,6 +40,8 @@ use Espo\Modules\ExportImport\Tools\{
 };
 
 use Exception;
+use DateTime;
+use DateTimeZone;
 
 class Export implements
 
@@ -47,14 +49,18 @@ class Export implements
     Di\MetadataAware,
     Di\FileManagerAware,
     Di\InjectableFactoryAware,
-    Di\LogAware
+    Di\LogAware,
+    Di\ConfigAware
 {
     use Di\MetadataSetter;
     use Di\FileManagerSetter;
     use Di\InjectableFactorySetter;
     use Di\LogSetter;
+    use Di\ConfigSetter;
 
     private $defs;
+
+    protected $manifestName = 'manifest.json';
 
     public function __construct(Defs $defs)
     {
@@ -87,9 +93,7 @@ class Export implements
             $this->defs->getEntityTypeList();
 
         foreach ($entityList as $entityType) {
-            $entityDataDefs = $defs[$entityType] ?? [];
-
-            $exportDisabled = $entityDataDefs['exportDisabled'] ?? false;
+            $exportDisabled = $defs[$entityType]['exportDisabled'] ?? false;
 
             if ($exportDisabled) {
 
@@ -104,6 +108,8 @@ class Export implements
                 );
             }
         }
+
+        $this->createManifest($params);
     }
 
     protected function exportEntity(string $entityType, Params $params): void
@@ -134,5 +140,20 @@ class Export implements
         }
 
         return $this->injectableFactory->create($collectionClassName);
+    }
+
+    protected function createManifest(Params $params): bool
+    {
+        $data = [
+            'applicationName' => $this->config->get('applicationName'),
+            'version' => $this->config->get('version'),
+            'exportTime' => (new DateTime('now', new DateTimeZone('UTC')))
+                ->format('Y-m-d H:i:s'),
+        ];
+
+        return $this->fileManager->putJsonContents(
+            $params->getExportManifestFile(),
+            $data
+        );
     }
 }

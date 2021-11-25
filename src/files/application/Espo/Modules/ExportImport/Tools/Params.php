@@ -28,6 +28,8 @@ namespace Espo\Modules\ExportImport\Tools;
 
 use RuntimeException;
 
+use Espo\Core\Utils\Util;
+
 class Params
 {
     private $format = null;
@@ -41,6 +43,8 @@ class Params
     private $dataPath = null;
 
     private $prettyPrint = false;
+
+    private $manifestFile = null;
 
     public function __construct(string $format)
     {
@@ -66,6 +70,7 @@ class Params
         $obj->entityTypeList = $params['entityTypeList'] ?? null;
         $obj->exportPath = $params['exportPath'] ?? null;
         $obj->dataPath = $params['dataPath'] ?? null;
+        $obj->manifestFile = $params['manifestFile'] ?? null;
 
         $obj->prettyPrint = array_key_exists('prettyPrint', $params) ?
             $params['prettyPrint'] : false;
@@ -127,6 +132,15 @@ class Params
         return $obj;
     }
 
+    public function withManifest(?string $file): self
+    {
+        $obj = clone $this;
+
+        $obj->manifestFile = $file;
+
+        return $obj;
+    }
+
     /**
      * Get a source of exportImport defs
      */
@@ -180,7 +194,7 @@ class Params
      */
     public function getExportEntityPath(): string
     {
-        return $this->exportPath . '/Entities';
+        return Util::concatPath($this->exportPath, 'Entities');
     }
 
     /**
@@ -188,6 +202,22 @@ class Params
      */
     public function getDataEntityPath(): string
     {
-        return $this->dataPath . '/Entities';
+        return Util::concatPath($this->dataPath, 'Entities');
+    }
+
+    /**
+     * Get a manifest file
+     */
+    public function getExportManifestFile(): string
+    {
+        return Util::concatPath($this->exportPath, $this->manifestFile);
+    }
+
+    /**
+     * Get a manifest file
+     */
+    public function getDataManifestFile(): string
+    {
+        return Util::concatPath($this->dataPath, $this->manifestFile);
     }
 }

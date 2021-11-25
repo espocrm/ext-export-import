@@ -3,6 +3,7 @@
 
     "dataPath": "custom/Espo/Modules/ExportImport/Data",
     "exportPath": "build/ExportImport",
+    "manifestFile": "manifest.json",
 
     "toolClassNameMap": {
         "Export": "Espo\\Modules\\ExportImport\\Tools\\Export",
