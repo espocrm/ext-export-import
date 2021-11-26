@@ -36,12 +36,11 @@ use Espo\Modules\ExportImport\Tools\{
     Params,
     Export\Params as ExportParams,
     Export\Collection,
-    Export\EntityExport as EntityExportTool
+    Export\EntityExport as EntityExportTool,
+    Manifest\ManifestWriter,
 };
 
 use Exception;
-use DateTime;
-use DateTimeZone;
 
 class Export implements
 
@@ -142,16 +141,10 @@ class Export implements
 
     protected function createManifest(Params $params): bool
     {
-        $data = [
-            'applicationName' => $this->config->get('applicationName'),
-            'version' => $this->config->get('version'),
-            'exportTime' => (new DateTime('now', new DateTimeZone('UTC')))
-                ->format('Y-m-d H:i:s'),
-        ];
+        $manifestWriter = $this->injectableFactory->createWith(ManifestWriter::class, [
+            'params' => $params,
+        ]);
 
-        return $this->fileManager->putJsonContents(
-            $params->getExportManifestFile(),
-            $data
-        );
+        return $manifestWriter->save();
     }
 }

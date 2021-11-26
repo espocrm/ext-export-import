@@ -82,7 +82,7 @@ class Params
     {
         $obj = clone $this;
 
-        $obj->$format = $format;
+        $obj->format = $format;
 
         return $obj;
     }
@@ -127,7 +127,7 @@ class Params
     {
         $obj = clone $this;
 
-        $obj->$prettyPrint = $prettyPrint;
+        $obj->prettyPrint = $prettyPrint;
 
         return $obj;
     }
