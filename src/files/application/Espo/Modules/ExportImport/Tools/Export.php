@@ -60,8 +60,6 @@ class Export implements
 
     private $defs;
 
-    protected $manifestName = 'manifest.json';
-
     public function __construct(Defs $defs)
     {
         $this->defs = $defs;
