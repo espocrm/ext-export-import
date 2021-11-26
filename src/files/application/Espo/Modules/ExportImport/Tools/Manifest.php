@@ -24,39 +24,32 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Manifest;
+namespace Espo\Modules\ExportImport\Tools;
 
 use Espo\{
-    Core\Utils\Config,
+    Core\Utils\Json,
     Modules\ExportImport\Tools\Params,
     Core\Utils\File\Manager as FileManager,
 };
 
 use DateTime;
 use DateTimeZone;
+use RuntimeException;
 
-class ManifestWriter
+class Manifest
 {
-    private $config;
-
     private $fileManager;
 
     private $params;
 
     private $manifestFile;
 
-    private $applicationName;
-
-    private $version;
-
-    private $exportTime;
+    private $data;
 
     public function __construct(
-        Config $config,
         FileManager $fileManager,
         Params $params
     ) {
-        $this->config = $config;
         $this->fileManager = $fileManager;
         $this->params = $params;
 
@@ -65,65 +58,55 @@ class ManifestWriter
 
     protected function loadData(): void
     {
-        $this->manifestFile = $this->params->getExportManifestFile();
-        $this->applicationName = $this->config->get('applicationName');
-        $this->version = $this->config->get('version');
-        $this->exportTime = new DateTime('now', new DateTimeZone('UTC'));
+        $this->manifestFile = $this->params->getDataManifestFile();
+
+        $contents = $this->fileManager->getContents($this->manifestFile);
+
+        if (!$contents) {
+            throw new RuntimeException(
+                'Manifest file "' . $this->manifestFile . '" is not found.'
+            );
+        }
+
+        $this->data = Json::encode($contents, true);
+
+        if (!is_array($this->data)) {
+            throw new RuntimeException(
+                'Incorrect manifest data.'
+            );
+        }
     }
 
-    public function setManifestFile(string $manifestFile): self
+    protected function get($name, $default = null)
     {
-        $obj = clone $this;
-
-        $obj->manifestFile = $manifestFile;
-
-        return $obj;
+        return $this->data[$name] ?? $default;
     }
 
-    public function setApplicationName(string $applicationName): self
+    public function getRaw(): array
     {
-        $obj = clone $this;
-
-        $obj->applicationName = $applicationName;
-
-        return $obj;
+        return $this->data;
     }
 
-    public function setVersion(string $version): self
+    public function getApplicationName(): string
     {
-        $obj = clone $this;
-
-        $obj->version = $version;
-
-        return $obj;
+        return $this->get('applicationName');
     }
 
-    public function setExportTime(DateTime $exportTime): self
+    public function getVersion(): string
     {
-        $obj = clone $this;
-
-        $obj->exportTime = $exportTime;
-
-        return $obj;
+        return $this->get('version');
     }
 
-    protected function getSaveData(): array
+    public function getExportTime(): DateTime
     {
-        return [
-            'applicationName' => $this->applicationName,
-            'version' => $this->version,
-            'exportTime' => $this->exportTime->format('Y-m-d H:i:s'),
-        ];
-    }
+        $exportTime =  $this->get('exportTime');
 
-    /**
-     * Save changes to the manifest file.
-     */
-    public function save(): bool
-    {
-        return $this->fileManager->putJsonContents(
-            $this->manifestFile,
-            $this->getSaveData()
-        );
+        if (!$exportTime) {
+            throw new RuntimeException(
+                'Incorrect export time.'
+            );
+        }
+
+        return new DateTime($exportTime, new DateTimeZone('UTC'));
     }
 }
