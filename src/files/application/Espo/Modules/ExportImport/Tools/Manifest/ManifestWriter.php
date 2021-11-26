@@ -51,16 +51,19 @@ class ManifestWriter
 
     private $exportTime;
 
-    public function __construct(Config $config, FileManager $fileManager, Params $params)
-    {
+    public function __construct(
+        Config $config,
+        FileManager $fileManager,
+        Params $params
+    ) {
         $this->config = $config;
         $this->fileManager = $fileManager;
         $this->params = $params;
 
-        $this->load();
+        $this->loadData();
     }
 
-    protected function load()
+    protected function loadData()
     {
         $this->manifestFile = $this->params->getExportManifestFile();
         $this->applicationName = $this->config->get('applicationName');
