@@ -57,6 +57,11 @@ class ManifestWriter
         $this->fileManager = $fileManager;
         $this->params = $params;
 
+        $this->load();
+    }
+
+    protected function load()
+    {
         $this->manifestFile = $this->params->getExportManifestFile();
         $this->applicationName = $this->config->get('applicationName');
         $this->version = $this->config->get('version');
