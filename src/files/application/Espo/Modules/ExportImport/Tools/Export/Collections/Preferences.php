@@ -49,13 +49,13 @@ class Preferences implements
     public function getCollection(Select $query): EntityCollection
     {
         $collection = $this->entityManager
-            ->getRepository('User')
+            ->getRDBRepository('User')
             ->where([
                 'type!=' => 'system',
             ])
             ->find();
 
-        $repository = $this->entityManager->getRepository('Preferences');
+        $repository = $this->entityManager->getRDBRepository('Preferences');
 
         $entityList = [];
 
