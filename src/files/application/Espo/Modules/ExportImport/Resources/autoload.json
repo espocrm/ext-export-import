@@ -1,0 +1,5 @@
+{
+    "psr-4": {
+        "JsonMachine\\": "application/Espo/Modules/ExportImport/vendor/halaxa/json-machine/src"
+    }
+}

@@ -1,0 +1,5 @@
+{
+    "require": {
+        "halaxa/json-machine": "^1"
+    }
+}
