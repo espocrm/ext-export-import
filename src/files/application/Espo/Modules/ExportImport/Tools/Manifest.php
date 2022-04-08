@@ -68,7 +68,7 @@ class Manifest
             );
         }
 
-        $this->data = Json::encode($contents, true);
+        $this->data = Json::decode($contents, true);
 
         if (!is_array($this->data)) {
             throw new RuntimeException(
