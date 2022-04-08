@@ -6,3 +6,4 @@
 /config.php
 /extensions/
 /.vscode/
+/src/files/application/Espo/Modules/**/vendor/
