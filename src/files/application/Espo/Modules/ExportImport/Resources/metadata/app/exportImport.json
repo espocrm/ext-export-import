@@ -1,7 +1,7 @@
 {
     "defsSource": "exportImportDefs",
 
-    "dataPath": "custom/Espo/Modules/ExportImport/Data",
+    "dataPath": "custom/Espo/Custom/Data",
     "exportPath": "build/ExportImport",
     "manifestFile": "manifest.json",
 
