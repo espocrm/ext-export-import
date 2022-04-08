@@ -35,7 +35,7 @@ class Data
         $this->resource = $resource;
     }
 
-    public function writeRow($row): void
+    public function writeRow(array $row): void
     {
         $line = base64_encode(serialize($row)) . \PHP_EOL;
 
@@ -67,5 +67,10 @@ class Data
         }
 
         return true;
+    }
+
+    public function getResource()
+    {
+        return $this->resource;
     }
 }

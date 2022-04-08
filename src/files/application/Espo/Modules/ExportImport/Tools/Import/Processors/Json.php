@@ -26,12 +26,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Processors;
 
-use Espo\Core\ORM\Entity;
-
 use Espo\Core\{
-    Utils\Config,
-    Utils\Metadata,
-    Utils\Json as JsonUtil,
     Exceptions\Error,
 };
 
@@ -41,14 +36,10 @@ use Espo\Modules\ExportImport\Tools\Import\{
     Processor\Data,
 };
 
-use Espo\Entities\Preferences;
-
 use Psr\Http\Message\StreamInterface;
 use GuzzleHttp\Psr7\Stream;
 
-use const JSON_UNESCAPED_UNICODE;
-use const JSON_UNESCAPED_SLASHES;
-use const JSON_PRETTY_PRINT;
+use JsonMachine\Items;
 
 class Json implements Processor
 {
@@ -60,6 +51,16 @@ class Json implements Processor
             throw new Error("Import: file [" . $file . "] does not exist.");
         }
 
-        die($file);
+        $records = Items::fromFile($file);
+
+        foreach ($records as $record) {
+            $row = get_object_vars($record);
+
+            $data->writeRow($row);
+        }
+
+        return new Stream(
+            $data->getResource()
+        );
     }
 }
