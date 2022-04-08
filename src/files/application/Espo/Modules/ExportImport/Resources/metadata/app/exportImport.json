@@ -29,6 +29,10 @@
         "Preferences": "Espo\\Modules\\ExportImport\\Tools\\Export\\Collections\\Preferences"
     },
 
+    "importProcessorClassNameMap": {
+        "json": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processors\\Json"
+    },
+
     "format": "json",
     "prettyPrint": true
 }
