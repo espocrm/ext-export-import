@@ -134,7 +134,7 @@ class EntityExport
 
         $entityType = $params->getEntityType();
 
-        $format = $params->getFormat() ?? 'csv';
+        $format = $params->getFormat() ?? 'json';
 
         $processor = $this->processorFactory->create($format);
 
@@ -147,7 +147,6 @@ class EntityExport
         if ($fieldList !== null && method_exists($processor, 'addAdditionalAttributes')) {
             $processor->addAdditionalAttributes($entityType, $attributeList, $fieldList);
         }
-
 
         $dataResource = fopen('php://temp', 'w');
 
