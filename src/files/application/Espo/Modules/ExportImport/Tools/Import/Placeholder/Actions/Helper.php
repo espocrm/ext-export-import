@@ -3,7 +3,7 @@
  * This file is part of Export Import extension for EspoCRM.
  *
  * Export Import extension for EspoCRM.
- * Copyright (C) 2014-2021 Yurii Kuznietsov, Taras Machyshyn, Oleksii Avramenko
+ * Copyright (C) 2014-2022 Yurii Kuznietsov, Taras Machyshyn, Oleksii Avramenko
  * Website: https://www.espocrm.com
  *
  * Export Import extension is free software: you can redistribute it and/or modify
@@ -24,48 +24,37 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import;
+namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions;
 
 use Espo\Core\{
-    InjectableFactory,
-    Utils\Metadata,
+    Di,
+    Exceptions\Error,
 };
 
-use Espo\Modules\ExportImport\Tools\Import\{
-    Processor\Entity as ProcessorEntity
-};
+class Helper implements
 
-use LogicException;
-
-class ProcessorFactory
+    Di\ConfigAware,
+    Di\MetadataAware
 {
-    private $injectableFactory;
+    use Di\ConfigSetter;
+    use Di\MetadataSetter;
 
-    private $metadata;
-
-    public function __construct(InjectableFactory $injectableFactory, Metadata $metadata)
+    public function getFieldDateFormat(string $entityType, string $fieldName): string
     {
-        $this->injectableFactory = $injectableFactory;
-        $this->metadata = $metadata;
-    }
+        $fieldType = $this->metadata->get([
+            'entitiDefs', $entityType, 'fields', $fieldName, 'type'
+        ]);
 
-    public function create(string $format): Processor
-    {
-        if (!in_array($format, $this->metadata->get(['app', 'exportImport', 'formatList']))) {
-            throw new LogicException("Not supported export format '{$format}'.");
+        switch ($fieldType) {
+            case 'datetime':
+                return $this->config->get('dateFormat') . ' ' . $this->config->get('timeFormat');
+                break;
+
+            case 'date':
+                return $this->config->get('dateFormat');
+                break;
         }
 
-        $className = $this->metadata->get(['app', 'exportImport', 'importProcessorClassNameMap', $format]);
-
-        if (!$className) {
-            throw new LogicException("No implementation for format '{$format}'.");
-        }
-
-        return $this->injectableFactory->create($className);
-    }
-
-    public function createEntityProcessor()
-    {
-        return $this->injectableFactory->create(ProcessorEntity::class);
+        throw new Error("Unknown datetime field type '{$fieldType}'");
     }
 }

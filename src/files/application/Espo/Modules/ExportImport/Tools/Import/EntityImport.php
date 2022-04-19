@@ -50,7 +50,8 @@ use Espo\{
 use Espo\Modules\ExportImport\Tools\Import\{
     Params,
     Processor\Params as ProcessorParams,
-    Processor\Data as ProcessorData
+    Processor\Data as ProcessorData,
+    EntityProcessor as ProcessorEntity
 };
 
 use RuntimeException;
@@ -141,9 +142,10 @@ class EntityImport
 
         $stream = $processor->process($processorParams, $processorData);
 
-        rewind($dataResource);
+        $processorEntity = $this->processorFactory->createEntityProcessor();
+        $stream2 = $processorEntity->process($processorParams, $processorData);
 
-        $this->processData($dataResource);
+        die('DONE: ' . $params->getEntityType());
 
         fclose($dataResource);
 
@@ -153,12 +155,5 @@ class EntityImport
     protected function isScopeEntity(string $scope): bool
     {
         return (bool) $this->metadata->get(['scopes', $scope, 'entity']);
-    }
-
-    protected function dataProcess($data)
-    {
-        while (($row = $data->readRow()) !== null) {
-            $preparedRow = $this->prepareRow($row);
-        }
     }
 }

@@ -374,7 +374,7 @@ class EntityExport
 
         $entityType = $params->getEntityType();
 
-       $entityDefs = $this->entityManager
+        $entityDefs = $this->entityManager
             ->getDefs()
             ->getEntity($entityType);
 

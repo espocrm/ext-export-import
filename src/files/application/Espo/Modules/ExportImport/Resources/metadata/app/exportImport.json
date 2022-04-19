@@ -33,6 +33,10 @@
         "json": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processors\\Json"
     },
 
+    "placeholderActionClassNameMap": {
+        "DateTime\\CurrentMonth": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Datetime\\CurrentMonth"
+    },
+
     "format": "json",
     "prettyPrint": true
 }

@@ -24,7 +24,7 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import;
+namespace Espo\Modules\ExportImport\Tools\Import\Placeholder;
 
 use Espo\Core\{
     InjectableFactory,
@@ -32,16 +32,18 @@ use Espo\Core\{
 };
 
 use Espo\Modules\ExportImport\Tools\Import\{
-    Processor\Entity as ProcessorEntity
+    Placeholder\Actions\Action as PlaceholderAction
 };
 
 use LogicException;
 
-class ProcessorFactory
+class Factory
 {
     private $injectableFactory;
 
     private $metadata;
+
+    protected $actions = [];
 
     public function __construct(InjectableFactory $injectableFactory, Metadata $metadata)
     {
@@ -49,23 +51,25 @@ class ProcessorFactory
         $this->metadata = $metadata;
     }
 
-    public function create(string $format): Processor
+    public function create(string $action): PlaceholderAction
     {
-        if (!in_array($format, $this->metadata->get(['app', 'exportImport', 'formatList']))) {
-            throw new LogicException("Not supported export format '{$format}'.");
-        }
-
-        $className = $this->metadata->get(['app', 'exportImport', 'importProcessorClassNameMap', $format]);
+        $className = $this->metadata->get(
+            ['app', 'exportImport', 'placeholderActionClassNameMap', $action]
+        );
 
         if (!$className) {
-            throw new LogicException("No implementation for format '{$format}'.");
+            throw new LogicException("No implementation placeholder action '{$action}'.");
         }
 
         return $this->injectableFactory->create($className);
     }
 
-    public function createEntityProcessor()
+    public function get(string $action): PlaceholderAction
     {
-        return $this->injectableFactory->create(ProcessorEntity::class);
+        if (!isset($this->actions[$action])) {
+            $this->actions[$action] = $this->create($action);
+        }
+
+        return $this->actions[$action];
     }
 }

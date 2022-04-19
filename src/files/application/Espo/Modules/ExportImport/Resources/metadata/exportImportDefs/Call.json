@@ -1,10 +1,10 @@
 {
     "fields": {
         "dateStart": {
-            "value": "datetime.currentMonth"
+            "placeholderAction": "DateTime\\CurrentMonth"
         },
         "dateEnd": {
-            "value": "datetime.currentMonth"
+            "placeholderAction": "DateTime\\CurrentMonth"
         }
     }
 }

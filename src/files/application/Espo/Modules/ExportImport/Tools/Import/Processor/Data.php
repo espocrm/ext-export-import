@@ -53,6 +53,11 @@ class Data
         return unserialize(base64_decode($line));
     }
 
+    public function rewind()
+    {
+        rewind($this->resource);
+    }
+
     public function isEnd(): bool
     {
         return feof($this->resource);
