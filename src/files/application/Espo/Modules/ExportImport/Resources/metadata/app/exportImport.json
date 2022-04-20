@@ -38,5 +38,6 @@
     },
 
     "format": "json",
-    "prettyPrint": true
+    "prettyPrint": true,
+    "useDefaultCurrency": true
 }

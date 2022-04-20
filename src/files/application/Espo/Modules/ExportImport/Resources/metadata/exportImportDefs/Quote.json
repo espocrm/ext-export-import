@@ -4,10 +4,14 @@
     ],
     "fields": {
         "itemList": {
-            "value": {
-                "listPriceCurrency": "config.defaultCurrency",
-                "unitPriceCurrency": "config.defaultCurrency",
-                "amountCurrency": "config.defaultCurrency"
+            "placeholderAction": "Config\\ObjectData",
+            "placeholderData": {
+                "key": "defaultCurrency",
+                "objectKeyList": [
+                    "listPriceCurrency",
+                    "unitPriceCurrency",
+                    "amountCurrency"
+                ]
             }
         }
     }

@@ -4,14 +4,13 @@
     ],
     "fields": {
         "password": {
-            "usePlaceholder": true,
+            "placeholderAction": "User\\Password",
             "placeholderData": {
-                "action": "\\Espo\\Modules\\DemoData\\Tools\\Data\\Placeholders\\Config\\SetPassword",
                 "value": "1"
             }
         },
         "isActive": {
-            "value": "user.isActive"
+            "placeholderAction": "User\\Active"
         }
     }
 }

@@ -64,8 +64,6 @@ class PlaceholderHandler implements
                 $placeholderActionClassName =
                     $placeholderFieldDefs['placeholderAction'] ?? null;
 
-                $fieldValue = $row[$fieldName];
-
                 $fieldDefs = $this->metadata->get([
                     'entityDefs', $entityType, 'fields', $fieldName
                 ], []);
@@ -81,12 +79,15 @@ class PlaceholderHandler implements
 
                 $params = ActionParams::create($entityType)
                     ->withFieldName($fieldName)
+                    ->withRecordData($row)
                     ->withFieldDefs($fieldDefs)
                     ->withPlaceholderDefs($placeholderFieldDefs)
                     ->withManifest($params->getManifest());
 
                 try {
-                    $row[$fieldName] = $placeholderAction->normalize($params, $fieldValue);
+                    $row[$fieldName] = $placeholderAction->normalize(
+                        $params, $params->getFieldValue()
+                    );
                 }
                 catch (Exception $e) {
                     $GLOBALS['log']->debug(

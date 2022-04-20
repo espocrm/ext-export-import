@@ -42,6 +42,10 @@ class Params
 
     private $manifest = null;
 
+    private $recordData = null;
+
+    private $exportImportDefs = null;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -88,6 +92,24 @@ class Params
         return $obj;
     }
 
+    public function withRecordData(array $data): self
+    {
+        $obj = clone $this;
+
+        $obj->recordData = $data;
+
+        return $obj;
+    }
+
+    public function withExportImportDefs(array $defs): self
+    {
+        $obj = clone $this;
+
+        $obj->exportImportDefs = $defs;
+
+        return $obj;
+    }
+
     /**
      * Get a target entity type.
      */
@@ -126,5 +148,26 @@ class Params
     public function getManifest(): Manifest
     {
         return $this->manifest;
+    }
+
+    /**
+     * Get record data
+     */
+    public function getRecordData(): array
+    {
+        return $this->recordData;
+    }
+
+    /**
+     * Get exportImport defs
+     */
+    public function getExportImportDefs(): array
+    {
+        return $this->exportImportDefs;
+    }
+
+    public function getFieldValue(): mixed
+    {
+        return $this->recordData[$this->fieldName] ?? null;
     }
 }

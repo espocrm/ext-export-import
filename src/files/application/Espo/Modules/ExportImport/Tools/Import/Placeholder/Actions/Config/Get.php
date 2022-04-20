@@ -24,7 +24,7 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Datetime;
+namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Config;
 
 use Espo\Core\{
     Di,
@@ -34,46 +34,34 @@ use Espo\Core\{
 use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\{
     Action,
     Params,
-    Helper,
+    Utils,
 };
 
-use DateTime;
-use DateTimeZone;
-
-class CurrentMonth implements
+class Config implements
 
     Action,
-    Di\ConfigAware,
-    Di\MetadataAware
+    Di\ConfigAware
 {
     use Di\ConfigSetter;
-    use Di\MetadataSetter;
-
-    protected $helper;
-
-    public function __construct(Helper $helper)
-    {
-        $this->helper = $helper;
-    }
 
     public function normalize(Params $params, mixed $actualValue)
     {
-        $entityType = $params->getEntityType();
-        $fieldName = $params->getFieldName();
+        $placeholderDefs = $params->getPlaceholderDefs();
+        $key = $placeholderDefs['placeholderData']['key'] ?? null;
+        $default = $placeholderDefs['placeholderData']['default'] ?? null;
 
-        $fieldFormat = $this->helper->getFieldDateFormat(
-            $entityType, $fieldName
-        );
+        if (!$key) {
+            throw new Error('Config key is not defined');
+        }
 
-        $now = new DateTime('now', new DateTimeZone('UTC'));
+        if (in_array($key, $this->config->get('systemItems'))) {
+            throw new Error("The option '{$key}' from systemItems is not permitted");
+        }
 
-        $fieldTime = new DateTime($actualValue, new DateTimeZone('UTC'));
-        $fieldTime->setDate(
-            $now->format('Y'),
-            $now->format('m'),
-            $fieldTime->format('d'),
-        );
+        if (!Utils::isCurrencyChangePermitted($params)) {
+            throw new Error('The useDefaultCurrency is disabled');
+        }
 
-        return $fieldTime->format($fieldFormat);
+        return $this->config->get($key, $default);
     }
 }

@@ -1,13 +1,13 @@
 {
     "fields": {
         "dateStart": {
-            "value": "datetime.currentMonth"
+            "value": "DateTime\\CurrentMonth"
         },
         "dateEnd": {
-            "value": "datetime.currentMonth"
+            "value": "DateTime\\CurrentMonth"
         },
         "dateCompleted": {
-            "value": "datetime.currentMonth"
+            "value": "DateTime\\CurrentMonth"
         }
     }
 }

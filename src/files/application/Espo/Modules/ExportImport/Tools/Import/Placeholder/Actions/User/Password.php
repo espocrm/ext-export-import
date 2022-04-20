@@ -24,56 +24,44 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Datetime;
+namespace Espo\Modules\DemoData\Tools\Data\Placeholders;
 
 use Espo\Core\{
     Di,
     Exceptions\Error,
+    Utils\PasswordHash,
 };
 
 use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\{
     Action,
     Params,
-    Helper,
 };
 
-use DateTime;
-use DateTimeZone;
-
-class CurrentMonth implements
+class Password implements
 
     Action,
-    Di\ConfigAware,
-    Di\MetadataAware
+    Di\ConfigAware
 {
     use Di\ConfigSetter;
-    use Di\MetadataSetter;
 
-    protected $helper;
+    protected $passwordHash;
 
-    public function __construct(Helper $helper)
+    public function __construct(PasswordHash $passwordHash)
     {
-        $this->helper = $helper;
+        $this->passwordHash = $passwordHash;
     }
 
     public function normalize(Params $params, mixed $actualValue)
     {
-        $entityType = $params->getEntityType();
-        $fieldName = $params->getFieldName();
+        $placeholderDefs = $params->getPlaceholderDefs();
+        $password = $placeholderDefs['placeholderData']['value'] ?? null;
 
-        $fieldFormat = $this->helper->getFieldDateFormat(
-            $entityType, $fieldName
-        );
+        if (!$password) {
+            throw new Error('Placeholder: Undefined user password');
+        }
 
-        $now = new DateTime('now', new DateTimeZone('UTC'));
+        $hash = $this->passwordHash;
 
-        $fieldTime = new DateTime($actualValue, new DateTimeZone('UTC'));
-        $fieldTime->setDate(
-            $now->format('Y'),
-            $now->format('m'),
-            $fieldTime->format('d'),
-        );
-
-        return $fieldTime->format($fieldFormat);
+        return $hash->hash($password);
     }
 }

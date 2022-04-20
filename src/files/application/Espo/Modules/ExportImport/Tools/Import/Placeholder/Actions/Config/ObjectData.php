@@ -24,56 +24,55 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Datetime;
+namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Config;
 
 use Espo\Core\{
     Di,
     Exceptions\Error,
 };
 
-use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\{
-    Action,
-    Params,
-    Helper,
+use Espo\Modules\ExportImport\Tools\Import\{
+    Placeholder\Actions\Action,
+    Placeholder\Actions\Params,
+    Placeholder\Actions\Utils,
 };
 
-use DateTime;
-use DateTimeZone;
-
-class CurrentMonth implements
+class ObjectData implements
 
     Action,
-    Di\ConfigAware,
-    Di\MetadataAware
+    Di\ConfigAware
 {
     use Di\ConfigSetter;
-    use Di\MetadataSetter;
-
-    protected $helper;
-
-    public function __construct(Helper $helper)
-    {
-        $this->helper = $helper;
-    }
 
     public function normalize(Params $params, mixed $actualValue)
     {
-        $entityType = $params->getEntityType();
-        $fieldName = $params->getFieldName();
+        $placeholderDefs = $params->getPlaceholderDefs();
+        $key = $placeholderDefs['placeholderData']['key'] ?? null;
+        $objectKeyList = $placeholderDefs['placeholderData']['objectKeyList'] ?? null;
+        $default = $placeholderDefs['placeholderData']['default'] ?? null;
 
-        $fieldFormat = $this->helper->getFieldDateFormat(
-            $entityType, $fieldName
-        );
+        if (!$key) {
+            throw new Error('Config key is not defined');
+        }
 
-        $now = new DateTime('now', new DateTimeZone('UTC'));
+        if (!$objectKeyList) {
+            throw new Error('objectKeyList is not defined');
+        }
 
-        $fieldTime = new DateTime($actualValue, new DateTimeZone('UTC'));
-        $fieldTime->setDate(
-            $now->format('Y'),
-            $now->format('m'),
-            $fieldTime->format('d'),
-        );
+        if (in_array($key, $this->config->get('systemItems'))) {
+            throw new Error("The option '{$key}' from systemItems is not permitted");
+        }
 
-        return $fieldTime->format($fieldFormat);
+        if (!Utils::isCurrencyChangePermitted($params)) {
+            throw new Error('The useDefaultCurrency is disabled');
+        }
+
+        $value = $this->config->get($key, $default);
+
+        foreach ($objectKeyList as $objectKey) {
+            $actualValue = Utils::replaceKeyInObject($actualValue, $objectKey, $value);
+        }
+
+        return $actualValue;
     }
 }

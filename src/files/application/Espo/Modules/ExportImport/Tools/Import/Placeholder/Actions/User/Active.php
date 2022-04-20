@@ -24,56 +24,36 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Datetime;
+namespace Espo\Modules\DemoData\Tools\Data\Placeholders;
 
 use Espo\Core\{
     Di,
-    Exceptions\Error,
 };
 
 use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\{
     Action,
     Params,
-    Helper,
 };
 
-use DateTime;
-use DateTimeZone;
-
-class CurrentMonth implements
+class Active implements
 
     Action,
-    Di\ConfigAware,
-    Di\MetadataAware
+    Di\ConfigAware
 {
     use Di\ConfigSetter;
-    use Di\MetadataSetter;
-
-    protected $helper;
-
-    public function __construct(Helper $helper)
-    {
-        $this->helper = $helper;
-    }
 
     public function normalize(Params $params, mixed $actualValue)
     {
-        $entityType = $params->getEntityType();
-        $fieldName = $params->getFieldName();
+        $recordData = $params->getRecordData();
 
-        $fieldFormat = $this->helper->getFieldDateFormat(
-            $entityType, $fieldName
-        );
+        if ($recordData['id'] == '1') {
+            return true;
+        }
 
-        $now = new DateTime('now', new DateTimeZone('UTC'));
+        if ($this->config->get('restrictedMode')) {
+            return false;
+        }
 
-        $fieldTime = new DateTime($actualValue, new DateTimeZone('UTC'));
-        $fieldTime->setDate(
-            $now->format('Y'),
-            $now->format('m'),
-            $fieldTime->format('d'),
-        );
-
-        return $fieldTime->format($fieldFormat);
+        return $actualValue;
     }
 }
