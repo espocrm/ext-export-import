@@ -145,6 +145,10 @@ class Import implements
         $import = $this->injectableFactory->create(EntityImportTool::class);
         $import->setParams($importParams);
 
-        $import->run();
+        $result = $import->run();
+
+        echo '<pre>';
+        var_dump($result);
+        exit;
     }
 }

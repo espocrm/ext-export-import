@@ -3,7 +3,7 @@
  * This file is part of Export Import extension for EspoCRM.
  *
  * Export Import extension for EspoCRM.
- * Copyright (C) 2014-2021 Yurii Kuznietsov, Taras Machyshyn, Oleksii Avramenko
+ * Copyright (C) 2014-2022 Yurii Kuznietsov, Taras Machyshyn, Oleksii Avramenko
  * Website: https://www.espocrm.com
  *
  * Export Import extension is free software: you can redistribute it and/or modify
@@ -26,12 +26,63 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import;
 
-use Espo\Modules\ExportImport\Tools\Import\{
-    Processor\Data,
-    Processor\Params,
-};
-
-interface Processor
+class Result
 {
-    public function process(Params $params, Data $data): Result;
+    private $entityType;
+
+    private $successCount = 0;
+
+    private $failCount = 0;
+
+    public function __construct(string $entityType)
+    {
+        $this->entityType = $entityType;
+    }
+
+    public static function create(string $entityType): self
+    {
+        return new self($entityType);
+    }
+
+    public function withSuccessCount(int $count): self
+    {
+        $obj = clone $this;
+
+        $obj->successCount = $count;
+
+        return $obj;
+    }
+
+    public function withFailCount(int $count): self
+    {
+        $obj = clone $this;
+
+        $obj->failCount = $count;
+
+        return $obj;
+    }
+
+    /**
+     * Get a target entity type.
+     */
+    public function getEntityType(): string
+    {
+        return $this->entityType;
+    }
+
+    /**
+     * Get record count
+     */
+    public function getSuccessCount(): int
+    {
+        return $this->successCount;
+    }
+
+    /**
+     * Get record count
+     */
+    public function getFailCount(): int
+    {
+        return $this->failCount;
+    }
 }

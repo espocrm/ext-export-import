@@ -34,16 +34,16 @@ use Espo\Modules\ExportImport\Tools\Import\{
     Processor,
     Processor\Params,
     Processor\Data,
+    Result
 };
 
-use Psr\Http\Message\StreamInterface;
 use GuzzleHttp\Psr7\Stream;
 
 use JsonMachine\Items;
 
 class Json implements Processor
 {
-    public function process(Params $params, Data $data): StreamInterface
+    public function process(Params $params, Data $data): Result
     {
         $file = $params->getFile();
 
@@ -59,8 +59,8 @@ class Json implements Processor
             $data->writeRow($row);
         }
 
-        return new Stream(
-            $data->getResource()
+        return Result::create(
+            $params->getEntityType()
         );
     }
 }

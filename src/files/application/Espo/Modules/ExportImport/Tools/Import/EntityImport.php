@@ -140,16 +140,16 @@ class EntityImport
 
         $processorData = new ProcessorData($dataResource);
 
-        $stream = $processor->process($processorParams, $processorData);
+        $processor->process($processorParams, $processorData);
 
         $processorEntity = $this->processorFactory->createEntityProcessor();
-        $stream2 = $processorEntity->process($processorParams, $processorData);
-
-        die('DONE: ' . $params->getEntityType());
+        $result = $processorEntity->process($processorParams, $processorData);
 
         fclose($dataResource);
 
-        return new Result($params->getPath());
+        return Result::create($entityType)
+            ->withFailCount($result->getFailCount)
+            ->withSuccessCount($result->getSuccessCount);
     }
 
     protected function isScopeEntity(string $scope): bool

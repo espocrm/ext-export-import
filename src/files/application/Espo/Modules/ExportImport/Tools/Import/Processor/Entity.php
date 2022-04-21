@@ -29,6 +29,8 @@ namespace Espo\Modules\ExportImport\Tools\Import\Processor;
 use Espo\Core\Di;
 
 use Espo\Modules\ExportImport\Tools\Import\{
+    Result,
+    Processor,
     Processor\Data,
     Processor\Params,
     Placeholder\Handler as PlaceholderHandler
@@ -55,11 +57,14 @@ class Entity implements
         );
     }
 
-    public function process(Params $params, Data $data): StreamInterface
+    public function process(Params $params, Data $data): Result
     {
         $data->rewind();
 
         $entityType = $params->getEntityType();
+
+        $failCount = 0;
+        $successCount = 0;
 
         while (($row = $data->readRow()) !== null) {
             $preparedRow = $this->prepareData($params, $row);
@@ -99,14 +104,22 @@ class Entity implements
                     'import' => true,
                     'silent' => true,
                 ]);
+
+                $successCount++;
             }
             catch (Exception $e) {
+                $failCount++;
+
                 $this->log->error(
                     "ExportImport [Import]: Error saving the record: " .
                     $e->getMessage()
                 );
             }
         }
+
+        return Result::create($entityType)
+            ->withFailCount($failCount)
+            ->withSuccessCount($successCount);
     }
 
     private function prepareData(Params $params, array $row)
