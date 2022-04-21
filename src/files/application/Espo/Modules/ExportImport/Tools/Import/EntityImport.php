@@ -148,8 +148,8 @@ class EntityImport
         fclose($dataResource);
 
         return Result::create($entityType)
-            ->withFailCount($result->getFailCount)
-            ->withSuccessCount($result->getSuccessCount);
+            ->withFailCount($result->getFailCount())
+            ->withSuccessCount($result->getSuccessCount());
     }
 
     protected function isScopeEntity(string $scope): bool

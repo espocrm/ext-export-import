@@ -37,24 +37,21 @@ use Espo\Modules\ExportImport\Tools\Import\{
 };
 
 use Exception;
-use Psr\Http\Message\StreamInterface;
 
 class Entity implements
 
     Processor,
-    Di\EntityManagerAware,
-    Di\InjectableFactoryAware
+    Di\LogAware,
+    Di\EntityManagerAware
 {
+    use Di\LogSetter;
     use Di\EntityManagerSetter;
-    Use Di\InjectableFactorySetter;
 
     protected $placeholderHandler;
 
-    public function __construct()
+    public function __construct(PlaceholderHandler $placeholderHandler)
     {
-        $this->placeholderHandler = $this->injectableFactory->create(
-            PlaceholderHandler::class
-        );
+        $this->placeholderHandler = $placeholderHandler;
     }
 
     public function process(Params $params, Data $data): Result

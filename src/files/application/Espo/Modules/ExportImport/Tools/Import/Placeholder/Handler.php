@@ -38,7 +38,7 @@ use Espo\Modules\ExportImport\Tools\Import\{
 
 use Exception;
 
-class PlaceholderHandler implements
+class Handler implements
 
     Di\MetadataAware
 {
