@@ -59,19 +59,38 @@ class Entity implements
     {
         $data->rewind();
 
+        $entityType = $params->getEntityType();
+
         while (($row = $data->readRow()) !== null) {
             $preparedRow = $this->prepareData($params, $row);
 
-            $entity = $this->entityManager->getEntity($params->getEntityType());
+            $id = $row['id'] ?? null;
 
-            $entity-set($preparedRow);
+            if ($id) {
+                $entity = $this->entityManager->getEntity($entityType, $id);
 
-            //todo: change
-            if ($entity->hasId()) {
-                $this->entityManager
-                    ->getRDBRepository($entity->getEntityType())
-                    ->deleteFromDb($entity->getId(), true);
+                if (!isset($entity)) {
+                    $query = $this->entityManager
+                        ->getQueryBuilder()
+                        ->delete()
+                        ->from($entityType)
+                        ->where([
+                            'id' => $id,
+                            'deleted' => true,
+                        ])
+                        ->build();
+
+                    $this->entityManager
+                        ->getQueryExecutor()
+                        ->execute($query);
+                }
             }
+
+            if (!isset($entity)) {
+                $entity = $this->entityManager->getEntity($entityType);
+            }
+
+            $entity->set($preparedRow);
 
             try {
                 $this->entityManager->saveEntity($entity, [
@@ -82,7 +101,10 @@ class Entity implements
                 ]);
             }
             catch (Exception $e) {
-                $this->log->error("ExportImport [Import]: Error saving the record: " . $e->getMessage());
+                $this->log->error(
+                    "ExportImport [Import]: Error saving the record: " .
+                    $e->getMessage()
+                );
             }
         }
     }
