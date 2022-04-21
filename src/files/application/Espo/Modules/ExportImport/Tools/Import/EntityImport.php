@@ -111,7 +111,7 @@ class EntityImport
     }
 
     /**
-     * Run export.
+     * Run import
      */
     public function run(): Result
     {
@@ -126,10 +126,6 @@ class EntityImport
         $format = $params->getFormat() ?? 'json';
 
         $processor = $this->processorFactory->create($format);
-
-        $recordService = $this->isScopeEntity($entityType) ?
-            $this->serviceContainer->get($entityType) :
-            null;
 
         $dataResource = fopen('php://temp', 'w');
 
@@ -150,10 +146,5 @@ class EntityImport
         return Result::create($entityType)
             ->withFailCount($result->getFailCount())
             ->withSuccessCount($result->getSuccessCount());
-    }
-
-    protected function isScopeEntity(string $scope): bool
-    {
-        return (bool) $this->metadata->get(['scopes', $scope, 'entity']);
     }
 }
