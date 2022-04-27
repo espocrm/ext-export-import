@@ -173,6 +173,11 @@ class EntityExport
             foreach ($attributeList as $attribute) {
                 $value = $this->getAttributeFromEntity($entity, $attribute);
 
+                if ($this->skipValue($entity, $attribute, $value)) {
+
+                    continue;
+                }
+
                 $row[$attribute] = $value;
             }
 
@@ -474,5 +479,25 @@ class EntityExport
     protected function isScopeEntity(string $scope): bool
     {
         return (bool) $this->metadata->get(['scopes', $scope, 'entity']);
+    }
+
+    protected function skipValue(Entity $entity, string $attribute, $value)
+    {
+        $type = $entity->getAttributeType($attribute);
+
+        switch ($type) {
+
+            case Entity::BOOL:
+            case Entity::TEXT:
+            case Entity::VARCHAR:
+            case Entity::FOREIGN_ID:
+                if ($value === null) {
+                    return true;
+                }
+                break;
+
+        }
+
+        return false;
     }
 }
