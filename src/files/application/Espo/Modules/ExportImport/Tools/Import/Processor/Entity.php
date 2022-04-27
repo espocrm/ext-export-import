@@ -36,7 +36,13 @@ use Espo\Modules\ExportImport\Tools\Import\{
     Placeholder\Handler as PlaceholderHandler
 };
 
+use Espo\{
+    ORM\Entity as OrmEntity,
+};
+
 use Exception;
+
+use function PHPSTORM_META\type;
 
 class Entity implements
 
@@ -128,9 +134,25 @@ class Entity implements
 
         $attributeList = $entityDefs->getAttributeNameList();
 
-        foreach ($row as $fieldName => $fieldValue) {
-            if (!in_array($fieldName, $attributeList)) {
-                unset($row[$fieldName]);
+        foreach ($row as $attributeName => $attributeValue) {
+
+            if (!in_array($attributeName, $attributeList)) {
+                unset($row[$attributeName]);
+
+                continue;
+            }
+
+            $type = $entityDefs
+                ->getAttribute($attributeName)
+                ->getType();
+
+            switch ($type) {
+
+                case OrmEntity::FOREIGN_ID:
+                    if ($attributeValue === null) {
+                        unset($row[$attributeName]);
+                    }
+                    break;
             }
         }
 
