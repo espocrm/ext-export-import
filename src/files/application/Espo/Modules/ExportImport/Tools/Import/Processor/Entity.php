@@ -109,7 +109,8 @@ class Entity implements
 
                 $this->log->error(
                     "ExportImport [Import]: Error saving the record: " .
-                    $e->getMessage()
+                    $e->getMessage() . " at " . $e->getFile() .
+                    ":" . $e->getLine()
                 );
             }
         }
