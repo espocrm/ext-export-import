@@ -28,5 +28,8 @@ namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions;
 
 interface Action
 {
-    public function normalize(Params $params, mixed $actualValue);
+    /**
+     * @return mixed
+     */
+    public function normalize(Params $params, $actualValue);
 }

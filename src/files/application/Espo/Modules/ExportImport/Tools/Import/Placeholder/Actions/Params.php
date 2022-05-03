@@ -166,7 +166,10 @@ class Params
         return $this->exportImportDefs;
     }
 
-    public function getFieldValue(): mixed
+    /**
+     * @return mixed
+     */
+    public function getFieldValue()
     {
         return $this->recordData[$this->fieldName] ?? null;
     }

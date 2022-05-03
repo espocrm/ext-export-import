@@ -51,7 +51,7 @@ class Password implements
         $this->passwordHash = $passwordHash;
     }
 
-    public function normalize(Params $params, mixed $actualValue)
+    public function normalize(Params $params, $actualValue)
     {
         $placeholderDefs = $params->getPlaceholderDefs();
         $password = $placeholderDefs['placeholderData']['value'] ?? null;

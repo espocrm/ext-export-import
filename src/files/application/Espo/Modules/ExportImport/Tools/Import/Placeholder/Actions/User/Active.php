@@ -42,7 +42,7 @@ class Active implements
 {
     use Di\ConfigSetter;
 
-    public function normalize(Params $params, mixed $actualValue)
+    public function normalize(Params $params, $actualValue)
     {
         $recordData = $params->getRecordData();
 

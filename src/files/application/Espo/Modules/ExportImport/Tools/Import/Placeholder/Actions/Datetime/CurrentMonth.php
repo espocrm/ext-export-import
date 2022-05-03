@@ -56,7 +56,7 @@ class CurrentMonth implements
         $this->helper = $helper;
     }
 
-    public function normalize(Params $params, mixed $actualValue)
+    public function normalize(Params $params, $actualValue)
     {
         $entityType = $params->getEntityType();
         $fieldName = $params->getFieldName();

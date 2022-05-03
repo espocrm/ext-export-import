@@ -146,9 +146,5 @@ class Import implements
         $import->setParams($importParams);
 
         $result = $import->run();
-
-        echo '<pre>';
-        var_dump($result);
-        exit;
     }
 }
