@@ -36,6 +36,8 @@ Possible values:
 - `createAndUpdate`
 - `update`
 
+Default: `createAndUpdate`
+
 ####
 
 ## Placeholders

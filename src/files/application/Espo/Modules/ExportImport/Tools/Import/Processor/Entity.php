@@ -63,6 +63,7 @@ class Entity implements
         $data->rewind();
 
         $entityType = $params->getEntityType();
+        $importType = $params->getImportType();
 
         $failCount = 0;
         $successCount = 0;
@@ -92,7 +93,17 @@ class Entity implements
                 }
             }
 
+            if (isset($entity) && in_array($importType, [Params::TYPE_CREATE])) {
+
+                continue;
+            }
+
             if (!isset($entity)) {
+                if (in_array($importType, [Params::TYPE_UPDATE])) {
+
+                    continue;
+                }
+
                 $entity = $this->entityManager->getEntity($entityType);
             }
 
