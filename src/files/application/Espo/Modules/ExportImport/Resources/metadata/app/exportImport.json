@@ -34,7 +34,11 @@
     },
 
     "placeholderActionClassNameMap": {
-        "DateTime\\CurrentMonth": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Datetime\\CurrentMonth"
+        "Config\\Get": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Config\\Get",
+        "Config\\ObjectData": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Config\\ObjectData",
+        "DateTime\\CurrentMonth": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Datetime\\CurrentMonth",
+        "User\\Active": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\User\\Active",
+        "User\\Password": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\User\\Password"
     },
 
     "format": "json",

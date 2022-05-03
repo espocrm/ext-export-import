@@ -24,7 +24,7 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\DemoData\Tools\Data\Placeholders;
+namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\User;
 
 use Espo\Core\{
     Di,

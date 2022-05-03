@@ -37,7 +37,7 @@ use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\{
     Utils,
 };
 
-class Config implements
+class Get implements
 
     Action,
     Di\ConfigAware
