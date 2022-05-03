@@ -49,9 +49,7 @@ use Espo\{
 
 use Espo\Modules\ExportImport\Tools\Import\{
     Params,
-    Processor\Params as ProcessorParams,
     Processor\Data as ProcessorData,
-    EntityProcessor as ProcessorEntity
 };
 
 use RuntimeException;
@@ -129,17 +127,12 @@ class EntityImport
 
         $dataResource = fopen('php://temp', 'w');
 
-        $processorParams =
-        (new ProcessorParams($params->getFile()))
-            ->withEntityType($params->getEntityType())
-            ->withManifest($params->getManifest());
-
         $processorData = new ProcessorData($dataResource);
 
-        $processor->process($processorParams, $processorData);
+        $processor->process($params, $processorData);
 
         $processorEntity = $this->processorFactory->createEntityProcessor();
-        $result = $processorEntity->process($processorParams, $processorData);
+        $result = $processorEntity->process($params, $processorData);
 
         fclose($dataResource);
 

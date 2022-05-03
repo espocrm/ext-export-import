@@ -46,6 +46,8 @@ class Params
 
     private $manifest = null;
 
+    private $importType = null;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -88,6 +90,15 @@ class Params
         $obj = clone $this;
 
         $obj->manifest = $manifest;
+
+        return $obj;
+    }
+
+    public function withImportType(string $importType): self
+    {
+        $obj = clone $this;
+
+        $obj->importType = $importType;
 
         return $obj;
     }
@@ -141,5 +152,13 @@ class Params
             $this->path,
             $this->entityType . '.' . $this->format
         );
+    }
+
+    /**
+     * Get import type
+     */
+    public function getImportType(): string
+    {
+        return $this->importType;
     }
 }

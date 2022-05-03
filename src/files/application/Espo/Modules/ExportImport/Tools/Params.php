@@ -46,6 +46,8 @@ class Params
 
     private $manifestFile = null;
 
+    private $importType= null;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -71,6 +73,7 @@ class Params
         $obj->exportPath = $params['exportPath'] ?? null;
         $obj->dataPath = $params['dataPath'] ?? null;
         $obj->manifestFile = $params['manifestFile'] ?? null;
+        $obj->importType = $params['importType'] ?? null;
 
         $obj->prettyPrint = array_key_exists('prettyPrint', $params) ?
             $params['prettyPrint'] : false;
@@ -137,6 +140,15 @@ class Params
         $obj = clone $this;
 
         $obj->manifestFile = $file;
+
+        return $obj;
+    }
+
+    public function withImportType(string $importType): self
+    {
+        $obj = clone $this;
+
+        $obj->importType = $importType;
 
         return $obj;
     }
@@ -219,5 +231,13 @@ class Params
     public function getDataManifestFile(): string
     {
         return Util::concatPath($this->dataPath, $this->manifestFile);
+    }
+
+    /**
+     * Get import type
+     */
+    public function getImportType(): string
+    {
+        return $this->importType;
     }
 }

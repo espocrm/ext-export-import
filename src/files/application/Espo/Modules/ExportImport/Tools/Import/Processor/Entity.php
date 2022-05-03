@@ -32,7 +32,7 @@ use Espo\Modules\ExportImport\Tools\Import\{
     Result,
     Processor,
     Processor\Data,
-    Processor\Params,
+    Params,
     Placeholder\Handler as PlaceholderHandler
 };
 
@@ -41,8 +41,6 @@ use Espo\{
 };
 
 use Exception;
-
-use function PHPSTORM_META\type;
 
 class Entity implements
 

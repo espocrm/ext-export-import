@@ -140,7 +140,8 @@ class Import implements
             ->withFormat($params->getFormat())
             ->withPath($params->getDataEntityPath())
             ->withDefsSource($params->getDefsSource())
-            ->withManifest($manifest);
+            ->withManifest($manifest)
+            ->withImportType($params->getImportType());
 
         $import = $this->injectableFactory->create(EntityImportTool::class);
         $import->setParams($importParams);

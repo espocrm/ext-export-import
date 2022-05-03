@@ -31,7 +31,7 @@ use Espo\Core\{
 };
 
 use Espo\Modules\ExportImport\Tools\Import\{
-    Processor\Params,
+    Params,
     Placeholder\Factory as PlaceholderFactory,
     Placeholder\Actions\Params as ActionParams
 };

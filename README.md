@@ -24,7 +24,19 @@ php command.php exportImport erase
 
 ## Configuration
 
-The export / import process can be configured in `application/Espo/Modules/ExportImport/Resources/metadata/app/exportImport.json`
+The export / import process can be configured in `custom/Espo/Custom/Resources/metadata/app/exportImport.json`
+
+### Import Type
+
+Attribute: `importType`
+
+Possible values:
+
+- `create`
+- `createAndUpdate`
+- `update`
+
+####
 
 ## Placeholders
 

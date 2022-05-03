@@ -43,5 +43,6 @@
 
     "format": "json",
     "prettyPrint": true,
-    "useDefaultCurrency": true
+    "useDefaultCurrency": true,
+    "importType": "createAndUpdate"
 }
