@@ -42,7 +42,7 @@ class Helper implements
     public function getFieldDateFormat(string $entityType, string $fieldName): string
     {
         $fieldType = $this->metadata->get([
-            'entitiDefs', $entityType, 'fields', $fieldName, 'type'
+            'entityDefs', $entityType, 'fields', $fieldName, 'type'
         ]);
 
         switch ($fieldType) {
