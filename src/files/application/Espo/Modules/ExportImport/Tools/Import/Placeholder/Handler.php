@@ -59,6 +59,7 @@ class Handler implements
             'exportImportDefs', $entityType, 'fields'
         ]);
 
+
         if ($placeholderData) {
             foreach ($placeholderData as $fieldName => $placeholderFieldDefs) {
                 $placeholderActionClassName =
@@ -92,7 +93,7 @@ class Handler implements
                 catch (Exception $e) {
                     $GLOBALS['log']->debug(
                         "ExportImport [Import][Placeholder]: " .
-                        "error getting a value for field {$entityType}.{$fieldName}," .
+                        "Error getting a value for the field {$entityType}.{$fieldName}," .
                         " error: " . $e->getMessage()
                     );
                 }

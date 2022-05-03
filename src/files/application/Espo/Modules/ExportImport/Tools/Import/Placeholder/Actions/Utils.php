@@ -26,8 +26,13 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions;
 
-use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\{
-    Params,
+use Espo\Core\{
+    Exceptions\Error,
+    Utils\DateTime as DateTimeUtil,
+};
+
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\{
+    Actions\Params,
 };
 
 use stdClass;
@@ -59,5 +64,20 @@ class Utils
         }
 
         return true;
+    }
+
+    public static function getDateFieldFormat(string $fieldType): string
+    {
+        switch ($fieldType) {
+            case 'datetime':
+                return DateTimeUtil::SYSTEM_DATE_TIME_FORMAT;
+                break;
+
+            case 'date':
+                return DateTimeUtil::SYSTEM_DATE_FORMAT;
+                break;
+        }
+
+        throw new Error("Unknown datetime field type '{$fieldType}'");
     }
 }

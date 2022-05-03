@@ -129,7 +129,7 @@ class Params
     /**
      * Get a field defs
      */
-    public function getFieldDefs(): string
+    public function getFieldDefs(): array
     {
         return $this->fieldDefs;
     }

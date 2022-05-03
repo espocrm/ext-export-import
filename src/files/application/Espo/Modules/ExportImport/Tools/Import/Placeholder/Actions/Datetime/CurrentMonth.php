@@ -26,44 +26,22 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Datetime;
 
-use Espo\Core\{
-    Di,
-    Exceptions\Error,
-};
-
-use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\{
-    Action,
-    Params,
-    Helper,
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\{
+    Actions\Action,
+    Actions\Params,
+    Actions\Utils,
 };
 
 use DateTime;
 use DateTimeZone;
 
-class CurrentMonth implements
-
-    Action,
-    Di\ConfigAware,
-    Di\MetadataAware
+class CurrentMonth implements Action
 {
-    use Di\ConfigSetter;
-    use Di\MetadataSetter;
-
-    protected $helper;
-
-    public function __construct(Helper $helper)
-    {
-        $this->helper = $helper;
-    }
-
     public function normalize(Params $params, $actualValue)
     {
-        $entityType = $params->getEntityType();
-        $fieldName = $params->getFieldName();
+        $fieldType = $params->getFieldDefs()['type'] ?? null;
 
-        $fieldFormat = $this->helper->getFieldDateFormat(
-            $entityType, $fieldName
-        );
+        $fieldFormat = Utils::getDateFieldFormat($fieldType);
 
         $now = new DateTime('now', new DateTimeZone('UTC'));
 
