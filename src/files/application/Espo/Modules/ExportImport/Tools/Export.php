@@ -67,8 +67,8 @@ class Export implements
     public function run(Params $params) : void
     {
         $format = $params->getFormat() ?? null;
-        $defsSource = $params->getDefsSource() ?? null;
         $exportPath = $params->getExportPath() ?? null;
+        $defs = $params->getExportImportDefs();
 
         if (!$format) {
             throw new Error('Option "format" is not defined.');
@@ -78,13 +78,7 @@ class Export implements
             throw new Error('Export path is not defined.');
         }
 
-        if (!$defsSource) {
-            throw new Error('Option "defsSource" is not defined.');
-        }
-
         $this->fileManager->removeInDir($exportPath);
-
-        $defs = $this->metadata->get([$defsSource]);
 
         $entityList = $params->getEntityTypeList() ??
             $this->defs->getEntityTypeList();
@@ -117,7 +111,7 @@ class Export implements
             ->withFormat($params->getFormat())
             ->withAccessControl(false)
             ->withPath($params->getExportEntityPath())
-            ->withDefsSource($params->getDefsSource())
+            ->withExportImportDefs($params->getExportImportDefs())
             ->withCollectionClass($collectionClass);
 
         $export = $this->injectableFactory->create(EntityExportTool::class);

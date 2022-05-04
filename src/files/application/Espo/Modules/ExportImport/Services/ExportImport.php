@@ -90,6 +90,14 @@ class ExportImport implements
             $params = array_merge($params, $extraParams);
         }
 
+        $defsSource = $params['defsSource'] ?? null;
+
+        if (!$defsSource) {
+            throw new Error('Incorrect "defsSource" option.');
+        }
+
+        $params['exportImportDefs'] = $this->metadata->get($defsSource);
+
         return Params::fromRaw($params);
     }
 }

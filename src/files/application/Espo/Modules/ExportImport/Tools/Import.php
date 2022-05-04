@@ -63,8 +63,8 @@ class Import implements
     public function run(Params $params) : void
     {
         $format = $params->getFormat() ?? null;
-        $defsSource = $params->getDefsSource() ?? null;
         $dataPath = $params->getDataPath() ?? null;
+        $defs = $params->getExportImportDefs();
 
         if (!$format) {
             throw new Error('Option "format" is not defined.');
@@ -73,12 +73,6 @@ class Import implements
         if (!$dataPath) {
             throw new Error('Data path is not defined.');
         }
-
-        if (!$defsSource) {
-            throw new Error('Option "defsSource" is not defined.');
-        }
-
-        $defs = $this->metadata->get([$defsSource]);
 
         $entityTypeList = $this->getEntityTypeList($params);
 
@@ -139,7 +133,7 @@ class Import implements
         $importParams = ImportParams::create($entityType)
             ->withFormat($params->getFormat())
             ->withPath($params->getDataEntityPath())
-            ->withDefsSource($params->getDefsSource())
+            ->withExportImportDefs($params->getExportImportDefs())
             ->withManifest($manifest)
             ->withImportType($params->getImportType());
 

@@ -55,12 +55,11 @@ class Handler implements
     {
         $entityType = $params->getEntityType();
 
-        $placeholderData = $this->metadata->get([
-            'exportImportDefs', $entityType, 'fields'
-        ]);
-
+        $placeholderData =
+            $params->getExportImportDefs()[$entityType]['fields'] ?? null;
 
         if ($placeholderData) {
+
             foreach ($placeholderData as $fieldName => $placeholderFieldDefs) {
                 $placeholderActionClassName =
                     $placeholderFieldDefs['placeholderAction'] ?? null;
@@ -98,6 +97,7 @@ class Handler implements
                     );
                 }
             }
+
         }
 
         return $row;

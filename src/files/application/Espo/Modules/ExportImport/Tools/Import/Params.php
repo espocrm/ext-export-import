@@ -42,7 +42,7 @@ class Params
 
     private $format = null;
 
-    private $defsSource = null;
+    private $exportImportDefs = null;
 
     private $manifest = null;
 
@@ -76,11 +76,11 @@ class Params
         return $obj;
     }
 
-    public function withDefsSource(?string $defsSource): self
+    public function withExportImportDefs(array $exportImportDefs): self
     {
         $obj = clone $this;
 
-        $obj->defsSource = $defsSource;
+        $obj->exportImportDefs = $exportImportDefs;
 
         return $obj;
     }
@@ -128,11 +128,11 @@ class Params
     }
 
     /**
-     * Get a source of exportImport defs
+     * Get exportImport defs
      */
-    public function getDefsSource(): string
+    public function getExportImportDefs(): array
     {
-        return $this->defsSource;
+        return $this->exportImportDefs;
     }
 
     /**

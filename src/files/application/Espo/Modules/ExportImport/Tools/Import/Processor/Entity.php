@@ -28,7 +28,7 @@ namespace Espo\Modules\ExportImport\Tools\Import\Processor;
 
 use Espo\Core\Di;
 
-use Espo\Modules\ExportImport\Tools\Import\{
+use Espo\Modules\ExportImport\Tools\{
     Params as ToolParams,
     Import\Result,
     Import\Processor,

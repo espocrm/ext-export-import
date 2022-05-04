@@ -40,7 +40,7 @@ class Params
 
     private $format = null;
 
-    private $defsSource = null;
+    private $exportImportDefs;
 
     private $entityTypeList = null;
 
@@ -76,11 +76,15 @@ class Params
 
         $obj = new self($format);
 
-        $obj->defsSource = $params['defsSource'] ?? null;
         $obj->exportPath = $params['exportPath'] ?? null;
         $obj->dataPath = $params['dataPath'] ?? null;
         $obj->manifestFile = $params['manifestFile'] ?? null;
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
+        $obj->exportImportDefs = $params['exportImportDefs'] ?? null;
+
+        if (!$obj->exportImportDefs) {
+            throw new RuntimeException('Incorrect "exportImportDefs" data.');
+        }
 
         if (!in_array(
             $obj->importType,
@@ -127,11 +131,11 @@ class Params
         return $value;
     }
 
-    public function withDefsSource(?string $defsSource): self
+    public function withExportImportDefs(array $exportImportDefs): self
     {
         $obj = clone $this;
 
-        $obj->defsSource = $defsSource;
+        $obj->exportImportDefs = $exportImportDefs;
 
         return $obj;
     }
@@ -202,11 +206,11 @@ class Params
     }
 
     /**
-     * Get a source of exportImport defs
+     * Get exportImport defs
      */
-    public function getDefsSource(): ?string
+    public function getExportImportDefs(): array
     {
-        return $this->defsSource;
+        return $this->exportImportDefs;
     }
 
     /**
