@@ -45,6 +45,7 @@ class ExportImport implements
     public function run(Params $params, IO $io): void
     {
         $action = $params->getArgument(0);
+        $options = $params->getOptions();
 
         if (!$action) {
             $io->writeLine(
@@ -70,7 +71,7 @@ class ExportImport implements
         }
 
         try {
-            $service->$method();
+            $service->$method($options);
         } catch (Throwable $e) {
             $io->writeLine(
                 "Error: " . $e->getMessage()

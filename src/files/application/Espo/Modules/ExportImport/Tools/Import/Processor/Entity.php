@@ -29,11 +29,12 @@ namespace Espo\Modules\ExportImport\Tools\Import\Processor;
 use Espo\Core\Di;
 
 use Espo\Modules\ExportImport\Tools\Import\{
-    Result,
-    Processor,
-    Processor\Data,
-    Params,
-    Placeholder\Handler as PlaceholderHandler
+    Params as ToolParams,
+    Import\Result,
+    Import\Processor,
+    Import\Processor\Data,
+    Import\Params,
+    Import\Placeholder\Handler as PlaceholderHandler
 };
 
 use Espo\{
@@ -93,13 +94,13 @@ class Entity implements
                 }
             }
 
-            if (isset($entity) && in_array($importType, [Params::TYPE_CREATE])) {
+            if (isset($entity) && in_array($importType, [ToolParams::TYPE_CREATE])) {
 
                 continue;
             }
 
             if (!isset($entity)) {
-                if (in_array($importType, [Params::TYPE_UPDATE])) {
+                if (in_array($importType, [ToolParams::TYPE_UPDATE])) {
 
                     continue;
                 }

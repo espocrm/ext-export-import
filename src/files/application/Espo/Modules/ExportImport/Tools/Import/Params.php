@@ -36,12 +36,6 @@ use Espo\Modules\ExportImport\Tools\{
 
 class Params
 {
-    public const TYPE_CREATE = 'create';
-
-    public const TYPE_CREATE_AND_UPDATE = 'createAndUpdate';
-
-    public const TYPE_UPDATE = 'update';
-
     private $entityType;
 
     private $path = null;

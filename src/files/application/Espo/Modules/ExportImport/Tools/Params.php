@@ -32,6 +32,12 @@ use Espo\Core\Utils\Util;
 
 class Params
 {
+    public const TYPE_CREATE = 'create';
+
+    public const TYPE_CREATE_AND_UPDATE = 'createAndUpdate';
+
+    public const TYPE_UPDATE = 'update';
+
     private $format = null;
 
     private $defsSource = null;
@@ -47,6 +53,8 @@ class Params
     private $manifestFile = null;
 
     private $importType= null;
+
+    private $useDefaultCurrency= null;
 
     public function __construct(string $format)
     {
@@ -69,25 +77,54 @@ class Params
         $obj = new self($format);
 
         $obj->defsSource = $params['defsSource'] ?? null;
-        $obj->entityTypeList = $params['entityTypeList'] ?? null;
         $obj->exportPath = $params['exportPath'] ?? null;
         $obj->dataPath = $params['dataPath'] ?? null;
         $obj->manifestFile = $params['manifestFile'] ?? null;
-        $obj->importType = $params['importType'] ?? null;
+        $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
+
+        if (!in_array(
+            $obj->importType,
+            [
+                self::TYPE_CREATE,
+                self::TYPE_CREATE_AND_UPDATE,
+                self::TYPE_UPDATE,
+            ]
+        )) {
+            throw new RuntimeException('Incorrect "importType" option.');
+        }
+
+        $obj->entityTypeList = $obj->normalizeEntityTypeList(
+            $params['entityTypeList'] ?? null
+        );
 
         $obj->prettyPrint = array_key_exists('prettyPrint', $params) ?
-            $params['prettyPrint'] : false;
+            (bool) $params['prettyPrint'] : false;
+
+        $obj->useDefaultCurrency = array_key_exists('useDefaultCurrency', $params) ?
+            (bool) $params['useDefaultCurrency'] : false;
 
         return $obj;
     }
 
-    public function withFormat(?string $format): self
+    private function normalizeEntityTypeList($value): ?array
     {
-        $obj = clone $this;
+        if (!$value) {
+            return $value;
+        }
 
-        $obj->format = $format;
+        if (is_string($value)) {
+            $value = explode(",", $value);
 
-        return $obj;
+            foreach ($value as &$item) {
+                $item = trim($item);
+            }
+        }
+
+        if (!is_array($value)) {
+            return null;
+        }
+
+        return $value;
     }
 
     public function withDefsSource(?string $defsSource): self
@@ -99,11 +136,13 @@ class Params
         return $obj;
     }
 
-    public function withEntityTypeList(?string $entityTypeList): self
+    public function withEntityTypeList($entityTypeList): self
     {
         $obj = clone $this;
 
-        $obj->entityTypeList = $entityTypeList;
+        $obj->entityTypeList = $obj->normalizeEntityTypeList(
+            $entityTypeList
+        );
 
         return $obj;
     }
@@ -149,6 +188,15 @@ class Params
         $obj = clone $this;
 
         $obj->importType = $importType;
+
+        return $obj;
+    }
+
+    public function withUseDefaultCurrency(?bool $useDefaultCurrency): self
+    {
+        $obj = clone $this;
+
+        $obj->useDefaultCurrency = $useDefaultCurrency;
 
         return $obj;
     }
@@ -239,5 +287,13 @@ class Params
     public function getImportType(): string
     {
         return $this->importType;
+    }
+
+    /**
+     * Use a default currency
+     */
+    public function getUseDefaultCurrency(): string
+    {
+        return $this->useDefaultCurrency;
     }
 }

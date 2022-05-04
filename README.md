@@ -7,19 +7,25 @@ Export and import data in EspoCRM
 ### Export data
 
 ```bash
-php command.php exportImport export
+php command.php export-import export
 ```
 
 ### Import data
 
 ```bash
-php command.php exportImport import
+php command.php export-import import
 ```
 
 ### Erase imported data
 
 ```bash
-php command.php exportImport erase
+php command.php export-import erase
+```
+
+### Command parameters
+
+```
+php command.php export-import import --format=json --pretty-print=true --data-path="custom/Espo/Custom/Data" --export-path="build/ExportImport" --import-type=createAndUpdate --use-default-currency=true --entity-type-list="Account,Contact"
 ```
 
 ## Configuration

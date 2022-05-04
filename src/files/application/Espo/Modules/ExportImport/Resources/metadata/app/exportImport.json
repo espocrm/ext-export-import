@@ -1,10 +1,4 @@
 {
-    "defsSource": "exportImportDefs",
-
-    "dataPath": "custom/Espo/Custom/Data",
-    "exportPath": "build/ExportImport",
-    "manifestFile": "manifest.json",
-
     "toolClassNameMap": {
         "Export": "Espo\\Modules\\ExportImport\\Tools\\Export",
         "Import": "Espo\\Modules\\ExportImport\\Tools\\Import",
@@ -40,6 +34,12 @@
         "User\\Active": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\User\\Active",
         "User\\Password": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\User\\Password"
     },
+
+    "defsSource": "exportImportDefs",
+
+    "dataPath": "custom/Espo/Custom/Data",
+    "exportPath": "build/ExportImport",
+    "manifestFile": "manifest.json",
 
     "format": "json",
     "prettyPrint": true,

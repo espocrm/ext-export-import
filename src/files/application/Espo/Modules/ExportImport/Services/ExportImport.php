@@ -43,19 +43,19 @@ class ExportImport implements
     use Di\MetadataSetter;
     use Di\LogSetter;
 
-    public function runExport() : void
+    public function runExport(?array $extraParams = null) : void
     {
-        $this->runTool('export');
+        $this->runTool('export', $extraParams);
     }
 
-    public function runImport() : void
+    public function runImport(?array $extraParams = null) : void
     {
-        $this->runTool('import');
+        $this->runTool('import', $extraParams);
     }
 
-    public function runErase() : void
+    public function runErase(?array $extraParams = null) : void
     {
-        $this->runTool('erase');
+        $this->runTool('erase', $extraParams);
     }
 
     protected function getClass($name): string
@@ -71,13 +71,13 @@ class ExportImport implements
         return $className;
     }
 
-    protected function runTool(string $action): void
+    protected function runTool(string $action, ?array $extraParams = null): void
     {
         $className = $this->getClass($action);
 
         $tool = $this->injectableFactory->create($className);
 
-        $params = $this->createParams();
+        $params = $this->createParams($extraParams);
 
         $tool->run($params);
     }
