@@ -198,7 +198,9 @@ class EntityExport
             );
 
             if (!$result) {
-                throw new Error("Could not store a file '{$filePath}'.");
+                throw new Error(
+                    "Could not store a file '{$params->getFilePath()}'."
+                );
             }
         }
 
