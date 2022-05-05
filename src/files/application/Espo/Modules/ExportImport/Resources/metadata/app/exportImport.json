@@ -23,6 +23,10 @@
         "Preferences": "Espo\\Modules\\ExportImport\\Tools\\Export\\Collections\\Preferences"
     },
 
+    "exportProcessHookClassNameMap": {
+        "Attachment": "Espo\\Modules\\ExportImport\\Tools\\Export\\ProcessHooks\\Attachment"
+    },
+
     "importProcessorClassNameMap": {
         "json": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processors\\Json"
     },

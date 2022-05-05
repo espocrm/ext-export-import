@@ -30,8 +30,9 @@ use Espo\Core\{
     Select\SearchParams,
 };
 
-use Espo\Modules\ExportImport\Tools\Export\{
-    Processor\Collection as CollectionClass
+use Espo\Modules\ExportImport\Tools\{
+    Processor\ProcessHook,
+    Export\Processor\Collection as CollectionClass,
 };
 
 class Params
@@ -55,6 +56,8 @@ class Params
     private $exportImportDefs;
 
     private $fileExtension;
+
+    private $processHookClass;
 
     public function __construct(string $entityType)
     {
@@ -143,6 +146,15 @@ class Params
         $obj = clone $this;
 
         $obj->fileExtension = $fileExtension;
+
+        return $obj;
+    }
+
+    public function withProcessHookClass(?ProcessHook $processHookClass): self
+    {
+        $obj = clone $this;
+
+        $obj->processHookClass = $processHookClass;
 
         return $obj;
     }
@@ -253,5 +265,13 @@ class Params
     public function getFileExtension(): array
     {
         return $this->fileExtension;
+    }
+
+    /**
+     * Get process hook class
+     */
+    public function getProcessHookClass(): ?ProcessHook
+    {
+        return $this->processHookClass;
     }
 }

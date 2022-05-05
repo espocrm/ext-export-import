@@ -50,6 +50,7 @@ use Espo\{
 use Espo\Modules\ExportImport\Tools\{
     Export\Params,
     Processor\Data as ProcessorData,
+    Processor\Exceptions\Skip as SkipException,
 };
 
 use RuntimeException;
@@ -178,6 +179,17 @@ class EntityExport
                 }
 
                 $row[$attribute] = $value;
+            }
+
+            $processHook = $params->getProcessHookClass();
+
+            if ($processHook) {
+                try {
+                    $processHook->process($entity, $row);
+                }
+                catch (SkipException $e) {
+                    continue;
+                }
             }
 
             $line = base64_encode(serialize($row)) . \PHP_EOL;

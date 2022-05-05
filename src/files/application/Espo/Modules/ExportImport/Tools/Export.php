@@ -38,6 +38,7 @@ use Espo\Modules\ExportImport\Tools\{
     Export\Processor\Collection,
     Export\EntityExport as EntityExportTool,
     Manifest\ManifestWriter,
+    Processor\ProcessHook,
 };
 
 use Exception;
@@ -107,6 +108,7 @@ class Export implements
     {
         $format = $params->getFormat();
         $collectionClass = $this->getCollectionClass($entityType);
+        $processHookClass = $this->getProcessHookClass($entityType);
 
         $fileExtension = $this->metadata->get([
             'app', 'exportImport', 'formatDefs', $format, 'fileExtension'
@@ -118,7 +120,8 @@ class Export implements
             ->withPath($params->getExportEntityPath())
             ->withExportImportDefs($params->getExportImportDefs())
             ->withCollectionClass($collectionClass)
-            ->withFileExtension($fileExtension);
+            ->withFileExtension($fileExtension)
+            ->withProcessHookClass($processHookClass);
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);
@@ -126,7 +129,7 @@ class Export implements
         $export->run();
     }
 
-    protected function getCollectionClass(string $entityType): ?Collection
+    private function getCollectionClass(string $entityType): ?Collection
     {
         $collectionClassName = $this->metadata->get([
             'app', 'exportImport', 'exportCollectionClassNameMap', $entityType
@@ -139,12 +142,25 @@ class Export implements
         return $this->injectableFactory->create($collectionClassName);
     }
 
-    protected function createManifest(Params $params): bool
+    private function createManifest(Params $params): bool
     {
         $manifestWriter = $this->injectableFactory->createWith(ManifestWriter::class, [
             'params' => $params,
         ]);
 
         return $manifestWriter->save();
+    }
+
+    private function getProcessHookClass(string $entityType): ?ProcessHook
+    {
+        $processHookClassName = $this->metadata->get([
+            'app', 'exportImport', 'exportProcessHookClassNameMap', $entityType
+        ]);
+
+        if (!$processHookClassName || !class_exists($processHookClassName)) {
+            return null;
+        }
+
+        return $this->injectableFactory->create($processHookClassName);
     }
 }
