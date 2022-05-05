@@ -55,12 +55,12 @@ class Preferences implements
             ])
             ->find();
 
-        $repository = $this->entityManager->getRDBRepository('Preferences');
-
         $entityList = [];
 
         foreach ($collection as $user) {
-            $entityList[] = $repository->get($user->id);
+            $entityList[] = $this->entityManager->getEntity(
+                'Preferences', $user->id
+            );
         }
 
         $obj = new EntityCollection($entityList, 'Preferences');
