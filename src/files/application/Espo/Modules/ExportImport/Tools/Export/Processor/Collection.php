@@ -24,7 +24,7 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Export;
+namespace Espo\Modules\ExportImport\Tools\Export\Processor;
 
 use Espo\{
     ORM\Query\Select,

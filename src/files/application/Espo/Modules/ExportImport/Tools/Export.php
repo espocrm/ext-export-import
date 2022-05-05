@@ -35,7 +35,7 @@ use Espo\{
 use Espo\Modules\ExportImport\Tools\{
     Params,
     Export\Params as ExportParams,
-    Export\Collection,
+    Export\Processor\Collection,
     Export\EntityExport as EntityExportTool,
     Manifest\ManifestWriter,
 };

@@ -31,7 +31,7 @@ use Espo\Core\{
 };
 
 use Espo\Modules\ExportImport\Tools\Export\{
-    Collection as CollectionClass
+    Processor\Collection as CollectionClass
 };
 
 class Params

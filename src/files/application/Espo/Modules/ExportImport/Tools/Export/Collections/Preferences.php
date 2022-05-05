@@ -35,7 +35,7 @@ use Espo\{
     ORM\EntityCollection,
 };
 
-use Espo\Modules\ExportImport\Tools\Export\{
+use Espo\Modules\ExportImport\Tools\Export\Processor\{
     Collection
 };
 
