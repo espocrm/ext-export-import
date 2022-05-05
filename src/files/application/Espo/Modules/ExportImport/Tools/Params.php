@@ -32,6 +32,10 @@ use Espo\Core\Utils\Util;
 
 class Params
 {
+    public const PATH_ENTITIES = 'Entities';
+
+    public const PATH_FILES = 'Files';
+
     public const TYPE_CREATE = 'create';
 
     public const TYPE_CREATE_AND_UPDATE = 'createAndUpdate';
@@ -254,19 +258,35 @@ class Params
     }
 
     /**
-     * Get export entity path
+     * Get export ENTITIES path
      */
-    public function getExportEntityPath(): string
+    public function getExportEntitiesPath(): string
     {
-        return Util::concatPath($this->exportPath, 'Entities');
+        return Util::concatPath($this->exportPath, self::PATH_ENTITIES);
     }
 
     /**
-     * Get data entity path
+     * Get data ENTITIES path
      */
-    public function getDataEntityPath(): string
+    public function getDataEntitiesPath(): string
     {
-        return Util::concatPath($this->dataPath, 'Entities');
+        return Util::concatPath($this->dataPath, self::PATH_ENTITIES);
+    }
+
+    /**
+     * Get export FILES path
+     */
+    public function getExportFilesPath(): string
+    {
+        return Util::concatPath($this->exportPath, self::PATH_FILES);
+    }
+
+    /**
+     * Get data FILES path
+     */
+    public function getDataFilesPath(): string
+    {
+        return Util::concatPath($this->dataPath, self::PATH_FILES);
     }
 
     /**

@@ -52,6 +52,10 @@ class Params implements IParams
 
     private $processHookClass;
 
+    private $entitiesPath;
+
+    private $filesPath;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -116,6 +120,24 @@ class Params implements IParams
         return $obj;
     }
 
+    public function withEntitiesPath(string $entitiesPath): self
+    {
+        $obj = clone $this;
+
+        $obj->entitiesPath = $entitiesPath;
+
+        return $obj;
+    }
+
+    public function withFilesPath(string $filesPath): self
+    {
+        $obj = clone $this;
+
+        $obj->filesPath = $filesPath;
+
+        return $obj;
+    }
+
     /**
      * Get a target entity type.
      */
@@ -162,7 +184,7 @@ class Params implements IParams
     public function getFile(): string
     {
         return Util::concatPath(
-            $this->path,
+            $this->entitiesPath,
             $this->entityType . '.' . $this->format
         );
     }
@@ -181,5 +203,21 @@ class Params implements IParams
     public function getProcessHookClass(): ?ProcessHook
     {
         return $this->processHookClass;
+    }
+
+    /**
+     * Get entities path
+     */
+    public function getEntitiesPath(): string
+    {
+        return $this->entitiesPath;
+    }
+
+    /**
+     * Get files path
+     */
+    public function getFilesPath(): string
+    {
+        return $this->filesPath;
     }
 }

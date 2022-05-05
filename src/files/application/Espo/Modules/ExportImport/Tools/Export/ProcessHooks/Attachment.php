@@ -45,6 +45,6 @@ class Attachment implements ProcessHook
             return;
         }
 
-        //todo: copy files
+
     }
 }

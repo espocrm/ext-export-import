@@ -28,6 +28,7 @@ namespace Espo\Modules\ExportImport\Tools\Export;
 
 use Espo\Core\{
     Select\SearchParams,
+    Utils\Util,
 };
 
 use Espo\Modules\ExportImport\Tools\{
@@ -59,6 +60,10 @@ class Params implements IParams
     private $fileExtension;
 
     private $processHookClass;
+
+    private $entitiesPath;
+
+    private $filesPath;
 
     public function __construct(string $entityType)
     {
@@ -160,6 +165,24 @@ class Params implements IParams
         return $obj;
     }
 
+    public function withEntitiesPath(string $entitiesPath): self
+    {
+        $obj = clone $this;
+
+        $obj->entitiesPath = $entitiesPath;
+
+        return $obj;
+    }
+
+    public function withFilesPath(string $filesPath): self
+    {
+        $obj = clone $this;
+
+        $obj->filesPath = $filesPath;
+
+        return $obj;
+    }
+
     /**
      * Get search params.
      */
@@ -257,7 +280,10 @@ class Params implements IParams
      */
     public function getFilePath(): string
     {
-        return $this->path . '/' . $this->getFileName();
+        return Util::concatPath(
+            $this->entitiesPath,
+            $this->getFileName()
+        );
     }
 
     /**
@@ -274,5 +300,21 @@ class Params implements IParams
     public function getProcessHookClass(): ?ProcessHook
     {
         return $this->processHookClass;
+    }
+
+    /**
+     * Get entities path
+     */
+    public function getEntitiesPath(): string
+    {
+        return $this->entitiesPath;
+    }
+
+    /**
+     * Get files path
+     */
+    public function getFilesPath(): string
+    {
+        return $this->filesPath;
     }
 }

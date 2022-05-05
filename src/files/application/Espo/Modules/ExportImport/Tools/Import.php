@@ -106,7 +106,7 @@ class Import implements
         }
 
         $entityFileList = $this->fileManager->getFileList(
-            $params->getDataEntityPath(),
+            $params->getDataEntitiesPath(),
             false,
             '\.json$'
         );
@@ -135,7 +135,9 @@ class Import implements
 
         $importParams = ImportParams::create($entityType)
             ->withFormat($params->getFormat())
-            ->withPath($params->getDataEntityPath())
+            ->withPath($params->getDataPath())
+            ->withEntitiesPath($params->getDataEntitiesPath())
+            ->withFilesPath($params->getDataFilesPath())
             ->withExportImportDefs($params->getExportImportDefs())
             ->withManifest($manifest)
             ->withImportType($params->getImportType())
