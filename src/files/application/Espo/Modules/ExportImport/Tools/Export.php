@@ -105,14 +105,20 @@ class Export implements
 
     protected function exportEntity(string $entityType, Params $params): void
     {
+        $format = $params->getFormat();
         $collectionClass = $this->getCollectionClass($entityType);
 
+        $fileExtension = $this->metadata->get([
+            'app', 'exportImport', 'formatDefs', $format, 'fileExtension'
+        ]);
+
         $exportParams = ExportParams::create($entityType)
-            ->withFormat($params->getFormat())
+            ->withFormat($format)
             ->withAccessControl(false)
             ->withPath($params->getExportEntityPath())
             ->withExportImportDefs($params->getExportImportDefs())
-            ->withCollectionClass($collectionClass);
+            ->withCollectionClass($collectionClass)
+            ->withFileExtension($fileExtension);
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);

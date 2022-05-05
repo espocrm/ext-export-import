@@ -54,6 +54,8 @@ class Params
 
     private $exportImportDefs;
 
+    private $fileExtension;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -132,6 +134,15 @@ class Params
         $obj = clone $this;
 
         $obj->exportImportDefs = $exportImportDefs;
+
+        return $obj;
+    }
+
+    public function withFileExtension(string $fileExtension): self
+    {
+        $obj = clone $this;
+
+        $obj->fileExtension = $fileExtension;
 
         return $obj;
     }
@@ -218,5 +229,29 @@ class Params
     public function getExportImportDefs(): array
     {
         return $this->exportImportDefs;
+    }
+
+    /**
+     * Get file name
+     */
+    public function getFileName(): string
+    {
+        return $this->entityType . '.' . $this->fileExtension;
+    }
+
+    /**
+     * Get file path
+     */
+    public function getFilePath(): string
+    {
+        return $this->path . '/' . $this->getFileName();
+    }
+
+    /**
+     * Get file extension
+     */
+    public function getFileExtension(): array
+    {
+        return $this->fileExtension;
     }
 }

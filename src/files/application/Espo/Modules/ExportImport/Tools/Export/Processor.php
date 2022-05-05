@@ -30,7 +30,7 @@ use Psr\Http\Message\StreamInterface;
 
 use Espo\Modules\ExportImport\Tools\{
     Processor\Data,
-    Export\Processor\Params,
+    Export\Params,
 };
 
 interface Processor

@@ -36,7 +36,7 @@ use Espo\Core\{
 
 use Espo\Modules\ExportImport\Tools\{
     Export\Processor,
-    Export\Processor\Params,
+    Export\Params,
     Processor\Data,
 };
 

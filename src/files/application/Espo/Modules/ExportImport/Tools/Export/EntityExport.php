@@ -50,7 +50,6 @@ use Espo\{
 use Espo\Modules\ExportImport\Tools\{
     Export\Params,
     Processor\Data as ProcessorData,
-    Export\Processor\Params as ProcessorParams,
 };
 
 use RuntimeException;
@@ -193,18 +192,13 @@ class EntityExport
         $fileName = $params->getEntityType() . '.' . $fileExtension;
         $filePath = $params->getPath() . '/' . $fileName;
 
-        $processorParams =
-            (new ProcessorParams($fileName, $attributeList, $fieldList))
-                ->withPath($params->getPath())
-                ->withEntityType($params->getEntityType());
-
         $processorData = new ProcessorData($dataResource);
 
-        $stream = $processor->process($processorParams, $processorData);
+        $stream = $processor->process($params, $processorData);
 
         if ($stream->getSize() > 0) {
             $result = $this->fileManager->putContents(
-                $filePath,
+                $params->getFilePath(),
                 $stream->getContents()
             );
 
