@@ -34,7 +34,8 @@ use Espo\Modules\ExportImport\Tools\{
     Import\Processor,
     Processor\Data,
     Import\Params,
-    Import\Placeholder\Handler as PlaceholderHandler
+    Import\Placeholder\Handler as PlaceholderHandler,
+    Processor\Exceptions\Skip as SkipException,
 };
 
 use Espo\{
@@ -109,6 +110,17 @@ class Entity implements
             }
 
             $entity->set($preparedRow);
+
+            $processHook = $params->getProcessHookClass();
+
+            if ($processHook) {
+                try {
+                    $processHook->process($entity, $row);
+                }
+                catch (SkipException $e) {
+                    continue;
+                }
+            }
 
             try {
                 $this->entityManager->saveEntity($entity, [

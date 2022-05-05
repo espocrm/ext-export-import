@@ -35,7 +35,8 @@ use Espo\{
 use Espo\Modules\ExportImport\Tools\{
     Params,
     Import\Params as ImportParams,
-    Import\EntityImport as EntityImportTool
+    Import\EntityImport as EntityImportTool,
+    Processor\ProcessHook,
 };
 
 use Exception;
@@ -130,16 +131,32 @@ class Import implements
 
     protected function importEntity(string $entityType, Params $params, Manifest $manifest): void
     {
+        $processHookClass = $this->getProcessHookClass($entityType);
+
         $importParams = ImportParams::create($entityType)
             ->withFormat($params->getFormat())
             ->withPath($params->getDataEntityPath())
             ->withExportImportDefs($params->getExportImportDefs())
             ->withManifest($manifest)
-            ->withImportType($params->getImportType());
+            ->withImportType($params->getImportType())
+            ->withProcessHookClass($processHookClass);
 
         $import = $this->injectableFactory->create(EntityImportTool::class);
         $import->setParams($importParams);
 
         $result = $import->run();
+    }
+
+    private function getProcessHookClass(string $entityType): ?ProcessHook
+    {
+        $processHookClassName = $this->metadata->get([
+            'app', 'exportImport', 'importProcessHookClassNameMap', $entityType
+        ]);
+
+        if (!$processHookClassName || !class_exists($processHookClassName)) {
+            return null;
+        }
+
+        return $this->injectableFactory->create($processHookClassName);
     }
 }

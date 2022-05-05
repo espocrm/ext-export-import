@@ -31,7 +31,8 @@ use Espo\Core\{
 };
 
 use Espo\Modules\ExportImport\Tools\{
-    Manifest
+    Manifest,
+    Processor\ProcessHook,
 };
 
 class Params
@@ -47,6 +48,8 @@ class Params
     private $manifest = null;
 
     private $importType = null;
+
+    private $processHookClass;
 
     public function __construct(string $entityType)
     {
@@ -99,6 +102,15 @@ class Params
         $obj = clone $this;
 
         $obj->importType = $importType;
+
+        return $obj;
+    }
+
+    public function withProcessHookClass(?ProcessHook $processHookClass): self
+    {
+        $obj = clone $this;
+
+        $obj->processHookClass = $processHookClass;
 
         return $obj;
     }
@@ -160,5 +172,13 @@ class Params
     public function getImportType(): string
     {
         return $this->importType;
+    }
+
+    /**
+     * Get process hook class
+     */
+    public function getProcessHookClass(): ?ProcessHook
+    {
+        return $this->processHookClass;
     }
 }
