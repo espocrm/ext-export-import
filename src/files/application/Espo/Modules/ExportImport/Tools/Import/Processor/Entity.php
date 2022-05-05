@@ -115,7 +115,7 @@ class Entity implements
 
             if ($processHook) {
                 try {
-                    $processHook->process($entity, $row);
+                    $processHook->process($params, $entity, $row);
                 }
                 catch (SkipException $e) {
                     continue;

@@ -33,9 +33,10 @@ use Espo\Core\{
 use Espo\Modules\ExportImport\Tools\{
     Manifest,
     Processor\ProcessHook,
+    Processor\Params as IParams,
 };
 
-class Params
+class Params implements IParams
 {
     private $entityType;
 

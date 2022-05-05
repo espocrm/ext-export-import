@@ -26,11 +26,9 @@
 
 namespace Espo\Modules\ExportImport\Tools\Processor;
 
-use Espo\{
-    ORM\Entity,
-};
-
-interface ProcessHook
+interface Params
 {
-    public function process(Params $params, Entity $entity, array &$row): void;
+    public function __construct(string $entityType);
+
+    public static function create(string $entityType): self;
 }

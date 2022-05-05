@@ -31,13 +31,20 @@ use Espo\{
 };
 
 use Espo\Modules\ExportImport\Tools\{
-    Processor\ProcessHook
+    Processor\Params,
+    Processor\ProcessHook,
 };
 
 class Attachment implements ProcessHook
 {
-    public function process(Entity $entity, array &$row): void
-    {
+    private const DEFAULT_STORAGE = 'EspoUploadDir';
 
+    public function process(Params $params, Entity $entity, array &$row): void
+    {
+        if ($entity->get('storage') != self::DEFAULT_STORAGE) {
+            return;
+        }
+
+        //todo: copy files
     }
 }
