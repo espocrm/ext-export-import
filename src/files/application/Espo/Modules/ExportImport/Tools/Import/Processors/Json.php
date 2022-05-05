@@ -30,11 +30,11 @@ use Espo\Core\{
     Exceptions\Error,
 };
 
-use Espo\Modules\ExportImport\Tools\Import\{
-    Processor,
-    Params,
+use Espo\Modules\ExportImport\Tools\{
     Processor\Data,
-    Result
+    Import\Result,
+    Import\Processor,
+    Import\Params,
 };
 
 use GuzzleHttp\Psr7\Stream;

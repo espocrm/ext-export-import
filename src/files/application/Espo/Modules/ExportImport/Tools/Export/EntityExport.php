@@ -47,10 +47,10 @@ use Espo\{
     ORM\EntityManager,
 };
 
-use Espo\Modules\ExportImport\Tools\Export\{
-    Params,
+use Espo\Modules\ExportImport\Tools\{
+    Export\Params,
     Processor\Data as ProcessorData,
-    Processor\Params as ProcessorParams,
+    Export\Processor\Params as ProcessorParams,
 };
 
 use RuntimeException;

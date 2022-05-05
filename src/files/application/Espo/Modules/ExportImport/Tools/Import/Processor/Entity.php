@@ -32,7 +32,7 @@ use Espo\Modules\ExportImport\Tools\{
     Params as ToolParams,
     Import\Result,
     Import\Processor,
-    Import\Processor\Data,
+    Processor\Data,
     Import\Params,
     Import\Placeholder\Handler as PlaceholderHandler
 };

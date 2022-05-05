@@ -28,9 +28,9 @@ namespace Espo\Modules\ExportImport\Tools\Export;
 
 use Psr\Http\Message\StreamInterface;
 
-use Espo\Modules\ExportImport\Tools\Export\{
+use Espo\Modules\ExportImport\Tools\{
     Processor\Data,
-    Processor\Params,
+    Export\Processor\Params,
 };
 
 interface Processor

@@ -47,8 +47,8 @@ use Espo\{
     ORM\EntityManager,
 };
 
-use Espo\Modules\ExportImport\Tools\Import\{
-    Params,
+use Espo\Modules\ExportImport\Tools\{
+    Import\Params,
     Processor\Data as ProcessorData,
 };
 

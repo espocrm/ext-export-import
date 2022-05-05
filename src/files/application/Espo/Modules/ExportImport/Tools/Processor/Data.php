@@ -24,7 +24,7 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Export\Processor;
+namespace Espo\Modules\ExportImport\Tools\Processor;
 
 class Data
 {
@@ -33,6 +33,13 @@ class Data
     public function __construct($resource)
     {
         $this->resource = $resource;
+    }
+
+    public function writeRow(array $row): void
+    {
+        $line = base64_encode(serialize($row)) . \PHP_EOL;
+
+        fwrite($this->resource, $line);
     }
 
     public function readRow(): ?array
@@ -44,6 +51,11 @@ class Data
         }
 
         return unserialize(base64_decode($line));
+    }
+
+    public function rewind()
+    {
+        rewind($this->resource);
     }
 
     public function isEnd(): bool
@@ -60,5 +72,10 @@ class Data
         }
 
         return true;
+    }
+
+    public function getResource()
+    {
+        return $this->resource;
     }
 }

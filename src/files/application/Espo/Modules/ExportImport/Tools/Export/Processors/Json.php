@@ -34,9 +34,9 @@ use Espo\Core\{
     Utils\Json as JsonUtil,
 };
 
-use Espo\Modules\ExportImport\Tools\Export\{
-    Processor,
-    Processor\Params,
+use Espo\Modules\ExportImport\Tools\{
+    Export\Processor,
+    Export\Processor\Params,
     Processor\Data,
 };
 
