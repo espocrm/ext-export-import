@@ -187,11 +187,6 @@ class EntityExport
 
         rewind($dataResource);
 
-        $fileExtension = $this->metadata->get(['app', 'exportImport', 'formatDefs', $format, 'fileExtension']);
-
-        $fileName = $params->getEntityType() . '.' . $fileExtension;
-        $filePath = $params->getPath() . '/' . $fileName;
-
         $processorData = new ProcessorData($dataResource);
 
         $stream = $processor->process($params, $processorData);
