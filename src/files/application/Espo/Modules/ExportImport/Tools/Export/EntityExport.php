@@ -157,6 +157,8 @@ class EntityExport
             $this->serviceContainer->get($entityType) :
             null;
 
+        $successCount = 0;
+
         foreach ($collection as $entity) {
             $this->listLoadProcessor->process($entity, $loaderParams);
 
@@ -195,6 +197,8 @@ class EntityExport
             $line = base64_encode(serialize($row)) . \PHP_EOL;
 
             fwrite($dataResource, $line);
+
+            $successCount++;
         }
 
         rewind($dataResource);
@@ -219,7 +223,8 @@ class EntityExport
         fclose($dataResource);
 
         return Result::create($entityType)
-            ->withStoragePath($params->getPath());
+            ->withStoragePath($params->getPath())
+            ->withSuccessCount($successCount);
     }
 
     protected function getAttributeFromEntity(Entity $entity, string $attribute)

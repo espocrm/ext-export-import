@@ -36,6 +36,8 @@ class Result implements IResult
 
     private $storagePath;
 
+    private $successCount = 0;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -55,9 +57,18 @@ class Result implements IResult
         return $obj;
     }
 
+    public function withSuccessCount(int $count): self
+    {
+        $obj = clone $this;
+
+        $obj->successCount = $count;
+
+        return $obj;
+    }
+
     public function getMessage(): ?string
     {
-        return null;
+        return "    Total: " . $this->successCount;
     }
 
     public function getGlobalMessage(): ?string
@@ -79,5 +90,13 @@ class Result implements IResult
     public function getStoragePath(): string
     {
         return $this->storagePath;
+    }
+
+    /**
+     * Get record count
+     */
+    public function getSuccessCount(): int
+    {
+        return $this->successCount;
     }
 }
