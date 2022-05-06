@@ -92,8 +92,10 @@ class Export implements
                 continue;
             }
 
+            $this->writeLine($params, "  {$entityType}...");
+
             try {
-                $this->exportEntity($entityType, $params);
+                $globalMessage = $this->exportEntity($params, $entityType);
             } catch (Exception $e) {
                 $this->log->warning(
                     'ExportImport [' . $entityType . ']:' . $e->getMessage()
@@ -102,9 +104,13 @@ class Export implements
         }
 
         $this->createManifest($params);
+
+        if ($globalMessage) {
+            $this->writeLine($params, $globalMessage);
+        }
     }
 
-    protected function exportEntity(string $entityType, Params $params): void
+    private function exportEntity(Params $params, string $entityType): string
     {
         $format = $params->getFormat();
         $collectionClass = $this->getCollectionClass($entityType);
@@ -128,7 +134,26 @@ class Export implements
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);
 
-        $export->run();
+        $result = $export->run();
+
+        $resultText = $result->getMessage();
+
+        if ($resultText) {
+            $this->writeLine($params, $resultText);
+        }
+
+        return $result->getGlobalMessage();
+    }
+
+    private function writeLine(Params $params, string $text)
+    {
+        if ($params->isQuiet()) {
+            return;
+        }
+
+        $io = $params->getIO();
+
+        $io->writeLine($text);
     }
 
     private function getCollectionClass(string $entityType): ?Collection

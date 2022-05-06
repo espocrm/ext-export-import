@@ -47,6 +47,11 @@ class ExportImport implements
         $action = $params->getArgument(0);
         $options = $params->getOptions();
 
+        $options = array_merge(
+            $this->createOptionsFromFlags($params),
+            $options
+        );
+
         if (!$action) {
             $io->writeLine(
                 "Error: action is not specified."
@@ -71,7 +76,7 @@ class ExportImport implements
         }
 
         try {
-            $service->$method($options);
+            $service->$method($options, $io);
         } catch (Throwable $e) {
             $io->writeLine(
                 "Error: " . $e->getMessage()
@@ -85,6 +90,21 @@ class ExportImport implements
             return;
         }
 
-        $io->writeLine("Done.");
+        if (!$params->hasFlag('q')) {
+            $io->writeLine("Done.");
+        }
+    }
+
+    private function createOptionsFromFlags(Params $params): array
+    {
+        $flagList = $params->getFlagList();
+
+        $options = [];
+
+        foreach ($flagList as $flagName) {
+            $options[$flagName] = true;
+        }
+
+        return $options;
     }
 }

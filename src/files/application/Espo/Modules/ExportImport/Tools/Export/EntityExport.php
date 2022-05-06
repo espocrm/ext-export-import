@@ -218,7 +218,8 @@ class EntityExport
 
         fclose($dataResource);
 
-        return new Result($params->getPath());
+        return Result::create($entityType)
+            ->withStoragePath($params->getPath());
     }
 
     protected function getAttributeFromEntity(Entity $entity, string $attribute)

@@ -28,6 +28,7 @@ namespace Espo\Modules\ExportImport\Services;
 
 use Espo\Core\{
     Di,
+    Console\IO,
     Exceptions\Error,
 };
 
@@ -43,19 +44,19 @@ class ExportImport implements
     use Di\MetadataSetter;
     use Di\LogSetter;
 
-    public function runExport(?array $extraParams = null) : void
+    public function runExport(?array $extraParams = null, ?IO $io = null) : void
     {
-        $this->runTool('export', $extraParams);
+        $this->runTool('export', $extraParams, $io);
     }
 
-    public function runImport(?array $extraParams = null) : void
+    public function runImport(?array $extraParams = null, ?IO $io = null) : void
     {
-        $this->runTool('import', $extraParams);
+        $this->runTool('import', $extraParams, $io);
     }
 
-    public function runErase(?array $extraParams = null) : void
+    public function runErase(?array $extraParams = null, ?IO $io = null) : void
     {
-        $this->runTool('erase', $extraParams);
+        $this->runTool('erase', $extraParams, $io);
     }
 
     protected function getClass($name): string
@@ -71,18 +72,22 @@ class ExportImport implements
         return $className;
     }
 
-    protected function runTool(string $action, ?array $extraParams = null): void
+    protected function runTool(
+        string $action,
+        ?array $extraParams = null,
+        ?IO $io = null
+    ): void
     {
         $className = $this->getClass($action);
 
         $tool = $this->injectableFactory->create($className);
 
-        $params = $this->createParams($extraParams);
+        $params = $this->createParams($extraParams, $io);
 
         $tool->run($params);
     }
 
-    protected function createParams(?array $extraParams = null): Params
+    protected function createParams(?array $extraParams = null, ?IO $io = null): Params
     {
         $params = $this->metadata->get(['app', 'exportImport']);
 
@@ -98,6 +103,7 @@ class ExportImport implements
 
         $params['exportImportDefs'] = $this->metadata->get($defsSource);
 
-        return Params::fromRaw($params);
+        return Params::fromRaw($params)
+            ->withIO($io);
     }
 }
