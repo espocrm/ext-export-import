@@ -26,7 +26,13 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import;
 
-class Result
+use Espo\Modules\ExportImport\Tools\{
+    Processor\Result as IResult,
+};
+
+use const PHP_EOL;
+
+class Result implements IResult
 {
     private $entityType;
 
@@ -60,6 +66,22 @@ class Result
         $obj->failCount = $count;
 
         return $obj;
+    }
+
+    public function getMessage(): ?string
+    {
+        $message = "    Total: " . $this->successCount;
+
+        if ($this->failCount) {
+            $message .= ", failed: " . $this->failCount;
+        }
+
+        return $message;
+    }
+
+    public function getGlobalMessage(): ?string
+    {
+        return null;
     }
 
     /**

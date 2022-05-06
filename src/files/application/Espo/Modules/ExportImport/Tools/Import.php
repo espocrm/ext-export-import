@@ -37,6 +37,7 @@ use Espo\Modules\ExportImport\Tools\{
     Import\Params as ImportParams,
     Import\EntityImport as EntityImportTool,
     Processor\ProcessHook,
+    Processor\Utils as ProcessorUtils,
 };
 
 use Exception;
@@ -89,14 +90,18 @@ class Import implements
                 continue;
             }
 
+            ProcessorUtils::writeLine($params, "  {$entityType}...");
+
             try {
-                $this->importEntity($entityType, $params, $manifest);
+                $globalMessage = $this->importEntity($entityType, $params, $manifest);
             } catch (Exception $e) {
                 $this->log->warning(
                     'ExportImport [' . $entityType . ']:' . $e->getMessage()
                 );
             }
         }
+
+        ProcessorUtils::writeLine($params, $globalMessage);
     }
 
     protected function getEntityTypeList(Params $params): array
@@ -129,7 +134,7 @@ class Import implements
         return $entityTypeList;
     }
 
-    protected function importEntity(string $entityType, Params $params, Manifest $manifest): void
+    protected function importEntity(string $entityType, Params $params, Manifest $manifest): ?string
     {
         $processHookClass = $this->getProcessHookClass($entityType);
 
@@ -147,6 +152,10 @@ class Import implements
         $import->setParams($importParams);
 
         $result = $import->run();
+
+        ProcessorUtils::writeLine($params, $result->getMessage());
+
+        return $result->getGlobalMessage();
     }
 
     private function getProcessHookClass(string $entityType): ?ProcessHook
