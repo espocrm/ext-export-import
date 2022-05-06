@@ -31,6 +31,10 @@
         "json": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processors\\Json"
     },
 
+    "importProcessHookClassNameMap": {
+        "Attachment": "Espo\\Modules\\ExportImport\\Tools\\Import\\ProcessHooks\\Attachment"
+    },
+
     "placeholderActionClassNameMap": {
         "Config\\Get": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Config\\Get",
         "Config\\ObjectData": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Config\\ObjectData",
