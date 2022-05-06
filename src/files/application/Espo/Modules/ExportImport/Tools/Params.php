@@ -42,6 +42,10 @@ class Params
 
     public const TYPE_UPDATE = 'update';
 
+    public const DEFAULT_STORAGE = 'EspoUploadDir';
+
+    public const STORAGE_PATH = 'data/upload';
+
     private $format = null;
 
     private $exportImportDefs;
