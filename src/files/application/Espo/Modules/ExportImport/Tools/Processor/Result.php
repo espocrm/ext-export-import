@@ -24,60 +24,11 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Export;
+namespace Espo\Modules\ExportImport\Tools\Processor;
 
-use Espo\Modules\ExportImport\Tools\{
-    Processor\Result as ToolResult,
-};
-
-class Result implements ToolResult
+interface Result
 {
-    private $entityType;
+    public function getMessage(): ?string;
 
-    private $storagePath;
-
-    public function __construct(string $entityType)
-    {
-        $this->entityType = $entityType;
-    }
-
-    public static function create(string $entityType): self
-    {
-        return new self($entityType);
-    }
-
-    public function withStoragePath(string $storagePath): self
-    {
-        $obj = clone $this;
-
-        $obj->storagePath = $storagePath;
-
-        return $obj;
-    }
-
-    public function getMessage(): ?string
-    {
-        return null;
-    }
-
-    public function getGlobalMessage(): ?string
-    {
-        return "Files saved at \"" . $this->storagePath ."\".";
-    }
-
-    /**
-     * Get a target entity type.
-     */
-    public function getEntityType(): string
-    {
-        return $this->entityType;
-    }
-
-    /**
-     * Get a storage path
-     */
-    public function getStoragePath(): string
-    {
-        return $this->storagePath;
-    }
+    public function getGlobalMessage(): ?string;
 }
