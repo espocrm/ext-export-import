@@ -28,7 +28,10 @@ namespace Espo\Modules\ExportImport\Tools;
 
 use RuntimeException;
 
-use Espo\Core\Utils\Util;
+use Espo\Core\{
+    Console\IO,
+    Utils\Util,
+};
 
 class Params
 {
@@ -64,6 +67,10 @@ class Params
 
     private $useDefaultCurrency= null;
 
+    private $quiet;
+
+    private $io = null;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -89,6 +96,7 @@ class Params
         $obj->manifestFile = $params['manifestFile'] ?? null;
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $params['exportImportDefs'] ?? null;
+        $obj->quiet = $params['q'] ?? false;
 
         if (!$obj->exportImportDefs) {
             throw new RuntimeException('Incorrect "exportImportDefs" data.');
@@ -213,6 +221,24 @@ class Params
         return $obj;
     }
 
+    public function withQuiet(?bool $quiet): self
+    {
+        $obj = clone $this;
+
+        $obj->quiet = $quiet;
+
+        return $obj;
+    }
+
+    public function withIO(?IO $io): self
+    {
+        $obj = clone $this;
+
+        $obj->io = $io;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -323,5 +349,25 @@ class Params
     public function getUseDefaultCurrency(): string
     {
         return $this->useDefaultCurrency;
+    }
+
+    /**
+     * Is quiet
+     */
+    public function isQuiet(): bool
+    {
+        if (!$this->quiet && $this->io) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get IO
+     */
+    public function getIO(): ?IO
+    {
+        return $this->io;
     }
 }
