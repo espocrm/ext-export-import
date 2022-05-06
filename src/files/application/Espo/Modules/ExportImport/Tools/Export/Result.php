@@ -27,10 +27,10 @@
 namespace Espo\Modules\ExportImport\Tools\Export;
 
 use Espo\Modules\ExportImport\Tools\{
-    Processor\Result as ToolResult,
+    Processor\Result as IResult,
 };
 
-class Result implements ToolResult
+class Result implements IResult
 {
     private $entityType;
 

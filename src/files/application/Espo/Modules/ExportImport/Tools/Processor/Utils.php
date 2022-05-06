@@ -77,4 +77,18 @@ class Utils
             $id
         );
     }
+
+    /**
+     * Write a message in a terminal
+     */
+    public static function writeLine(ToolParams $params, ?string $message)
+    {
+        if ($params->isQuiet() || !$message) {
+            return;
+        }
+
+        $io = $params->getIO();
+
+        $io->writeLine($message);
+    }
 }

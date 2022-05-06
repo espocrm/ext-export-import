@@ -39,6 +39,7 @@ use Espo\Modules\ExportImport\Tools\{
     Export\EntityExport as EntityExportTool,
     Manifest\ManifestWriter,
     Processor\ProcessHook,
+    Processor\Utils as ProcessorUtils,
 };
 
 use Exception;
@@ -92,7 +93,7 @@ class Export implements
                 continue;
             }
 
-            $this->writeLine($params, "  {$entityType}...");
+            ProcessorUtils::writeLine($params, "  {$entityType}...");
 
             try {
                 $globalMessage = $this->exportEntity($params, $entityType);
@@ -105,9 +106,7 @@ class Export implements
 
         $this->createManifest($params);
 
-        if ($globalMessage) {
-            $this->writeLine($params, $globalMessage);
-        }
+        ProcessorUtils::writeLine($params, $globalMessage);
     }
 
     private function exportEntity(Params $params, string $entityType): string
@@ -136,24 +135,9 @@ class Export implements
 
         $result = $export->run();
 
-        $resultText = $result->getMessage();
-
-        if ($resultText) {
-            $this->writeLine($params, $resultText);
-        }
+        ProcessorUtils::writeLine($params, $result->getMessage());
 
         return $result->getGlobalMessage();
-    }
-
-    private function writeLine(Params $params, string $text)
-    {
-        if ($params->isQuiet()) {
-            return;
-        }
-
-        $io = $params->getIO();
-
-        $io->writeLine($text);
     }
 
     private function getCollectionClass(string $entityType): ?Collection
