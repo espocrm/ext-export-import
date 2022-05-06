@@ -29,7 +29,6 @@ namespace Espo\Modules\ExportImport\Tools\Import\ProcessHooks;
 use Espo\{
     Core\Di,
     ORM\Entity,
-    Core\Exceptions\Error,
 };
 
 use Espo\Modules\ExportImport\Tools\{
@@ -42,8 +41,10 @@ use Espo\Modules\ExportImport\Tools\{
 class Attachment implements
 
     ProcessHook,
+    Di\LogAware,
     Di\FileManagerAware
 {
+    use Di\LogSetter;
     use Di\FileManagerSetter;
 
     public function process(Params $params, Entity $entity, array &$row): void
@@ -60,8 +61,9 @@ class Attachment implements
         );
 
         if (!$result) {
-            throw new Error(
-                "Unable to copy the file from '{$srcFile}' to '{$destDir}'."
+            $this->log->error(
+                "ExportImport [Import]: Unable to copy the file from " .
+                "'{$srcFile}' to '{$destDir}'."
             );
         }
     }
