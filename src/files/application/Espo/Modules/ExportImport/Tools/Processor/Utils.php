@@ -38,12 +38,20 @@ use Espo\Modules\ExportImport\Tools\{
 class Utils
 {
     /**
+     * Get a directory path in data/upload
+     */
+    public static function getDirPathInUpload(Params $params): string
+    {
+        return ToolParams::STORAGE_PATH;
+    }
+
+    /**
      * Get a files path in data/upload
      */
     public static function getFilePathInUpload(Params $params, string $id): string
     {
         return Util::concatPath(
-            ToolParams::STORAGE_PATH,
+            self::getDirPathInUpload($params),
             $id
         );
     }
@@ -64,10 +72,8 @@ class Utils
      */
     public static function getFilePathInData(Params $params, string $id): string
     {
-        $directoryPath = self::getDirPathInData($params);
-
         return Util::concatPath(
-            $directoryPath,
+            self::getDirPathInData($params),
             $id
         );
     }
