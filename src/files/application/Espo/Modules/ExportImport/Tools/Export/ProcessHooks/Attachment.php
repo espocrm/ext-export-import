@@ -27,24 +27,42 @@
 namespace Espo\Modules\ExportImport\Tools\Export\ProcessHooks;
 
 use Espo\{
+    Core\Di,
     ORM\Entity,
+    Core\Exceptions\Error,
 };
 
 use Espo\Modules\ExportImport\Tools\{
+    Params as ToolParams,
     Processor\Params,
     Processor\ProcessHook,
+    Processor\Utils,
 };
 
-class Attachment implements ProcessHook
+class Attachment implements
+
+    ProcessHook,
+    Di\FileManagerAware
 {
-    private const DEFAULT_STORAGE = 'EspoUploadDir';
+    use Di\FileManagerSetter;
 
     public function process(Params $params, Entity $entity, array &$row): void
     {
-        if ($entity->get('storage') != self::DEFAULT_STORAGE) {
+        if ($entity->get('storage') != ToolParams::DEFAULT_STORAGE) {
             return;
         }
 
+        $srcFile = Utils::getFilePathInUpload($params, $entity->id);
+        $destDir = Utils::getDirPathInData($params);
 
+        $result = $this->fileManager->copy(
+            $srcFile, $destDir, false, null, true
+        );
+
+        if (!$result) {
+            throw new Error(
+                "Unable to copy the file from '{$srcFile}' to '{$destDir}'."
+            );
+        }
     }
 }
