@@ -56,6 +56,10 @@ class Params implements IParams
 
     private $filesPath;
 
+    private $userActive = false;
+
+    private $userPassword = null;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -134,6 +138,24 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->filesPath = $filesPath;
+
+        return $obj;
+    }
+
+    public function withUserActive(bool $userActive): self
+    {
+        $obj = clone $this;
+
+        $obj->userActive = $userActive;
+
+        return $obj;
+    }
+
+    public function withUserPassword(string $userPassword): self
+    {
+        $obj = clone $this;
+
+        $obj->userPassword = $userPassword;
 
         return $obj;
     }
@@ -219,5 +241,21 @@ class Params implements IParams
     public function getFilesPath(): string
     {
         return $this->filesPath;
+    }
+
+    /**
+     * User active status
+     */
+    public function getUserActive(): bool
+    {
+        return $this->userActive;
+    }
+
+    /**
+     * User password
+     */
+    public function getUserPassword(): ?string
+    {
+        return $this->userPassword;
     }
 }

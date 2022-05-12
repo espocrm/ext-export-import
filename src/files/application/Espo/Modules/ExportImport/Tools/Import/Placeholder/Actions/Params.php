@@ -46,6 +46,10 @@ class Params
 
     private $exportImportDefs = null;
 
+    private $userActive = false;
+
+    private $userPassword = null;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -106,6 +110,24 @@ class Params
         $obj = clone $this;
 
         $obj->exportImportDefs = $defs;
+
+        return $obj;
+    }
+
+    public function withUserActive(bool $userActive): self
+    {
+        $obj = clone $this;
+
+        $obj->userActive = $userActive;
+
+        return $obj;
+    }
+
+    public function withUserPassword(string $userPassword): self
+    {
+        $obj = clone $this;
+
+        $obj->userPassword = $userPassword;
 
         return $obj;
     }
@@ -172,5 +194,21 @@ class Params
     public function getFieldValue()
     {
         return $this->recordData[$this->fieldName] ?? null;
+    }
+
+    /**
+     * User active status
+     */
+    public function getUserActive(): bool
+    {
+        return $this->userActive;
+    }
+
+    /**
+     * User password
+     */
+    public function getUserPassword(): ?string
+    {
+        return $this->userPassword;
     }
 }

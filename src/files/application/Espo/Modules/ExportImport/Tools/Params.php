@@ -69,6 +69,10 @@ class Params
 
     private $quiet;
 
+    private $userActive = false;
+
+    private $userPassword = null;
+
     private $io = null;
 
     public function __construct(string $format)
@@ -97,6 +101,8 @@ class Params
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $params['exportImportDefs'] ?? null;
         $obj->quiet = $params['q'] ?? false;
+        $obj->userActive = $params['userActive'] ?? false;
+        $obj->userPassword = $params['userPassword'] ?? null;
 
         if (!$obj->exportImportDefs) {
             throw new RuntimeException('Incorrect "exportImportDefs" data.');
@@ -239,6 +245,24 @@ class Params
         return $obj;
     }
 
+    public function withUserActive(bool $userActive): self
+    {
+        $obj = clone $this;
+
+        $obj->userActive = $userActive;
+
+        return $obj;
+    }
+
+    public function withUserPassword(string $userPassword): self
+    {
+        $obj = clone $this;
+
+        $obj->userPassword = $userPassword;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -369,5 +393,21 @@ class Params
     public function getIO(): ?IO
     {
         return $this->io;
+    }
+
+    /**
+     * User active status
+     */
+    public function getUserActive(): bool
+    {
+        return $this->userActive;
+    }
+
+    /**
+     * User password
+     */
+    public function getUserPassword(): ?string
+    {
+        return $this->userPassword;
     }
 }
