@@ -53,11 +53,15 @@ class Password implements
 
     public function normalize(Params $params, $actualValue)
     {
-        $placeholderDefs = $params->getPlaceholderDefs();
-        $password = $placeholderDefs['placeholderData']['value'] ?? null;
+        $password = $params->getUserPassword();
 
         if (!$password) {
-            throw new Error('Placeholder: Undefined user password');
+            $password = $params->getPlaceholderDefs()['placeholderData']['value']
+                ?? null;
+        }
+
+        if (!$password) {
+            $password = uniqid('', true);
         }
 
         $hash = $this->passwordHash;

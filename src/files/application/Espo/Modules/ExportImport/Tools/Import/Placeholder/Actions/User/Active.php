@@ -54,6 +54,6 @@ class Active implements
             return false;
         }
 
-        return $actualValue;
+        return $params->getUserActive();
     }
 }
