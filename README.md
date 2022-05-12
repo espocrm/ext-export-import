@@ -84,6 +84,17 @@ Edit the file: `src/files/application/Espo/Modules/ExportImport/Resources/metada
 }
 ```
 
+### User
+
+#### Password
+
+```
+"placeholderAction": "User\\Password",
+"placeholderData": {
+    "value": "1"
+}
+```
+
 ## Development
 
 Mode information about configuring the extension for development purposes, read the https://github.com/espocrm/ext-template#readme.
