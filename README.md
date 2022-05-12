@@ -34,17 +34,39 @@ The export / import process can be configured in `custom/Espo/Custom/Resources/m
 
 ### Import Type
 
-Attribute: `importType`
+#### Attribute: `importType`
 
-Possible values:
+#### Possible values:
 
 - `create`
 - `createAndUpdate`
 - `update`
 
-Default: `createAndUpdate`
+#### Default: `createAndUpdate`
 
-####
+### User active status
+
+Default user status for impoted users. This applies to all user except admin user with ID `1`.
+
+#### Attribute: `userActive`
+
+#### Possible values:
+- `true`
+- `false`
+
+#### Default: `false`
+
+### User password
+
+User password for imported users.
+If empty then generates random values. For resseting the passord use `php command.php set-password [username]`.
+
+#### Attribute: `userPassword`
+
+#### Possible values:
+- `any string`
+
+#### Default: `null`
 
 ## Placeholders
 
