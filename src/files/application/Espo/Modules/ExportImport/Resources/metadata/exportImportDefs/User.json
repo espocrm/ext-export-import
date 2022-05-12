@@ -4,10 +4,7 @@
     ],
     "fields": {
         "password": {
-            "placeholderAction": "User\\Password",
-            "placeholderData": {
-                "value": "1"
-            }
+            "placeholderAction": "User\\Password"
         },
         "isActive": {
             "placeholderAction": "User\\Active"
