@@ -82,7 +82,9 @@ class Handler implements
                     ->withRecordData($row)
                     ->withFieldDefs($fieldDefs)
                     ->withPlaceholderDefs($placeholderFieldDefs)
-                    ->withManifest($params->getManifest());
+                    ->withManifest($params->getManifest())
+                    ->withUserActive($params->getUserActive())
+                    ->withUserPassword($params->getUserPassword());
 
                 try {
                     $row[$fieldName] = $placeholderAction->normalize(

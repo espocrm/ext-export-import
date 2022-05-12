@@ -146,7 +146,9 @@ class Import implements
             ->withExportImportDefs($params->getExportImportDefs())
             ->withManifest($manifest)
             ->withImportType($params->getImportType())
-            ->withProcessHookClass($processHookClass);
+            ->withProcessHookClass($processHookClass)
+            ->withUserActive($params->getUserActive())
+            ->withUserPassword($params->getUserPassword());
 
         $import = $this->injectableFactory->create(EntityImportTool::class);
         $import->setParams($importParams);
