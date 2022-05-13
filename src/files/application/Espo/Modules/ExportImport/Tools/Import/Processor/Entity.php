@@ -48,9 +48,13 @@ class Entity implements
 
     Processor,
     Di\LogAware,
+    Di\ConfigAware,
+    Di\MetadataAware,
     Di\EntityManagerAware
 {
     use Di\LogSetter;
+    use Di\ConfigSetter;
+    use Di\MetadataSetter;
     use Di\EntityManagerSetter;
 
     protected $placeholderHandler;
@@ -150,13 +154,15 @@ class Entity implements
 
     private function prepareData(Params $params, array $row)
     {
+        $entityType = $params->getEntityType();
+
         $entityDefs = $this->entityManager
             ->getDefs()
-            ->getEntity($params->getEntityType());
+            ->getEntity($entityType);
 
         $attributeList = $entityDefs->getAttributeNameList();
 
-        foreach ($row as $attributeName => $attributeValue) {
+        foreach ($row as $attributeName => &$attributeValue) {
 
             if (!in_array($attributeName, $attributeList)) {
                 unset($row[$attributeName]);
@@ -164,15 +170,29 @@ class Entity implements
                 continue;
             }
 
-            $type = $entityDefs
+            $attributeType = $entityDefs
                 ->getAttribute($attributeName)
                 ->getType();
 
-            switch ($type) {
-
+            switch ($attributeType) {
                 case OrmEntity::FOREIGN_ID:
                     if ($attributeValue === null) {
                         unset($row[$attributeName]);
+                    }
+                    break;
+            }
+
+            $fieldType = $this->metadata->get([
+                'entityDefs', $entityType, 'fields', $attributeName, 'type'
+            ]);
+
+            switch ($fieldType) {
+                case 'currency':
+                    $setDefaultCurrency = $params->getSetDefaultCurrency();
+
+                    if ($setDefaultCurrency) {
+                        $row[$attributeName . 'Currency'] =
+                            $this->config->get('defaultCurrency');
                     }
                     break;
             }
