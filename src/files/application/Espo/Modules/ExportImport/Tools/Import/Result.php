@@ -70,7 +70,7 @@ class Result implements IResult
 
     public function getMessage(): ?string
     {
-        $message = "    Total: " . $this->successCount;
+        $message = "  Total: " . $this->successCount;
 
         if ($this->failCount) {
             $message .= ", failed: " . $this->failCount;

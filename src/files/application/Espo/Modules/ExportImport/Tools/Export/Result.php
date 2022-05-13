@@ -68,7 +68,7 @@ class Result implements IResult
 
     public function getMessage(): ?string
     {
-        return "    Total: " . $this->successCount;
+        return "  Total: " . $this->successCount;
     }
 
     public function getGlobalMessage(): ?string

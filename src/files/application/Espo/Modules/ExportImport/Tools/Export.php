@@ -93,7 +93,7 @@ class Export implements
                 continue;
             }
 
-            ProcessorUtils::writeLine($params, "  {$entityType}...");
+            ProcessorUtils::writeLine($params, "{$entityType}...");
 
             try {
                 $globalMessage = $this->exportEntity($params, $entityType);

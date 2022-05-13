@@ -90,7 +90,7 @@ class Import implements
                 continue;
             }
 
-            ProcessorUtils::writeLine($params, "  {$entityType}...");
+            ProcessorUtils::writeLine($params, "{$entityType}...");
 
             try {
                 $globalMessage = $this->importEntity($entityType, $params, $manifest);
