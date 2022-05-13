@@ -50,6 +50,8 @@ class Params implements IParams
 
     private $importType = null;
 
+    private $setDefaultCurrency= null;
+
     private $processHookClass;
 
     private $entitiesPath;
@@ -111,6 +113,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->importType = $importType;
+
+        return $obj;
+    }
+
+    public function withSetDefaultCurrency(?bool $setDefaultCurrency): self
+    {
+        $obj = clone $this;
+
+        $obj->setDefaultCurrency = $setDefaultCurrency;
 
         return $obj;
     }
@@ -217,6 +228,14 @@ class Params implements IParams
     public function getImportType(): string
     {
         return $this->importType;
+    }
+
+    /**
+     * Use a default currency
+     */
+    public function getSetDefaultCurrency(): string
+    {
+        return $this->setDefaultCurrency ?? false;
     }
 
     /**

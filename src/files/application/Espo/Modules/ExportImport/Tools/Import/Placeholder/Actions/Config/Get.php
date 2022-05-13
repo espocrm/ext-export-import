@@ -59,7 +59,7 @@ class Get implements
         }
 
         if (!Utils::isCurrencyChangePermitted($params)) {
-            throw new Error('The useDefaultCurrency is disabled');
+            throw new Error('The setDefaultCurrency is disabled');
         }
 
         return $this->config->get($key, $default);

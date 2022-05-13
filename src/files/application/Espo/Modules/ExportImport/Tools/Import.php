@@ -146,6 +146,7 @@ class Import implements
             ->withExportImportDefs($params->getExportImportDefs())
             ->withManifest($manifest)
             ->withImportType($params->getImportType())
+            ->withSetDefaultCurrency($params->getSetDefaultCurrency())
             ->withProcessHookClass($processHookClass)
             ->withUserActive($params->getUserActive())
             ->withUserPassword($params->getUserPassword());

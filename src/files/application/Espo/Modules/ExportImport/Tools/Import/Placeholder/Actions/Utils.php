@@ -57,9 +57,9 @@ class Utils
     public static function isCurrencyChangePermitted(Params $params): bool
     {
         $key = $params->getPlaceholderDefs()['placeholderData']['key'] ?? null;
-        $useDefaultCurrency = $params->getExportImportDefs()['useDefaultCurrency'] ?? false;
+        $setDefaultCurrency = $params->getExportImportDefs()['setDefaultCurrency'] ?? false;
 
-        if (!$useDefaultCurrency && $key == 'defaultCurrency') {
+        if (!$setDefaultCurrency && $key == 'defaultCurrency') {
             return false;
         }
 
