@@ -46,7 +46,7 @@ The export / import process can be configured in `custom/Espo/Custom/Resources/m
 
 ### User active status
 
-Default user status for impoted users. This applies to all user except admin user with ID `1`.
+Default user status for imported users. This applies to all user except admin user with ID `1`.
 
 #### Attribute: `userActive`
 
@@ -59,7 +59,7 @@ Default user status for impoted users. This applies to all user except admin use
 ### User password
 
 User password for imported users.
-If empty then generates random values. For resseting the passord use `php command.php set-password [username]`.
+If empty then generates random values. For resetting the password use `php command.php set-password [username]`.
 
 #### Attribute: `userPassword`
 
@@ -86,7 +86,7 @@ The default currency can be defined for every currency field.
 
 In the metadata defs can be configured some additional features. The path is `custom/Espo/Custom/Resources/metadata/exportImportDefs`.
 
-### Export additioanl fields
+### Export additional fields
 
 If need to export additional fields that out of the standard functionality.
 
