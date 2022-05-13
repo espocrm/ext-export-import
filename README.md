@@ -30,7 +30,7 @@ php command.php export-import import --format=json --pretty-print=true --data-pa
 
 ## Configuration
 
-The export / import process can be configured in `custom/Espo/Custom/Resources/metadata/app/exportImport.json`
+The export / import process can be configured in `custom/Espo/Custom/Resources/metadata/app/exportImport.json` or by cli command.
 
 ### Import Type
 
@@ -67,6 +67,20 @@ If empty then generates random values. For resseting the passord use `php comman
 - `any string`
 
 #### Default: `null`
+
+### Default currency
+
+The default currency can be defined for every currency field.
+
+#### Attribute: `setDefaultCurrency`
+
+#### Cli attribute: `set-default-currency`
+
+#### Possible values:
+- `true`
+- `false`
+
+#### Default: `false`
 
 ## Export Import Defs
 
