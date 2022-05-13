@@ -51,7 +51,7 @@
 
     "format": "json",
     "prettyPrint": true,
-    "useDefaultCurrency": true,
+    "setDefaultCurrency": false,
     "importType": "createAndUpdate",
     "userActive": false,
     "userPassword": "1"
