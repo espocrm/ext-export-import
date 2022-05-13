@@ -68,9 +68,29 @@ If empty then generates random values. For resseting the passord use `php comman
 
 #### Default: `null`
 
+## Export Import Defs
+
+In the metadata defs can be configured some additional features. The path is `custom/Espo/Custom/Resources/metadata/exportImportDefs`.
+
+### Export additioanl fields
+
+If need to export additional fields that out of the standard functionality.
+
+#### exportAdditionalFieldList
+
+Example for Quotes: `custom/Espo/Custom/Resources/metadata/exportImportDefs/Quote.json`
+
+```json
+{
+    "exportAdditionalFieldList": [
+        "itemList"
+    ]
+}
+```
+
 ## Placeholders
 
-Edit the file: `src/files/application/Espo/Modules/ExportImport/Resources/metadata/exportImportDefs/ENTITY.json`.
+Edit the file: `custom/Espo/Custom/Resources/metadata/exportImportDefs/ENTITY.json`.
 
 ### Config
 
