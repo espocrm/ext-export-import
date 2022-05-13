@@ -98,6 +98,10 @@ class Export implements
             try {
                 $globalMessage = $this->exportEntity($params, $entityType);
             } catch (Exception $e) {
+                ProcessorUtils::writeLine(
+                    $params, "  Error: " . $e->getMessage()
+                );
+
                 $this->log->warning(
                     'ExportImport [' . $entityType . ']:' . $e->getMessage()
                 );

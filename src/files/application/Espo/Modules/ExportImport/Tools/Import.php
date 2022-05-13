@@ -95,6 +95,10 @@ class Import implements
             try {
                 $globalMessage = $this->importEntity($entityType, $params, $manifest);
             } catch (Exception $e) {
+                ProcessorUtils::writeLine(
+                    $params, "  Error: " . $e->getMessage()
+                );
+
                 $this->log->warning(
                     'ExportImport [' . $entityType . ']:' . $e->getMessage()
                 );
