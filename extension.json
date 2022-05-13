@@ -1,12 +1,12 @@
 {
     "module": "ExportImport",
     "name": "ExportImport",
-    "description": "Export and Import Data.",
+    "description": "Tool for export / import data of EspoCRM",
     "author": "EspoCRM",
     "acceptableVersions": [
-        ">=5.9.0"
+        ">=7.0.0"
     ],
     "php": [
-        ">=7.2"
+        ">=7.4"
     ]
 }
