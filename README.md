@@ -96,7 +96,7 @@ Edit the file: `custom/Espo/Custom/Resources/metadata/exportImportDefs/ENTITY.js
 
 #### Get
 
-```
+```json
 "placeholderAction": "Config\\Get",
 "placeholderData": {
     "key": "defaultCurrency",
@@ -108,7 +108,7 @@ Edit the file: `custom/Espo/Custom/Resources/metadata/exportImportDefs/ENTITY.js
 
 #### Password
 
-```
+```json
 "placeholderAction": "User\\Password",
 "placeholderData": {
     "value": "1"
