@@ -111,10 +111,16 @@ Edit the file: `custom/Espo/Custom/Resources/metadata/exportImportDefs/ENTITY.js
 #### Get
 
 ```json
-"placeholderAction": "Config\\Get",
-"placeholderData": {
-    "key": "defaultCurrency",
-    "default": null
+{
+    "fields": {
+        "amountCurrency": {
+            "placeholderAction": "Config\\Get",
+            "placeholderData": {
+                "key": "defaultCurrency",
+                "default": null
+            }
+        }
+    }
 }
 ```
 
@@ -123,9 +129,27 @@ Edit the file: `custom/Espo/Custom/Resources/metadata/exportImportDefs/ENTITY.js
 #### Password
 
 ```json
-"placeholderAction": "User\\Password",
-"placeholderData": {
-    "value": "1"
+{
+    "fields": {
+        "password": {
+            "placeholderAction": "User\\Password",
+            "placeholderData": {
+                "value": "1"
+            }
+        }
+    }
+}
+```
+
+#### Active
+
+```json
+{
+    "fields": {
+        "isActive": {
+            "placeholderAction": "User\\Active"
+        }
+    }
 }
 ```
 
