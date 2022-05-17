@@ -24,7 +24,7 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Datetime;
+namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\DateTime;
 
 use Espo\Modules\ExportImport\Tools\Import\Placeholder\{
     Actions\Action,

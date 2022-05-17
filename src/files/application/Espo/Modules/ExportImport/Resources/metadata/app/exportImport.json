@@ -38,7 +38,8 @@
     "placeholderActionClassNameMap": {
         "Config\\Get": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Config\\Get",
         "Config\\ObjectData": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Config\\ObjectData",
-        "DateTime\\CurrentMonth": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Datetime\\CurrentMonth",
+        "DateTime\\CurrentMonth": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\DateTime\\CurrentMonth",
+        "DateTime\\CurrentYear": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\DateTime\\CurrentYear",
         "User\\Active": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\User\\Active",
         "User\\Password": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\User\\Password"
     },
