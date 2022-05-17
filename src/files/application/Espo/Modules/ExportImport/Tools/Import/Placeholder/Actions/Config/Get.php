@@ -58,10 +58,6 @@ class Get implements
             throw new Error("The option '{$key}' from systemItems is not permitted");
         }
 
-        if (!Utils::isCurrencyChangePermitted($params)) {
-            throw new Error('The setDefaultCurrency is disabled');
-        }
-
         return $this->config->get($key, $default);
     }
 }
