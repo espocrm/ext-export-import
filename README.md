@@ -129,6 +129,32 @@ Edit the file: `custom/Espo/Custom/Resources/metadata/exportImportDefs/ENTITY.js
 }
 ```
 
+### Datetime
+
+#### CurrentMonth
+
+```json
+{
+    "fields": {
+        "dateStart": {
+            "placeholderAction": "DateTime\\CurrentMonth"
+        }
+    }
+}
+```
+
+#### CurrentYear
+
+```json
+{
+    "fields": {
+        "dateStart": {
+            "placeholderAction": "DateTime\\CurrentYear"
+        }
+    }
+}
+```
+
 ## Development
 
 Mode information about configuring the extension for development purposes, read the https://github.com/espocrm/ext-template#readme.
