@@ -65,6 +65,8 @@ class Params implements IParams
 
     private $filesPath;
 
+    private $customization;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -179,6 +181,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->filesPath = $filesPath;
+
+        return $obj;
+    }
+
+    public function withCustomization(bool $customization): self
+    {
+        $obj = clone $this;
+
+        $obj->customization = $customization;
 
         return $obj;
     }
@@ -316,5 +327,13 @@ class Params implements IParams
     public function getFilesPath(): string
     {
         return $this->filesPath;
+    }
+
+    /**
+     * Export customization
+     */
+    public function getCustomization(): bool
+    {
+        return $this->customization;
     }
 }

@@ -75,6 +75,8 @@ class Params
 
     private $io = null;
 
+    private $customization;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -103,6 +105,7 @@ class Params
         $obj->quiet = $params['q'] ?? false;
         $obj->userActive = $params['userActive'] ?? false;
         $obj->userPassword = $params['userPassword'] ?? null;
+        $obj->customization = $params['customization'] ?? false;
 
         if (!$obj->exportImportDefs) {
             throw new RuntimeException('Incorrect "exportImportDefs" data.');
@@ -263,6 +266,15 @@ class Params
         return $obj;
     }
 
+    public function withCustomization(bool $customization): self
+    {
+        $obj = clone $this;
+
+        $obj->customization = $customization;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -409,5 +421,13 @@ class Params
     public function getUserPassword(): ?string
     {
         return $this->userPassword;
+    }
+
+    /**
+     * Export / import customization
+     */
+    public function getCustomization(): bool
+    {
+        return $this->customization;
     }
 }
