@@ -55,5 +55,6 @@
     "setDefaultCurrency": false,
     "importType": "createAndUpdate",
     "userActive": false,
-    "userPassword": "1"
+    "userPassword": "1",
+    "customization": false
 }
