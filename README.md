@@ -82,6 +82,17 @@ The default currency can be defined for every currency field.
 
 #### Default: `false`
 
+### Customization
+
+Export / import all customization made for the instance.
+
+- Attribute: `customization`
+- CLI attribute: `customization`
+- Possible values:
+  - `true`
+  - `false`
+- Default: `false`
+
 ## Export Import Defs
 
 In the metadata defs can be configured some additional features. The path is `custom/Espo/Custom/Resources/metadata/exportImportDefs`.
