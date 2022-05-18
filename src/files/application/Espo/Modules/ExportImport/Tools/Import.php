@@ -153,8 +153,7 @@ class Import implements
             ->withSetDefaultCurrency($params->getSetDefaultCurrency())
             ->withProcessHookClass($processHookClass)
             ->withUserActive($params->getUserActive())
-            ->withUserPassword($params->getUserPassword())
-            ->withCustomization($params->getCustomization());
+            ->withUserPassword($params->getUserPassword());
 
         $import = $this->injectableFactory->create(EntityImportTool::class);
         $import->setParams($importParams);
