@@ -62,8 +62,6 @@ class Params implements IParams
 
     private $userPassword = null;
 
-    private $customization;
-
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -173,15 +171,6 @@ class Params implements IParams
         return $obj;
     }
 
-    public function withCustomization(bool $customization): self
-    {
-        $obj = clone $this;
-
-        $obj->customization = $customization;
-
-        return $obj;
-    }
-
     /**
      * Get a target entity type.
      */
@@ -287,13 +276,5 @@ class Params implements IParams
     public function getUserPassword(): ?string
     {
         return $this->userPassword;
-    }
-
-    /**
-     * Import customization
-     */
-    public function getCustomization(): bool
-    {
-        return $this->customization;
     }
 }
