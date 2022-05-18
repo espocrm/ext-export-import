@@ -39,6 +39,8 @@ class Params
 
     public const PATH_FILES = 'Files';
 
+    public const PATH_CUSTOMIZATION = 'Customization';
+
     public const TYPE_CREATE = 'create';
 
     public const TYPE_CREATE_AND_UPDATE = 'createAndUpdate';
