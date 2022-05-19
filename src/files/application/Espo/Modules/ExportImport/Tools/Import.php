@@ -83,13 +83,6 @@ class Import implements
         ]);
 
         foreach ($entityTypeList as $entityType) {
-            $importDisabled = $defs[$entityType]['importDisabled'] ?? false;
-
-            if ($importDisabled) {
-
-                continue;
-            }
-
             ProcessorUtils::writeLine($params, "{$entityType}...");
 
             try {
@@ -108,12 +101,31 @@ class Import implements
         ProcessorUtils::writeLine($params, $globalMessage);
     }
 
-    protected function getEntityTypeList(Params $params): array
+    private function getEntityTypeList(Params $params): array
     {
         if ($params->getEntityTypeList()) {
-            return $params->getEntityTypeList();
+            $list = $params->getEntityTypeList();
         }
 
+        if (!isset($list)) {
+            $list = $this->loadEntityTypeList($params);
+        }
+
+        $defs = $params->getExportImportDefs();
+
+        foreach ($list as $key => $entityType) {
+            $importDisabled = $defs[$entityType]['importDisabled'] ?? false;
+
+            if ($importDisabled) {
+                unset($list[$key]);
+            }
+        }
+
+        return array_values($list);
+    }
+
+    private function loadEntityTypeList(Params $params): array
+    {
         $entityFileList = $this->fileManager->getFileList(
             $params->getDataEntitiesPath(),
             false,
