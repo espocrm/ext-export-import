@@ -84,17 +84,9 @@ class Export implements
 
         $this->fileManager->removeInDir($exportPath);
 
-        $entityList = $params->getEntityTypeList() ??
-            $this->defs->getEntityTypeList();
+        $entityTypeList = $this->getEntityTypeList($params);
 
-        foreach ($entityList as $entityType) {
-            $exportDisabled = $defs[$entityType]['exportDisabled'] ?? false;
-
-            if ($exportDisabled) {
-
-                continue;
-            }
-
+        foreach ($entityTypeList as $entityType) {
             ProcessorUtils::writeLine($params, "{$entityType}...");
 
             try {
@@ -110,11 +102,29 @@ class Export implements
             }
         }
 
-        $this->exportCustomization($params, $entityList);
+        $this->exportCustomization($params);
 
         $this->createManifest($params);
 
         ProcessorUtils::writeLine($params, $globalMessage);
+    }
+
+    private function getEntityTypeList(Params $params): array
+    {
+        $list = $params->getEntityTypeList() ??
+            $this->defs->getEntityTypeList();
+
+        $defs = $params->getExportImportDefs();
+
+        foreach ($list as $key => $entityType) {
+            $exportDisabled = $defs[$entityType]['exportDisabled'] ?? false;
+
+            if ($exportDisabled) {
+                unset($list[$key]);
+            }
+        }
+
+        return array_values($list);
     }
 
     private function exportEntity(Params $params, string $entityType): string
@@ -183,8 +193,10 @@ class Export implements
         return $this->injectableFactory->create($processHookClassName);
     }
 
-    private function exportCustomization(Params $params, array $entityTypeList)
+    private function exportCustomization(Params $params): void
     {
+        $entityTypeList = $this->getEntityTypeList($params);
+
         $params = CustomizationParams::create()
             ->withPath($params->getExportPath())
             ->withEntityTypeList($entityTypeList)
