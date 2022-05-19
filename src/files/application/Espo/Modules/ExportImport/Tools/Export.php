@@ -35,11 +35,13 @@ use Espo\{
 use Espo\Modules\ExportImport\Tools\{
     Params,
     Export\Params as ExportParams,
+    Customization\Params as CustomizationParams,
     Export\Processor\Collection,
     Export\EntityExport as EntityExportTool,
     Manifest\ManifestWriter,
     Processor\ProcessHook,
     Processor\Utils as ProcessorUtils,
+    Customization\Processors\Export as CustomizationExport,
 };
 
 use Exception;
@@ -107,6 +109,8 @@ class Export implements
                 );
             }
         }
+
+        $this->exportCustomization($params, $entityList);
 
         $this->createManifest($params);
 
@@ -177,5 +181,19 @@ class Export implements
         }
 
         return $this->injectableFactory->create($processHookClassName);
+    }
+
+    private function exportCustomization(Params $params, array $entityTypeList)
+    {
+        $params = CustomizationParams::create()
+            ->withPath($params->getExportPath())
+            ->withEntityTypeList($entityTypeList)
+            ->withExportImportDefs($params->getExportImportDefs());
+
+        $customizationExport = $this->injectableFactory->create(
+            CustomizationExport::class
+        );
+
+        $customizationExport->process($params);
     }
 }

@@ -28,6 +28,7 @@ namespace Espo\Modules\ExportImport\Tools\Customization\Processors;
 
 use Espo\Core\{
     Di,
+    Utils\Util,
 };
 
 use Espo\Modules\ExportImport\Tools\{
@@ -44,7 +45,11 @@ class Export implements
     public function process(Params $params): void
     {
         $src = $params->getSystemCustomPath();
-        $dest = $params->getCustomizationPath();
+
+        $dest = Util::concatPath(
+            $params->getCustomizationPath(),
+            $params->getSystemCustomPath()
+        );
 
         //todo: copy only $params->getEntityTypeList()
         $this->fileManager->copy($src, $dest, true);

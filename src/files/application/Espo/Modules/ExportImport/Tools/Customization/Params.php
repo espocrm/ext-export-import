@@ -56,7 +56,7 @@ class Params
     {
         $obj = clone $this;
 
-        $obj->srcPath = $path;
+        $obj->path = $path;
 
         return $obj;
     }
@@ -126,7 +126,7 @@ class Params
     /**
      * Get a manifest
      */
-    public function getManifest(): Manifest
+    public function getManifest(): ?Manifest
     {
         return $this->manifest;
     }
