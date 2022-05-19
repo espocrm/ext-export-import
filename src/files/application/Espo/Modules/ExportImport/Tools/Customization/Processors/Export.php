@@ -37,6 +37,7 @@ use Espo\Modules\ExportImport\Tools\{
 };
 
 class Export implements
+
     Processor,
     Di\FileManagerAware
 {
