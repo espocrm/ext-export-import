@@ -72,7 +72,6 @@ class Export implements
     {
         $format = $params->getFormat() ?? null;
         $exportPath = $params->getExportPath() ?? null;
-        $defs = $params->getExportImportDefs();
 
         if (!$format) {
             throw new Error('Option "format" is not defined.');
