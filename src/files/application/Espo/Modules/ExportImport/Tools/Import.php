@@ -195,6 +195,11 @@ class Import implements
 
     private function importCustomization(Params $params, Manifest $manifest): void
     {
+        if (!$params->getCustomization()) {
+
+            return;
+        }
+
         $entityTypeList = $this->getEntityTypeList($params);
 
         $params = CustomizationParams::create()

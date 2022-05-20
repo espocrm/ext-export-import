@@ -194,6 +194,11 @@ class Export implements
 
     private function exportCustomization(Params $params): void
     {
+        if (!$params->getCustomization()) {
+
+            return;
+        }
+
         $entityTypeList = $this->getEntityTypeList($params);
 
         $params = CustomizationParams::create()
