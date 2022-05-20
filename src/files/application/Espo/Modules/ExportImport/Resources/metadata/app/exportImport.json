@@ -46,8 +46,8 @@
 
     "defsSource": "exportImportDefs",
 
-    "dataPath": "custom/Espo/Custom/Data",
-    "exportPath": "build/ExportImport",
+    "exportPath": "build/ExportImport/Export",
+    "importPath": "build/ExportImport/Import",
     "manifestFile": "manifest.json",
 
     "format": "json",

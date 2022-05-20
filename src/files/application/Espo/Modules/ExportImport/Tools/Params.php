@@ -61,7 +61,7 @@ class Params
 
     private $exportPath = null;
 
-    private $dataPath = null;
+    private $importPath = null;
 
     private $prettyPrint = false;
 
@@ -102,7 +102,7 @@ class Params
         $obj = new self($format);
 
         $obj->exportPath = $params['exportPath'] ?? null;
-        $obj->dataPath = $params['dataPath'] ?? null;
+        $obj->importPath = $params['importPath'] ?? null;
         $obj->manifestFile = $params['manifestFile'] ?? null;
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $params['exportImportDefs'] ?? null;
@@ -189,11 +189,11 @@ class Params
         return $obj;
     }
 
-    public function withDataPath(?string $dataPath): self
+    public function withImportPath(?string $importPath): self
     {
         $obj = clone $this;
 
-        $obj->dataPath = $dataPath;
+        $obj->importPath = $importPath;
 
         return $obj;
     }
@@ -306,9 +306,9 @@ class Params
     /**
      * Get a path of stored data
      */
-    public function getDataPath(): string
+    public function getImportPath(): string
     {
-        return $this->dataPath;
+        return $this->importPath;
     }
 
     /**
@@ -340,7 +340,7 @@ class Params
      */
     public function getDataEntitiesPath(): string
     {
-        return Util::concatPath($this->dataPath, self::PATH_ENTITIES);
+        return Util::concatPath($this->importPath, self::PATH_ENTITIES);
     }
 
     /**
@@ -356,7 +356,7 @@ class Params
      */
     public function getDataFilesPath(): string
     {
-        return Util::concatPath($this->dataPath, self::PATH_FILES);
+        return Util::concatPath($this->importPath, self::PATH_FILES);
     }
 
     /**
@@ -372,7 +372,7 @@ class Params
      */
     public function getDataManifestFile(): string
     {
-        return Util::concatPath($this->dataPath, $this->manifestFile);
+        return Util::concatPath($this->importPath, $this->manifestFile);
     }
 
     /**

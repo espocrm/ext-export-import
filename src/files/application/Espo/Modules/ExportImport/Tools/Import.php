@@ -67,14 +67,18 @@ class Import implements
     public function run(Params $params) : void
     {
         $format = $params->getFormat() ?? null;
-        $dataPath = $params->getDataPath() ?? null;
+        $importPath = $params->getImportPath() ?? null;
 
         if (!$format) {
             throw new Error('Option "format" is not defined.');
         }
 
-        if (!$dataPath) {
-            throw new Error('Data path is not defined.');
+        if (!$importPath) {
+            throw new Error('Import path is not defined.');
+        }
+
+        if (!file_exists($importPath)) {
+            throw new Error("Import path \"{$importPath}\" does not exist.");
         }
 
         $entityTypeList = $this->getEntityTypeList($params);
@@ -159,7 +163,7 @@ class Import implements
 
         $importParams = ImportParams::create($entityType)
             ->withFormat($params->getFormat())
-            ->withPath($params->getDataPath())
+            ->withPath($params->getImportPath())
             ->withEntitiesPath($params->getDataEntitiesPath())
             ->withFilesPath($params->getDataFilesPath())
             ->withExportImportDefs($params->getExportImportDefs())
@@ -203,7 +207,7 @@ class Import implements
         $entityTypeList = $this->getEntityTypeList($params);
 
         $params = CustomizationParams::create()
-            ->withPath($params->getDataPath())
+            ->withPath($params->getImportPath())
             ->withManifest($manifest)
             ->withEntityTypeList($entityTypeList)
             ->withExportImportDefs($params->getExportImportDefs());
