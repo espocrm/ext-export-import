@@ -25,10 +25,30 @@ php command.php export-import erase
 ### Command parameters
 
 ```
-php command.php export-import import --format=json --pretty-print=true --data-path="custom/Espo/Custom/Data" --export-path="build/ExportImport" --import-type=createAndUpdate --use-default-currency=true --entity-type-list="Account,Contact"
+php command.php export-import import --format=json --pretty-print=true --data-path="custom/Data" --export-path="build/ExportImport" --import-type=createAndUpdate --use-default-currency=true --entity-type-list="Account,Contact"
 ```
 
 ## Configuration
+
+### Export Path
+
+Define an export path.
+
+- Attribute: `exportPath`
+- CLI attribute: `export-path`
+- Possible values:
+    - `any string`
+- Default: `build/ExportImport/Export`
+
+### Import Path
+
+Define an import path.
+
+- Attribute: `importPath`
+- CLI attribute: `import-path`
+- Possible values:
+    - `any string`
+- Default: `build/ExportImport/Import`
 
 The export / import process can be configured in `custom/Espo/Custom/Resources/metadata/app/exportImport.json` or by cli command.
 
