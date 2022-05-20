@@ -25,7 +25,7 @@ php command.php export-import erase
 ### Command parameters
 
 ```
-php command.php export-import import --format=json --pretty-print=true --data-path="custom/Data" --export-path="build/ExportImport" --import-type=createAndUpdate --use-default-currency=true --entity-type-list="Account,Contact"
+php command.php export-import import --format=json --pretty-print=true --data-path="build/ExportImport/Import" --export-path="build/ExportImport/Export" --import-type=createAndUpdate --use-default-currency=true --entity-type-list="Account,Contact"
 ```
 
 ## Configuration
@@ -54,53 +54,48 @@ The export / import process can be configured in `custom/Espo/Custom/Resources/m
 
 ### Import Type
 
-#### Attribute: `importType`
+The type of importing data.
 
-#### Possible values:
-
-- `create`
-- `createAndUpdate`
-- `update`
-
-#### Default: `createAndUpdate`
+- Attribute: `importType`
+- CLI attribute: `import-type`
+- Possible values:
+    - `create`
+    - `createAndUpdate`
+    - `update`
+- Default: `createAndUpdate`
 
 ### User active status
 
 Default user status for imported users. This applies to all user except admin user with ID `1`.
 
-#### Attribute: `userActive`
-
-#### Possible values:
-- `true`
-- `false`
-
-#### Default: `false`
+- Attribute: `userActive`
+- CLI attribute: `user-active`
+- Possible values:
+    - `true`
+    - `false`
+- Default: `false`
 
 ### User password
 
 User password for imported users.
 If empty then generates random values. For resetting the password use `php command.php set-password [username]`.
 
-#### Attribute: `userPassword`
-
-#### Possible values:
-- `any string`
-
-#### Default: `null`
+- Attribute: `userPassword`
+- CLI attribute: `user-password`
+- Possible values:
+    - `any string`
+- Default: `null`
 
 ### Default currency
 
 The default currency can be defined for every currency field.
 
-#### Attribute: `setDefaultCurrency`
-
-#### Cli attribute: `set-default-currency`
-
-#### Possible values:
-- `true`
-- `false`
-
-#### Default: `false`
+- Attribute: `setDefaultCurrency`
+- CLI attribute: `set-default-currency`
+- Possible values:
+    - `true`
+    - `false`
+- Default: `false`
 
 ### Customization
 
