@@ -39,6 +39,11 @@ class Params
 {
     public const PATH_CUSTOM = 'custom/Espo/Custom';
 
+    public const COMMON_FILE_LIST = [
+        'custom/Espo/Custom/Resources/i18n/*/Global.json',
+        'custom/Espo/Custom/Resources/metadata/app/*.json',
+    ];
+
     private $path;
 
     private $exportImportDefs;
@@ -134,7 +139,7 @@ class Params
     /**
      * Get entity type list
      */
-    public function getEntityTypeList(): string
+    public function getEntityTypeList(): array
     {
         return $this->entityTypeList;
     }

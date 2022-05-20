@@ -38,6 +38,8 @@ use Espo\Modules\ExportImport\Tools\{
     Import\EntityImport as EntityImportTool,
     Processor\ProcessHook,
     Processor\Utils as ProcessorUtils,
+    Customization\Params as CustomizationParams,
+    Customization\Processors\Import as CustomizationImport,
 };
 
 use Exception;
@@ -66,7 +68,6 @@ class Import implements
     {
         $format = $params->getFormat() ?? null;
         $dataPath = $params->getDataPath() ?? null;
-        $defs = $params->getExportImportDefs();
 
         if (!$format) {
             throw new Error('Option "format" is not defined.');
@@ -97,6 +98,8 @@ class Import implements
                 );
             }
         }
+
+        $this->importCustomization($params, $manifest);
 
         ProcessorUtils::writeLine($params, $globalMessage);
     }
@@ -150,7 +153,7 @@ class Import implements
         return $entityTypeList;
     }
 
-    protected function importEntity(string $entityType, Params $params, Manifest $manifest): ?string
+    private function importEntity(string $entityType, Params $params, Manifest $manifest): ?string
     {
         $processHookClass = $this->getProcessHookClass($entityType);
 
@@ -188,5 +191,22 @@ class Import implements
         }
 
         return $this->injectableFactory->create($processHookClassName);
+    }
+
+    private function importCustomization(Params $params, Manifest $manifest): void
+    {
+        $entityTypeList = $this->getEntityTypeList($params);
+
+        $params = CustomizationParams::create()
+            ->withPath($params->getDataPath())
+            ->withManifest($manifest)
+            ->withEntityTypeList($entityTypeList)
+            ->withExportImportDefs($params->getExportImportDefs());
+
+        $customizationImport = $this->injectableFactory->create(
+            CustomizationImport::class
+        );
+
+        $customizationImport->process($params);
     }
 }

@@ -81,7 +81,7 @@ class Utils
     /**
      * Write a message in a terminal
      */
-    public static function writeLine(ToolParams $params, ?string $message)
+    public static function writeLine(ToolParams $params, ?string $message): void
     {
         if ($params->isQuiet() || !$message) {
             return;
@@ -90,5 +90,34 @@ class Utils
         $io = $params->getIO();
 
         $io->writeLine($message);
+    }
+
+    /**
+     * Quote a string for regular expression
+     */
+    public static function quotePattern(string $pattern): string
+    {
+        $pattern = preg_replace_callback(
+            '/([^*])/',
+            function ($matches) {
+                return preg_quote($matches[1], "/");
+            },
+            $pattern
+        );
+
+        return str_replace('*', '.*', $pattern);
+    }
+
+    public static function isPatternMatched(array $patternList, string $value): bool
+    {
+        foreach ($patternList as $pattern) {
+            $pattern = self::quotePattern($pattern);
+
+            if (preg_match('/^' . $pattern . '$/', $value)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

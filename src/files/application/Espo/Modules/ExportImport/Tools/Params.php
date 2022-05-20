@@ -41,6 +41,8 @@ class Params
 
     public const PATH_CUSTOMIZATION = 'Customization';
 
+    public const PATH_CONFIG = 'Config';
+
     public const TYPE_CREATE = 'create';
 
     public const TYPE_CREATE_AND_UPDATE = 'createAndUpdate';
