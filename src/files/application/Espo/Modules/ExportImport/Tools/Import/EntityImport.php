@@ -28,31 +28,12 @@ namespace Espo\Modules\ExportImport\Tools\Import;
 
 use Espo\Core\{
     Exceptions\Error,
-    Utils\Json,
-    Select\SelectBuilderFactory,
-    Acl,
-    Acl\Table,
-    Acl\GlobalRestricton,
-    Record\ServiceContainer,
-    Utils\Metadata,
-    Utils\File\Manager as FileManager,
-    FieldProcessing\ListLoadProcessor,
-    FieldProcessing\Loader\Params as LoaderParams,
-    Utils\FieldUtil,
-};
-
-use Espo\{
-    ORM\Entity,
-    ORM\Collection,
-    ORM\EntityManager,
 };
 
 use Espo\Modules\ExportImport\Tools\{
     Import\Params,
     Processor\Data as ProcessorData,
 };
-
-use RuntimeException;
 
 class EntityImport
 {
@@ -63,42 +44,10 @@ class EntityImport
 
     private $processorFactory;
 
-    private $selectBuilderFactory;
-
-    private $serviceContainer;
-
-    private $acl;
-
-    private $entityManager;
-
-    private $metadata;
-
-    private $fileManager;
-
-    private $listLoadProcessor;
-
-    private $fieldUtil;
-
     public function __construct(
-        ProcessorFactory $processorFactory,
-        SelectBuilderFactory $selectBuilderFactor,
-        ServiceContainer $serviceContainer,
-        Acl $acl,
-        EntityManager $entityManager,
-        Metadata $metadata,
-        FileManager $fileManager,
-        ListLoadProcessor $listLoadProcessor,
-        FieldUtil $fieldUtil
+        ProcessorFactory $processorFactory
     ) {
         $this->processorFactory = $processorFactory;
-        $this->selectBuilderFactory = $selectBuilderFactor;
-        $this->serviceContainer = $serviceContainer;
-        $this->acl = $acl;
-        $this->entityManager = $entityManager;
-        $this->metadata = $metadata;
-        $this->fileManager = $fileManager;
-        $this->listLoadProcessor = $listLoadProcessor;
-        $this->fieldUtil = $fieldUtil;
     }
 
     public function setParams(Params $params): self
