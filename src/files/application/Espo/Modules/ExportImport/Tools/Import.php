@@ -47,15 +47,17 @@ use Exception;
 class Import implements
 
     Tool,
+    Di\LogAware,
     Di\MetadataAware,
     Di\FileManagerAware,
-    Di\InjectableFactoryAware,
-    Di\LogAware
+    Di\DataManagerAware,
+    Di\InjectableFactoryAware
 {
+    use Di\LogSetter;
     use Di\MetadataSetter;
     use Di\FileManagerSetter;
+    use Di\DataManagerSetter;
     use Di\InjectableFactorySetter;
-    use Di\LogSetter;
 
     private $defs;
 
@@ -87,6 +89,8 @@ class Import implements
             'params' => $params,
         ]);
 
+        $this->importCustomization($params, $manifest);
+
         foreach ($entityTypeList as $entityType) {
             ProcessorUtils::writeLine($params, "{$entityType}...");
 
@@ -102,8 +106,6 @@ class Import implements
                 );
             }
         }
-
-        $this->importCustomization($params, $manifest);
 
         ProcessorUtils::writeLine($params, $globalMessage);
     }
@@ -217,5 +219,7 @@ class Import implements
         );
 
         $customizationImport->process($params);
+
+        $this->dataManager->rebuild();
     }
 }
