@@ -42,6 +42,7 @@ use Espo\{
     ORM\Entity as OrmEntity,
 };
 
+use Espo\Modules\ExportImport\Tools\Import\Processor\Entity as ProcessorEntity;
 use Exception;
 
 class Entity implements
@@ -77,7 +78,7 @@ class Entity implements
         while (($row = $data->readRow()) !== null) {
             $preparedRow = $this->prepareData($params, $row);
 
-            $id = $row['id'] ?? null;
+            $id = $this->getEntityId($params, $preparedRow);
 
             if ($id) {
                 $entity = $this->entityManager->getEntity($entityType, $id);
@@ -199,5 +200,60 @@ class Entity implements
         }
 
         return $this->placeholderHandler->process($params, $row);
+    }
+
+    private function getEntityId(Params $params, array $row): ?string
+    {
+        $id = $row['id'] ?? null;
+
+        if ($this->isScopeEntity($params->getEntityType())) {
+            return $id;
+        }
+
+        return $this->getRelationId($params, $row);
+    }
+
+    private function getRelationId(Params $params, array $row): ?string
+    {
+        $entityType = $params->getEntityType();
+
+        $entityDefs = $this->entityManager
+            ->getDefs()
+            ->getEntity($entityType);
+
+        $whereClause = [];
+
+        foreach ($entityDefs->getAttributeList() as $attribute) {
+            $name = $attribute->getName();
+            $type = $attribute->getType();
+
+            switch ($type) {
+                case 'foreignId':
+                    $value = $row[$name] ?? null;
+
+                    if ($value) {
+                        $whereClause[$name] = $value;
+                    }
+                    break;
+            }
+        }
+
+        if (!empty($whereClause)) {
+            $record = $this->entityManager
+                ->getRDBRepository($entityType)
+                ->where($whereClause)
+                ->findOne();
+
+            if ($record) {
+                return $record->id;
+            }
+        }
+
+        return $row['id'] ?? null;
+    }
+
+    private function isScopeEntity(string $scope): bool
+    {
+        return (bool) $this->metadata->get(['scopes', $scope, 'entity']);
     }
 }
