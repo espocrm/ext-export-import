@@ -49,7 +49,10 @@ class Attachment implements
 
     public function process(Params $params, Entity $entity, array &$row): void
     {
-        if ($entity->get('storage') != ToolParams::DEFAULT_STORAGE) {
+        if (
+            $entity->get('storage') &&
+            $entity->get('storage') != ToolParams::DEFAULT_STORAGE
+        ) {
             return;
         }
 
