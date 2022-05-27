@@ -51,6 +51,7 @@ use Espo\Modules\ExportImport\Tools\{
     Export\Params,
     Processor\Data as ProcessorData,
     Processor\Exceptions\Skip as SkipException,
+    Processor\Utils as ToolUtils,
 };
 
 use RuntimeException;
@@ -153,7 +154,7 @@ class EntityExport
         $loaderParams = LoaderParams::create()
             ->withSelect($attributeList);
 
-        $recordService = $this->isScopeEntity($entityType) ?
+        $recordService = ToolUtils::isScopeEntity($this->metadata, $entityType) ?
             $this->serviceContainer->get($entityType) :
             null;
 
@@ -483,11 +484,6 @@ class EntityExport
         }
 
         return array_values($fieldList);
-    }
-
-    protected function isScopeEntity(string $scope): bool
-    {
-        return (bool) $this->metadata->get(['scopes', $scope, 'entity']);
     }
 
     protected function skipValue(Entity $entity, string $attribute, $value)

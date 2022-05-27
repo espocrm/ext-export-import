@@ -36,13 +36,13 @@ use Espo\Modules\ExportImport\Tools\{
     Import\Params,
     Import\Placeholder\Handler as PlaceholderHandler,
     Processor\Exceptions\Skip as SkipException,
+    Processor\Utils as ToolUtils,
 };
 
 use Espo\{
     ORM\Entity as OrmEntity,
 };
 
-use Espo\Modules\ExportImport\Tools\Import\Processor\Entity as ProcessorEntity;
 use Exception;
 
 class Entity implements
@@ -206,7 +206,9 @@ class Entity implements
     {
         $id = $row['id'] ?? null;
 
-        if ($this->isScopeEntity($params->getEntityType())) {
+        $entityType = $params->getEntityType();
+
+        if (ToolUtils::isScopeEntity($this->metadata, $entityType)) {
             return $id;
         }
 
@@ -250,10 +252,5 @@ class Entity implements
         }
 
         return $row['id'] ?? null;
-    }
-
-    private function isScopeEntity(string $scope): bool
-    {
-        return (bool) $this->metadata->get(['scopes', $scope, 'entity']);
     }
 }

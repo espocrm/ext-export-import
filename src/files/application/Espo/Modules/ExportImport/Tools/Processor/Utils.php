@@ -28,6 +28,7 @@ namespace Espo\Modules\ExportImport\Tools\Processor;
 
 use Espo\{
     Core\Utils\Util,
+    Core\Utils\Metadata,
 };
 
 use Espo\Modules\ExportImport\Tools\{
@@ -119,5 +120,10 @@ class Utils
         }
 
         return false;
+    }
+
+    public static function isScopeEntity(Metadata $metadata, string $scope): bool
+    {
+        return (bool) $metadata->get(['scopes', $scope, 'entity']);
     }
 }
