@@ -35,7 +35,7 @@ use Espo\Modules\ExportImport\Tools\Import\Placeholder\{
 use DateTime;
 use DateTimeZone;
 
-class Today implements Action
+class Now implements Action
 {
     public function normalize(Params $params, $actualValue)
     {
