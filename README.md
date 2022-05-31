@@ -181,6 +181,18 @@ Edit the file: `custom/Espo/Custom/Resources/metadata/exportImportDefs/ENTITY.js
 
 ### Datetime
 
+#### Now
+
+```json
+{
+    "fields": {
+        "dateStart": {
+            "placeholderAction": "DateTime\\Now"
+        }
+    }
+}
+```
+
 #### CurrentMonth
 
 ```json
