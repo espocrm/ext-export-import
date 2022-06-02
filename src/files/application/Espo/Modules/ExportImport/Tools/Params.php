@@ -26,12 +26,14 @@
 
 namespace Espo\Modules\ExportImport\Tools;
 
-use RuntimeException;
-
 use Espo\Core\{
     Console\IO,
     Utils\Util,
 };
+
+use DateTime;
+use DateTimeZone;
+use RuntimeException;
 
 class Params
 {
@@ -80,6 +82,8 @@ class Params
     private $io = null;
 
     private $customization;
+
+    private $exportTime;
 
     public function __construct(string $format)
     {
@@ -136,6 +140,10 @@ class Params
         $obj->setDefaultCurrency = array_key_exists('setDefaultCurrency', $params) ?
             (bool) $params['setDefaultCurrency'] : false;
 
+        $obj->exportTime = $obj->normalizeExportTime(
+            $params['exportTime'] ?? null
+        );
+
         return $obj;
     }
 
@@ -158,6 +166,13 @@ class Params
         }
 
         return $value;
+    }
+
+    private function normalizeExportTime($value): DateTime
+    {
+        $value = $value ?? 'now';
+
+        return new DateTime($value, new DateTimeZone('UTC'));
     }
 
     public function withExportImportDefs(array $exportImportDefs): self
@@ -275,6 +290,15 @@ class Params
         $obj = clone $this;
 
         $obj->customization = $customization;
+
+        return $obj;
+    }
+
+    public function withExportTime(DateTime $exportTime): self
+    {
+        $obj = clone $this;
+
+        $obj->exportTime = $exportTime;
 
         return $obj;
     }
@@ -433,5 +457,13 @@ class Params
     public function getCustomization(): bool
     {
         return $this->customization;
+    }
+
+    /**
+     * Get Export time
+     */
+    public function getExportTime(): DateTime
+    {
+        return $this->exportTime;
     }
 }

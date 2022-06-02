@@ -33,7 +33,6 @@ use Espo\{
 };
 
 use DateTime;
-use DateTimeZone;
 
 class ManifestWriter
 {
@@ -68,7 +67,7 @@ class ManifestWriter
         $this->manifestFile = $this->params->getExportManifestFile();
         $this->applicationName = $this->config->get('applicationName');
         $this->version = $this->config->get('version');
-        $this->exportTime = new DateTime('now', new DateTimeZone('UTC'));
+        $this->exportTime = $this->params->getExportTime();
     }
 
     public function setManifestFile(string $manifestFile): self
