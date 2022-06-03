@@ -1,13 +1,13 @@
 {
     "fields": {
         "dateStart": {
-            "value": "DateTime\\CurrentMonth"
+            "value": "DateTime\\ExportDifference"
         },
         "dateEnd": {
-            "value": "DateTime\\CurrentMonth"
+            "value": "DateTime\\ExportDifference"
         },
         "dateCompleted": {
-            "value": "DateTime\\CurrentMonth"
+            "value": "DateTime\\ExportDifference"
         }
     }
 }

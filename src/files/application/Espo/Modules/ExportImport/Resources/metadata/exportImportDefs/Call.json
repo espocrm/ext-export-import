@@ -1,10 +1,10 @@
 {
     "fields": {
         "dateStart": {
-            "placeholderAction": "DateTime\\CurrentMonth"
+            "placeholderAction": "DateTime\\ExportDifference"
         },
         "dateEnd": {
-            "placeholderAction": "DateTime\\CurrentMonth"
+            "placeholderAction": "DateTime\\ExportDifference"
         }
     }
 }
