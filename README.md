@@ -193,6 +193,21 @@ Edit the file: `custom/Espo/Custom/Resources/metadata/exportImportDefs/ENTITY.js
 }
 ```
 
+#### ExportDifference
+
+The difference between the record date and the export date.
+E.g. record date = `2022-05-01`, export date = `2022-08-01`. When import data at `2022-12-01`, the record data will be `2022-09-01`.
+
+```json
+{
+    "fields": {
+        "dateStart": {
+            "placeholderAction": "DateTime\\ExportDifference"
+        }
+    }
+}
+```
+
 #### CurrentMonth
 
 ```json
