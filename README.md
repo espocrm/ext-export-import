@@ -128,6 +128,27 @@ Example for Quotes: `custom/Espo/Custom/Resources/metadata/exportImportDefs/Quot
 }
 ```
 
+### Skip export list
+
+If need to skip some records like `system` user or others.
+
+#### exportSkipLists
+
+Example for User: `custom/Espo/Custom/Resources/metadata/exportImportDefs/User.json`
+
+```json
+{
+    "exportSkipLists" : {
+        "id": [
+            "system"
+        ],
+        "userName": [
+            "tester"
+        ]
+    }
+}
+```
+
 ## Placeholders
 
 Edit the file: `custom/Espo/Custom/Resources/metadata/exportImportDefs/ENTITY.json`.
