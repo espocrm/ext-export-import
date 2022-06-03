@@ -30,6 +30,7 @@ use Espo\{
     Core\Di,
     ORM\Defs,
     Core\Exceptions\Error,
+    Core\Select\SearchParams,
 };
 
 use Espo\Modules\ExportImport\Tools\{
@@ -136,6 +137,8 @@ class Export implements
             'app', 'exportImport', 'formatDefs', $format, 'fileExtension'
         ]);
 
+        $searchParams = $this->getSearchParams($params, $entityType);
+
         $exportParams = ExportParams::create($entityType)
             ->withFormat($format)
             ->withAccessControl(false)
@@ -145,7 +148,8 @@ class Export implements
             ->withExportImportDefs($params->getExportImportDefs())
             ->withCollectionClass($collectionClass)
             ->withFileExtension($fileExtension)
-            ->withProcessHookClass($processHookClass);
+            ->withProcessHookClass($processHookClass)
+            ->withSearchParams($searchParams);
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);
@@ -211,5 +215,43 @@ class Export implements
         );
 
         $customizationExport->process($params);
+    }
+
+    private function getSearchParams(Params $params, string $entityType): ?SearchParams
+    {
+        $skipLists = $params->getExportImportDefs()[$entityType]['exportSkipLists']
+            ?? null;
+
+        if (!$skipLists || count($skipLists) == 0) {
+            return null;
+        }
+
+        $where = [];
+
+        foreach ($skipLists as $fieldName => $list) {
+            if (count($list) == 0) {
+
+                continue;
+            }
+
+            $where[] = [
+                'type' => 'or',
+                'value' => [
+                    [
+                        'type' => 'isNull',
+                        'attribute' => $fieldName,
+                    ],
+                    [
+                        'type' => 'notIn',
+                        'attribute' => $fieldName,
+                        'value' => $list,
+                    ],
+                ],
+            ];
+        }
+
+        return SearchParams::fromRaw([
+            'where' => $where
+        ]);
     }
 }

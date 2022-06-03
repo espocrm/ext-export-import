@@ -1,4 +1,5 @@
 <?php
+
 /************************************************************************
  * This file is part of Export Import extension for EspoCRM.
  *
@@ -189,8 +190,7 @@ class EntityExport
             if ($processHook) {
                 try {
                     $processHook->process($params, $entity, $row);
-                }
-                catch (SkipException $e) {
+                } catch (SkipException $e) {
                     continue;
                 }
             }
@@ -230,7 +230,7 @@ class EntityExport
 
     protected function getAttributeFromEntity(Entity $entity, string $attribute)
     {
-        $methodName = 'getAttribute' . ucfirst($attribute). 'FromEntity';
+        $methodName = 'getAttribute' . ucfirst($attribute) . 'FromEntity';
 
         if (method_exists($this, $methodName)) {
             return $this->$methodName($entity);
@@ -500,7 +500,6 @@ class EntityExport
                     return true;
                 }
                 break;
-
         }
 
         return false;

@@ -1,7 +1,9 @@
 {
-    "exportSkipIdList" : [
-        "1"
-    ],
+    "exportSkipLists" : {
+        "id": [
+            "system"
+        ]
+    },
     "fields": {
         "password": {
             "placeholderAction": "User\\Password"
