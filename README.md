@@ -229,6 +229,42 @@ E.g. record date = `2022-05-01`, export date = `2022-08-01`. When import data at
 }
 ```
 
+#### ExportDifferenceField
+
+The same logic as `ExportDifference`, but the initial value gets from another field.
+
+```json
+{
+    "fields": {
+        "createdAt": {
+            "placeholderAction": "DateTime\\ExportDifferenceField",
+            "placeholderData": {
+                "field": "dateStart"
+            }
+        }
+    }
+}
+```
+
+To get the initial value from a couple fields. The value will be obtained from the first defined field.
+
+```json
+{
+    "fields": {
+        "createdAt": {
+            "placeholderAction": "DateTime\\ExportDifferenceField",
+            "placeholderData": {
+                "fieldList": [
+                    "dateStart",
+                    "dateEnd",
+                    "dateCompleted"
+                ]
+            }
+        }
+    }
+}
+```
+
 #### CurrentMonth
 
 ```json

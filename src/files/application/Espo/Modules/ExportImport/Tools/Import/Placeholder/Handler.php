@@ -81,7 +81,7 @@ class Handler implements
                     ->withFieldName($fieldName)
                     ->withRecordData($row)
                     ->withFieldDefs($fieldDefs)
-                    ->withPlaceholderDefs($placeholderFieldDefs)
+                    ->withExportImportDefs($params->getExportImportDefs())
                     ->withManifest($params->getManifest())
                     ->withUserActive($params->getUserActive())
                     ->withUserPassword($params->getUserPassword());
