@@ -70,6 +70,7 @@ class Utils
     {
         switch ($fieldType) {
             case 'datetime':
+            case 'datetimeOptional':
                 return DateTimeUtil::SYSTEM_DATE_TIME_FORMAT;
                 break;
 
