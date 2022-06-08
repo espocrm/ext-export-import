@@ -38,8 +38,6 @@ class Params
 
     private $fieldDefs;
 
-    private $placeholderDefs = null;
-
     private $manifest = null;
 
     private $recordData = null;
@@ -74,15 +72,6 @@ class Params
         $obj = clone $this;
 
         $obj->fieldDefs = $fieldDefs;
-
-        return $obj;
-    }
-
-    public function withPlaceholderDefs(?array $defs): self
-    {
-        $obj = clone $this;
-
-        $obj->placeholderDefs = $defs;
 
         return $obj;
     }
@@ -161,7 +150,8 @@ class Params
      */
     public function getPlaceholderDefs(): array
     {
-        return $this->placeholderDefs;
+        return $this->exportImportDefs[$this->entityType]['fields'][$this->fieldName]
+            ?? [];
     }
 
     /**
