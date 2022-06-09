@@ -41,6 +41,7 @@
         "DateTime\\CurrentMonth": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\DateTime\\CurrentMonth",
         "DateTime\\CurrentYear": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\DateTime\\CurrentYear",
         "DateTime\\ExportDifference": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\DateTime\\ExportDifference",
+        "DateTime\\ExportDifferenceField": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\DateTime\\ExportDifferenceField",
         "User\\Active": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\User\\Active",
         "User\\Password": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\User\\Password"
     },
