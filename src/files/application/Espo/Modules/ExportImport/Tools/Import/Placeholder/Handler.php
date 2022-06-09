@@ -40,8 +40,10 @@ use Exception;
 
 class Handler implements
 
+    Di\LogAware,
     Di\MetadataAware
 {
+    use Di\LogSetter;
     use Di\MetadataSetter;
 
     protected $placeholderFactory;
@@ -54,6 +56,8 @@ class Handler implements
     public function process(Params $params, array $row): array
     {
         $entityType = $params->getEntityType();
+
+        $processedRow = $row;
 
         $placeholderData =
             $params->getExportImportDefs()[$entityType]['fields'] ?? null;
@@ -87,12 +91,12 @@ class Handler implements
                     ->withUserPassword($params->getUserPassword());
 
                 try {
-                    $row[$fieldName] = $placeholderAction->normalize(
+                    $processedRow[$fieldName] = $placeholderAction->normalize(
                         $params, $params->getFieldValue()
                     );
                 }
                 catch (Exception $e) {
-                    $GLOBALS['log']->debug(
+                    $this->log->warning(
                         "ExportImport [Import][Placeholder]: " .
                         "Error getting a value for the field {$entityType}.{$fieldName}," .
                         " error: " . $e->getMessage()
@@ -102,6 +106,6 @@ class Handler implements
 
         }
 
-        return $row;
+        return $processedRow;
     }
 }
