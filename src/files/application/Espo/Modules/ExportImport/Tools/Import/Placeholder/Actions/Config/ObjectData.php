@@ -64,7 +64,7 @@ class ObjectData implements
         }
 
         if (!Utils::isCurrencyChangePermitted($params)) {
-            throw new Error('The setDefaultCurrency is disabled');
+            throw new Error('The updateCurrency is disabled');
         }
 
         $value = $this->config->get($key, $default);

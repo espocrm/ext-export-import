@@ -189,9 +189,9 @@ class Entity implements
 
             switch ($fieldType) {
                 case 'currency':
-                    $setDefaultCurrency = $params->getSetDefaultCurrency();
+                    $updateCurrency = $params->getUpdateCurrency();
 
-                    if ($setDefaultCurrency) {
+                    if ($updateCurrency) {
                         $row[$attributeName . 'Currency'] =
                             $this->config->get('defaultCurrency');
                     }

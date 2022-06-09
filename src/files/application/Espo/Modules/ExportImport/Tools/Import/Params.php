@@ -50,7 +50,7 @@ class Params implements IParams
 
     private $importType = null;
 
-    private $setDefaultCurrency= null;
+    private $updateCurrency= null;
 
     private $processHookClass;
 
@@ -117,11 +117,11 @@ class Params implements IParams
         return $obj;
     }
 
-    public function withSetDefaultCurrency(?bool $setDefaultCurrency): self
+    public function withUpdateCurrency(?bool $updateCurrency): self
     {
         $obj = clone $this;
 
-        $obj->setDefaultCurrency = $setDefaultCurrency;
+        $obj->updateCurrency = $updateCurrency;
 
         return $obj;
     }
@@ -233,9 +233,9 @@ class Params implements IParams
     /**
      * Use a default currency
      */
-    public function getSetDefaultCurrency(): string
+    public function getUpdateCurrency(): string
     {
-        return $this->setDefaultCurrency ?? false;
+        return $this->updateCurrency ?? false;
     }
 
     /**

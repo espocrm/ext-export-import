@@ -71,7 +71,7 @@ class Params
 
     private $importType= null;
 
-    private $setDefaultCurrency= null;
+    private $updateCurrency= null;
 
     private $quiet;
 
@@ -137,8 +137,8 @@ class Params
         $obj->prettyPrint = array_key_exists('prettyPrint', $params) ?
             (bool) $params['prettyPrint'] : false;
 
-        $obj->setDefaultCurrency = array_key_exists('setDefaultCurrency', $params) ?
-            (bool) $params['setDefaultCurrency'] : false;
+        $obj->updateCurrency = array_key_exists('updateCurrency', $params) ?
+            (bool) $params['updateCurrency'] : false;
 
         $obj->exportTime = $obj->normalizeExportTime(
             $params['exportTime'] ?? null
@@ -240,11 +240,11 @@ class Params
         return $obj;
     }
 
-    public function withSetDefaultCurrency(?bool $setDefaultCurrency): self
+    public function withUpdateCurrency(?bool $updateCurrency): self
     {
         $obj = clone $this;
 
-        $obj->setDefaultCurrency = $setDefaultCurrency;
+        $obj->updateCurrency = $updateCurrency;
 
         return $obj;
     }
@@ -410,9 +410,9 @@ class Params
     /**
      * Use a default currency
      */
-    public function getSetDefaultCurrency(): string
+    public function getUpdateCurrency(): string
     {
-        return $this->setDefaultCurrency;
+        return $this->updateCurrency;
     }
 
     /**
