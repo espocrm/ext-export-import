@@ -108,6 +108,17 @@ Export / import all customization made for the instance.
   - `false`
 - Default: `false`
 
+### Update createAt
+
+The current time will be defined for the createAt field.
+
+- Attribute: `updateCreatedAt`
+- CLI attribute: `update-created-at`
+- Possible values:
+  - `true`
+  - `false`
+- Default: `false`
+
 ## Export Import Defs
 
 In the metadata defs can be configured some additional features. The path is `custom/Espo/Custom/Resources/metadata/exportImportDefs`.
