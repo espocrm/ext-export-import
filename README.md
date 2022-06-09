@@ -90,8 +90,8 @@ If empty then generates random values. For resetting the password use `php comma
 
 The default currency can be defined for every currency field.
 
-- Attribute: `setDefaultCurrency`
-- CLI attribute: `set-default-currency`
+- Attribute: `updateCurrency`
+- CLI attribute: `update-currency`
 - Possible values:
     - `true`
     - `false`
