@@ -53,7 +53,7 @@
     "manifestFile": "manifest.json",
 
     "format": "json",
-    "prettyPrint": true,
+    "prettyPrint": false,
     "importType": "createAndUpdate",
     "customization": false,
     "config": false,
