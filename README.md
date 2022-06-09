@@ -25,7 +25,7 @@ php command.php export-import erase
 ### Command parameters
 
 ```
-php command.php export-import import --format=json --pretty-print=true --data-path="build/ExportImport/Import" --export-path="build/ExportImport/Export" --import-type=createAndUpdate --use-default-currency=true --entity-type-list="Account,Contact"
+php command.php export-import import --format=json --pretty-print=true --data-path="build/ExportImport/Import" --export-path="build/ExportImport/Export" --import-type=createAndUpdate --update-currency=true --entity-type-list="Account,Contact"
 ```
 
 ## Configuration
