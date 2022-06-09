@@ -36,6 +36,7 @@ use Espo\{
 use Espo\Modules\ExportImport\Tools\{
     Params,
     Export\Params as ExportParams,
+    Config\Params as ConfigParams,
     Customization\Params as CustomizationParams,
     Export\Processor\Collection,
     Export\EntityExport as EntityExportTool,
@@ -43,6 +44,7 @@ use Espo\Modules\ExportImport\Tools\{
     Processor\ProcessHook,
     Processor\Utils as ProcessorUtils,
     Customization\Processors\Export as CustomizationExport,
+    Config\Processors\Export as ConfigExport,
 };
 
 use Exception;
@@ -103,6 +105,8 @@ class Export implements
         }
 
         $this->exportCustomization($params);
+
+        $this->exportConfig($params);
 
         $this->createManifest($params);
 
@@ -215,6 +219,27 @@ class Export implements
         );
 
         $customizationExport->process($params);
+    }
+
+    private function exportConfig(Params $params): void
+    {
+        if (!$params->getConfig()) {
+
+            return;
+        }
+
+        $entityTypeList = $this->getEntityTypeList($params);
+
+        $params = ConfigParams::create()
+            ->withPath($params->getExportPath())
+            ->withEntityTypeList($entityTypeList)
+            ->withExportImportDefs($params->getExportImportDefs());
+
+        $configExport = $this->injectableFactory->create(
+            ConfigExport::class
+        );
+
+        $configExport->process($params);
     }
 
     private function getSearchParams(Params $params, string $entityType): ?SearchParams
