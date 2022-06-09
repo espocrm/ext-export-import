@@ -40,6 +40,8 @@ use Espo\Modules\ExportImport\Tools\{
     Processor\Utils as ProcessorUtils,
     Customization\Params as CustomizationParams,
     Customization\Processors\Import as CustomizationImport,
+    Config\Params as ConfigParams,
+    Config\Processors\Import as ConfigImport,
 };
 
 use Exception;
@@ -88,6 +90,8 @@ class Import implements
         $manifest = $this->injectableFactory->createWith(Manifest::class, [
             'params' => $params,
         ]);
+
+        $this->importConfig($params, $manifest);
 
         $this->importCustomization($params, $manifest);
 
@@ -222,5 +226,29 @@ class Import implements
         $customizationImport->process($params);
 
         $this->dataManager->rebuild();
+    }
+
+    private function importConfig(Params $params, Manifest $manifest): void
+    {
+        if (!$params->getConfig()) {
+
+            return;
+        }
+
+        $entityTypeList = $this->getEntityTypeList($params);
+
+        $params = ConfigParams::create()
+            ->withPath($params->getImportPath())
+            ->withManifest($manifest)
+            ->withEntityTypeList($entityTypeList)
+            ->withExportImportDefs($params->getExportImportDefs());
+
+        $customizationImport = $this->injectableFactory->create(
+            ConfigImport::class
+        );
+
+        $customizationImport->process($params);
+
+        $this->dataManager->clearCache();
     }
 }
