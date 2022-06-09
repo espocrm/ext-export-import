@@ -87,6 +87,8 @@ class Params
 
     private $updateCreatedAt;
 
+    private $config;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -116,6 +118,7 @@ class Params
         $obj->userActive = $params['userActive'] ?? false;
         $obj->userPassword = $params['userPassword'] ?? null;
         $obj->customization = $params['customization'] ?? false;
+        $obj->config = $params['config'] ?? false;
 
         if (!$obj->exportImportDefs) {
             throw new RuntimeException('Incorrect "exportImportDefs" data.');
@@ -317,6 +320,15 @@ class Params
         return $obj;
     }
 
+    public function withConfig(bool $config): self
+    {
+        $obj = clone $this;
+
+        $obj->config = $config;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -487,5 +499,13 @@ class Params
     public function getUpdateCreatedAt(): bool
     {
         return $this->updateCreatedAt;
+    }
+
+    /**
+     * Export / import config
+     */
+    public function getConfig(): bool
+    {
+        return $this->config;
     }
 }

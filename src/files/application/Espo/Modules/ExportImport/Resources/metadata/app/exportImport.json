@@ -56,6 +56,7 @@
     "prettyPrint": true,
     "importType": "createAndUpdate",
     "customization": false,
+    "config": false,
 
     "updateCurrency": false,
     "updateCreatedAt": false,
