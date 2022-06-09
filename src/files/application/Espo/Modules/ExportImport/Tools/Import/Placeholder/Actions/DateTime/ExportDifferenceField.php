@@ -35,7 +35,6 @@ use Espo\Modules\ExportImport\Tools\Import\Placeholder\{
     Factory,
     Actions\Action,
     Actions\Params,
-    Actions\DateTime\ExportDifference
 };
 
 class ExportDifferenceField implements
@@ -81,13 +80,12 @@ class ExportDifferenceField implements
             'entityDefs', $entityType, 'fields', $fieldName
         ], []);
 
-        $fieldParams = clone $params;
-        $fieldParams
+        $fieldParams = $params
             ->withFieldName($fieldName)
             ->withFieldDefs($fieldDefs);
 
         $placeholderFactory = $this->injectableFactory->create(Factory::class);
-        $exportDifferenceAction = $placeholderFactory->get(ExportDifference::class);
+        $exportDifferenceAction = $placeholderFactory->get('DateTime\\ExportDifference');
 
         return $exportDifferenceAction->normalize($fieldParams, $fieldValue);
     }
