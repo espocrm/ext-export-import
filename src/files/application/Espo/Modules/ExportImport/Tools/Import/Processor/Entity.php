@@ -26,7 +26,11 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Processor;
 
-use Espo\Core\Di;
+use Espo\{
+    Core\Di,
+    ORM\Entity as OrmEntity,
+    Core\Utils\DateTime as DateTimeUtils,
+};
 
 use Espo\Modules\ExportImport\Tools\{
     Params as ToolParams,
@@ -37,10 +41,6 @@ use Espo\Modules\ExportImport\Tools\{
     Import\Placeholder\Handler as PlaceholderHandler,
     Processor\Exceptions\Skip as SkipException,
     Processor\Utils as ToolUtils,
-};
-
-use Espo\{
-    ORM\Entity as OrmEntity,
 };
 
 use Exception;
@@ -59,6 +59,10 @@ class Entity implements
     use Di\EntityManagerSetter;
 
     protected $placeholderHandler;
+
+    protected const CREATED_AT_LIST = [
+        'createdAt'
+    ];
 
     public function __construct(PlaceholderHandler $placeholderHandler)
     {
@@ -194,6 +198,15 @@ class Entity implements
                     if ($updateCurrency) {
                         $row[$attributeName . 'Currency'] =
                             $this->config->get('defaultCurrency');
+                    }
+                    break;
+
+                case 'datetime':
+                    if (
+                        $params->getUpdateCreatedAt() &&
+                        in_array($attributeName, self::CREATED_AT_LIST)
+                    ) {
+                        $attributeValue = DateTimeUtils::getSystemNowString();
                     }
                     break;
             }

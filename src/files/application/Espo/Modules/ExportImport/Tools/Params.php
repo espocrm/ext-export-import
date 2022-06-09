@@ -85,6 +85,8 @@ class Params
 
     private $exportTime;
 
+    private $updateCreatedAt;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -139,6 +141,9 @@ class Params
 
         $obj->updateCurrency = array_key_exists('updateCurrency', $params) ?
             (bool) $params['updateCurrency'] : false;
+
+        $obj->updateCreatedAt = array_key_exists('updateCreatedAt', $params) ?
+            (bool) $params['updateCreatedAt'] : false;
 
         $obj->exportTime = $obj->normalizeExportTime(
             $params['exportTime'] ?? null
@@ -299,6 +304,15 @@ class Params
         $obj = clone $this;
 
         $obj->exportTime = $exportTime;
+
+        return $obj;
+    }
+
+    public function withUpdateCreatedAt(bool $updateCreatedAt): self
+    {
+        $obj = clone $this;
+
+        $obj->updateCreatedAt = $updateCreatedAt;
 
         return $obj;
     }
@@ -465,5 +479,13 @@ class Params
     public function getExportTime(): DateTime
     {
         return $this->exportTime;
+    }
+
+    /**
+     * Get updateCreatedAt
+     */
+    public function getUpdateCreatedAt(): bool
+    {
+        return $this->updateCreatedAt;
     }
 }

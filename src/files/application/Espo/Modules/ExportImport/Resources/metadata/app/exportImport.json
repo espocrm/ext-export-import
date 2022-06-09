@@ -58,6 +58,7 @@
     "customization": false,
 
     "updateCurrency": false,
+    "updateCreatedAt": false,
     "userActive": false,
     "userPassword": "1"
 }

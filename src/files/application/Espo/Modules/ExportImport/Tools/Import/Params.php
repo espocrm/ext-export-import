@@ -62,6 +62,8 @@ class Params implements IParams
 
     private $userPassword = null;
 
+    private $updateCreatedAt;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -171,6 +173,15 @@ class Params implements IParams
         return $obj;
     }
 
+    public function withUpdateCreatedAt(bool $updateCreatedAt): self
+    {
+        $obj = clone $this;
+
+        $obj->updateCreatedAt = $updateCreatedAt;
+
+        return $obj;
+    }
+
     /**
      * Get a target entity type.
      */
@@ -276,5 +287,13 @@ class Params implements IParams
     public function getUserPassword(): ?string
     {
         return $this->userPassword;
+    }
+
+    /**
+     * Get updateCreatedAt
+     */
+    public function getUpdateCreatedAt(): bool
+    {
+        return $this->updateCreatedAt;
     }
 }
