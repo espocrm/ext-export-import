@@ -119,6 +119,28 @@ The current time will be defined for the createAt field.
   - `false`
 - Default: `false`
 
+### Hard export entity type list
+
+This option enables export feature for an entity which is disabled in `exportImportDefs`.
+
+- Attribute: `hardExportList`
+- CLI attribute: `hard-export-list`
+- Possible values:
+    - `a string`, e.g. `"Account"`
+    - `a string which is separated by a comma`, e.g. `"Account, Contact"`
+- Default: `null`
+
+### Hard import entity type list
+
+This option enables import feature for an entity which is disabled in `exportImportDefs`.
+
+- Attribute: `hardImportList`
+- CLI attribute: `hard-import-list`
+- Possible values:
+    - `a string`, e.g. `"Account"`
+    - `a string which is separated by a comma`, e.g. `"Account, Contact"`
+- Default: `null`
+
 ## Export Import Defs
 
 In the metadata defs can be configured some additional features. The path is `custom/Espo/Custom/Resources/metadata/exportImportDefs`.
