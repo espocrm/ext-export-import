@@ -22,10 +22,18 @@ php command.php export-import import
 php command.php export-import erase
 ```
 
-### Command parameters
+### Command examples
+
+#### Export
 
 ```
-php command.php export-import import --format=json --pretty-print=true --data-path="build/ExportImport/Import" --export-path="build/ExportImport/Export" --import-type=createAndUpdate --update-currency=true --entity-type-list="Account,Contact"
+php command.php export-import export --format=json --export-path="build/ExportImport/Export" --pretty-print"
+```
+
+#### Import
+
+```
+php command.php export-import import --format=json --import-path="build/ExportImport/Import" --import-type=createAndUpdate"
 ```
 
 ## Configuration
