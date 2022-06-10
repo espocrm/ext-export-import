@@ -36,14 +36,14 @@ php command.php export-import export --format=json --export-path="build/ExportIm
 php command.php export-import import --format=json --import-path="build/ExportImport/Import" --import-type=createAndUpdate"
 ```
 
-## Configuration
+## Parameters
 
 ### Export Path
 
 Define an export path.
 
 - Attribute: `exportPath`
-- CLI attribute: `export-path`
+- CLI attribute: `--export-path="PATH"`
 - Possible values:
     - `any string`
 - Default: `build/ExportImport/Export`
@@ -53,53 +53,75 @@ Define an export path.
 Define an import path.
 
 - Attribute: `importPath`
-- CLI attribute: `import-path`
+- CLI attribute: `--import-path="PATH"`
 - Possible values:
     - `any string`
 - Default: `build/ExportImport/Import`
 
 The export / import process can be configured in `custom/Espo/Custom/Resources/metadata/app/exportImport.json` or by cli command.
 
+### Entity Type List
+
+The needed Entity type list can be defined. If empty, then gets all Entity types.
+
+- Attribute: `entityTypeList`
+- CLI attribute: `--entity-type-list-list="ENTITY_TYPE1, ENTITY_TYPE2"`
+- Possible values:
+    - `a string`, e.g. `"Account"`
+    - `a string which is separated by a comma`, e.g. `"Account, Contact"`
+- Default: `all available entities`
+
 ### Import Type
 
 The type of importing data.
 
 - Attribute: `importType`
-- CLI attribute: `import-type`
+- CLI attribute: `--import-type="TYPE"`
 - Possible values:
     - `create`
     - `createAndUpdate`
     - `update`
 - Default: `createAndUpdate`
 
-### User active status
+### Pretty Print
 
-Default user status for imported users. This applies to all user except admin user with ID `1`.
+Store data in pretty print format.
 
-- Attribute: `userActive`
-- CLI attribute: `user-active`
+- Attribute: `prettyPrint`
+- CLI attribute: `--pretty-print`
 - Possible values:
     - `true`
     - `false`
 - Default: `false`
 
-### User password
+### User Active Status
+
+Default user status for imported users. This applies to all user except admin user with ID `1`.
+
+- Attribute: `userActive`
+- CLI attribute: `--user-active`
+- Possible values:
+    - `true`
+    - `false`
+- Default: `false`
+
+### User Password
 
 User password for imported users.
 If empty then generates random values. For resetting the password use `php command.php set-password [username]`.
 
 - Attribute: `userPassword`
-- CLI attribute: `user-password`
+- CLI attribute: `--user-password`
 - Possible values:
     - `any string`
 - Default: `null`
 
-### Default currency
+### Default Currency
 
 The default currency can be defined for every currency field.
 
 - Attribute: `updateCurrency`
-- CLI attribute: `update-currency`
+- CLI attribute: `--update-currency`
 - Possible values:
     - `true`
     - `false`
@@ -110,7 +132,18 @@ The default currency can be defined for every currency field.
 Export / import all customization made for the instance.
 
 - Attribute: `customization`
-- CLI attribute: `customization`
+- CLI attribute: `--customization`
+- Possible values:
+  - `true`
+  - `false`
+- Default: `false`
+
+### Config
+
+Export / import all customization made for the instance.
+
+- Attribute: `config`
+- CLI attribute: `--config`
 - Possible values:
   - `true`
   - `false`
@@ -121,29 +154,29 @@ Export / import all customization made for the instance.
 The current time will be defined for the createAt field.
 
 - Attribute: `updateCreatedAt`
-- CLI attribute: `update-created-at`
+- CLI attribute: `--update-created-at`
 - Possible values:
   - `true`
   - `false`
 - Default: `false`
 
-### Hard export entity type list
+### Hard Export Entities
 
 This option enables export feature for an entity which is disabled in `exportImportDefs`.
 
 - Attribute: `hardExportList`
-- CLI attribute: `hard-export-list`
+- CLI attribute: `--hard-export-list="ENTITY_TYPE"`
 - Possible values:
     - `a string`, e.g. `"Account"`
     - `a string which is separated by a comma`, e.g. `"Account, Contact"`
 - Default: `null`
 
-### Hard import entity type list
+### Hard Import Entities
 
 This option enables import feature for an entity which is disabled in `exportImportDefs`.
 
 - Attribute: `hardImportList`
-- CLI attribute: `hard-import-list`
+- CLI attribute: `hard-import-list="ENTITY_TYPE"`
 - Possible values:
     - `a string`, e.g. `"Account"`
     - `a string which is separated by a comma`, e.g. `"Account, Contact"`
