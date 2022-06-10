@@ -118,11 +118,7 @@ class Params
         $obj->manifestFile = $params['manifestFile'] ?? null;
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
-        $obj->quiet = $params['q'] ?? false;
-        $obj->userActive = $params['userActive'] ?? false;
         $obj->userPassword = $params['userPassword'] ?? null;
-        $obj->customization = $params['customization'] ?? false;
-        $obj->config = $params['config'] ?? false;
 
         if (!in_array(
             $obj->importType,
@@ -139,14 +135,33 @@ class Params
             $params['entityTypeList'] ?? null
         );
 
-        $obj->prettyPrint = array_key_exists('prettyPrint', $params) ?
-            (bool) $params['prettyPrint'] : false;
+        $obj->quiet = ToolUtils::normalizeBoolFromArray(
+            $params, 'q'
+        );
 
-        $obj->updateCurrency = array_key_exists('updateCurrency', $params) ?
-            (bool) $params['updateCurrency'] : false;
+        $obj->customization = ToolUtils::normalizeBoolFromArray(
+            $params, 'customization'
+        );
 
-        $obj->updateCreatedAt = array_key_exists('updateCreatedAt', $params) ?
-            (bool) $params['updateCreatedAt'] : false;
+        $obj->config = ToolUtils::normalizeBoolFromArray(
+            $params, 'config'
+        );
+
+        $obj->prettyPrint = ToolUtils::normalizeBoolFromArray(
+            $params, 'prettyPrint'
+        );
+
+        $obj->updateCurrency = ToolUtils::normalizeBoolFromArray(
+            $params, 'updateCurrency'
+        );
+
+        $obj->updateCreatedAt = ToolUtils::normalizeBoolFromArray(
+            $params, 'updateCreatedAt'
+        );
+
+        $obj->userActive = ToolUtils::normalizeBoolFromArray(
+            $params, 'userActive'
+        );
 
         $obj->exportTime = $obj->normalizeExportTime(
             $params['exportTime'] ?? null

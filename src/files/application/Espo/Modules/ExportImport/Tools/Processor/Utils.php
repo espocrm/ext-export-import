@@ -151,4 +151,17 @@ class Utils
 
         return $value;
     }
+
+    public static function normalizeBoolFromArray(
+        array $data,
+        string $optionName,
+        bool $default = false
+    ): bool
+    {
+        if (!array_key_exists($optionName, $data)) {
+            return $default;
+        }
+
+        return filter_var($data[$optionName], FILTER_VALIDATE_BOOLEAN);
+    }
 }
