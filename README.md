@@ -140,7 +140,7 @@ Export / import all customization made for the instance.
 
 ### Config
 
-Export / import all customization made for the instance.
+Enable export / import configuration data.
 
 - Attribute: `config`
 - CLI attribute: `--config`
