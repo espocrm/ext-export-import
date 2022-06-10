@@ -65,6 +65,8 @@ class Params implements IParams
 
     private $filesPath;
 
+    private $prettyPrint = false;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -179,6 +181,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->filesPath = $filesPath;
+
+        return $obj;
+    }
+
+    public function withPrettyPrint(?bool $prettyPrint): self
+    {
+        $obj = clone $this;
+
+        $obj->prettyPrint = $prettyPrint;
 
         return $obj;
     }
@@ -316,5 +327,13 @@ class Params implements IParams
     public function getFilesPath(): string
     {
         return $this->filesPath;
+    }
+
+    /**
+     * Get a prettyPrint option
+     */
+    public function getPrettyPrint(): string
+    {
+        return $this->prettyPrint;
     }
 }

@@ -86,7 +86,7 @@ class Json implements Processor
             return new Stream($fp);
         }
 
-        $prettyPrint = $this->metadata->get(['app', 'exportImport', 'prettyPrint']) ?? false;
+        $prettyPrint = $params->getPrettyPrint();
 
         fwrite($fp, "[\n");
 

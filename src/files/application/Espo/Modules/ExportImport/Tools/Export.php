@@ -153,7 +153,8 @@ class Export implements
             ->withCollectionClass($collectionClass)
             ->withFileExtension($fileExtension)
             ->withProcessHookClass($processHookClass)
-            ->withSearchParams($searchParams);
+            ->withSearchParams($searchParams)
+            ->withPrettyPrint($params->getPrettyPrint());
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);
