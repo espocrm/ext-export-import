@@ -128,7 +128,7 @@ class Utils
     }
 
     public static function normalizeList(
-        ?string $value,
+        $value,
         $default = null,
         string $delimiter = ','
     ): ?array
