@@ -31,6 +31,10 @@ use Espo\Core\{
     Utils\Util,
 };
 
+use Espo\Modules\ExportImport\Tools\{
+    Processor\Utils as ToolUtils,
+};
+
 use DateTime;
 use DateTimeZone;
 use RuntimeException;
@@ -113,16 +117,12 @@ class Params
         $obj->importPath = $params['importPath'] ?? null;
         $obj->manifestFile = $params['manifestFile'] ?? null;
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
-        $obj->exportImportDefs = $params['exportImportDefs'] ?? null;
+        $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
         $obj->quiet = $params['q'] ?? false;
         $obj->userActive = $params['userActive'] ?? false;
         $obj->userPassword = $params['userPassword'] ?? null;
         $obj->customization = $params['customization'] ?? false;
         $obj->config = $params['config'] ?? false;
-
-        if (!$obj->exportImportDefs) {
-            throw new RuntimeException('Incorrect "exportImportDefs" data.');
-        }
 
         if (!in_array(
             $obj->importType,
@@ -135,7 +135,7 @@ class Params
             throw new RuntimeException('Incorrect "importType" option.');
         }
 
-        $obj->entityTypeList = $obj->normalizeEntityTypeList(
+        $obj->entityTypeList = ToolUtils::normalizeList(
             $params['entityTypeList'] ?? null
         );
 
@@ -155,32 +155,36 @@ class Params
         return $obj;
     }
 
-    private function normalizeEntityTypeList($value): ?array
-    {
-        if (!$value) {
-            return $value;
-        }
-
-        if (is_string($value)) {
-            $value = explode(",", $value);
-
-            foreach ($value as &$item) {
-                $item = trim($item);
-            }
-        }
-
-        if (!is_array($value)) {
-            return null;
-        }
-
-        return $value;
-    }
-
     private function normalizeExportTime($value): DateTime
     {
         $value = $value ?? 'now';
 
         return new DateTime($value, new DateTimeZone('UTC'));
+    }
+
+    private function normalizeExportImportDefs(array $params): array
+    {
+        $exportImportDefs = $params['exportImportDefs'] ?? null;
+
+        if (!$exportImportDefs) {
+            throw new RuntimeException('Incorrect "exportImportDefs" data.');
+        }
+
+        $hardExportList = isset($params['hardExportList']) ?
+            ToolUtils::normalizeList($params['hardExportList'], []) : [];
+
+        $hardImportList = isset($params['hardImportList']) ?
+            ToolUtils::normalizeList($params['hardImportList'], []) : [];
+
+        foreach ($hardExportList as $entityType) {
+            $exportImportDefs[$entityType]['exportDisabled'] = false;
+        }
+
+        foreach ($hardImportList as $entityType) {
+            $exportImportDefs[$entityType]['importDisabled'] = false;
+        }
+
+        return $exportImportDefs;
     }
 
     public function withExportImportDefs(array $exportImportDefs): self
@@ -196,7 +200,7 @@ class Params
     {
         $obj = clone $this;
 
-        $obj->entityTypeList = $obj->normalizeEntityTypeList(
+        $obj->entityTypeList = ToolUtils::normalizeList(
             $entityTypeList
         );
 

@@ -126,4 +126,29 @@ class Utils
     {
         return (bool) $metadata->get(['scopes', $scope, 'entity']);
     }
+
+    public static function normalizeList(
+        ?string $value,
+        $default = null,
+        string $delimiter = ','
+    ): ?array
+    {
+        if (!$value) {
+            return $default;
+        }
+
+        if (is_string($value)) {
+            $value = explode($delimiter, $value);
+
+            foreach ($value as &$item) {
+                $item = trim($item);
+            }
+        }
+
+        if (!is_array($value)) {
+            return $default;
+        }
+
+        return $value;
+    }
 }
