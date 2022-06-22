@@ -7,19 +7,19 @@ Export and import data in EspoCRM
 ### Export data
 
 ```bash
-php command.php export-import export
+bin/command export-import export
 ```
 
 ### Import data
 
 ```bash
-php command.php export-import import
+bin/command export-import import
 ```
 
-### Erase imported data
+### Erase imported data (not yet implemented)
 
 ```bash
-php command.php export-import erase
+bin/command export-import erase
 ```
 
 ### Command examples
@@ -27,13 +27,13 @@ php command.php export-import erase
 #### Export
 
 ```
-php command.php export-import export --format=json --export-path="build/ExportImport/Export" --pretty-print"
+bin/command export-import export --format=json --export-path="build/ExportImport/Export" --pretty-print"
 ```
 
 #### Import
 
 ```
-php command.php export-import import --format=json --import-path="build/ExportImport/Import" --import-type=createAndUpdate"
+bin/command export-import import --format=json --import-path="build/ExportImport/Import" --import-type=createAndUpdate" --user-password="pass"
 ```
 
 ## Parameters
@@ -108,7 +108,7 @@ Default user status for imported users. This applies to all user except admin us
 ### User Password
 
 User password for imported users.
-If empty then generates random values. For resetting the password use `php command.php set-password [username]`.
+If empty then generates random values. For resetting the password use `bin/command set-password [username]`.
 
 - Attribute: `userPassword`
 - CLI attribute: `--user-password`
