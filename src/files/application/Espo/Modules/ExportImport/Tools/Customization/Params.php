@@ -40,8 +40,10 @@ class Params
     public const PATH_CUSTOM = 'custom/Espo/Custom';
 
     public const COMMON_FILE_LIST = [
-        'custom/Espo/Custom/Resources/i18n/*/Global.json',
+        'custom/Espo/Custom/Resources/i18n/*/*.json',
         'custom/Espo/Custom/Resources/metadata/app/*.json',
+        'custom/Espo/Custom/Resources/metadata/*/*.json',
+        'custom/Espo/Custom/Resources/routes.json',
     ];
 
     private $path;
