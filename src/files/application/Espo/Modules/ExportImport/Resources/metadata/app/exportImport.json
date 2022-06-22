@@ -60,6 +60,5 @@
 
     "updateCurrency": false,
     "updateCreatedAt": false,
-    "userActive": false,
-    "userPassword": "1"
+    "userActive": false
 }
