@@ -62,5 +62,6 @@ class Import implements
         );
 
         $this->configWriter->setMultiple($configData);
+        $this->configWriter->save();
     }
 }

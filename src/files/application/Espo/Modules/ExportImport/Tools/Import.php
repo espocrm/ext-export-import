@@ -243,11 +243,11 @@ class Import implements
             ->withEntityTypeList($entityTypeList)
             ->withExportImportDefs($params->getExportImportDefs());
 
-        $customizationImport = $this->injectableFactory->create(
+        $configImport = $this->injectableFactory->create(
             ConfigImport::class
         );
 
-        $customizationImport->process($params);
+        $configImport->process($params);
 
         $this->dataManager->clearCache();
     }
