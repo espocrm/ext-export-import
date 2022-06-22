@@ -112,7 +112,7 @@ class Params
         return $obj;
     }
 
-    public function withUserPassword(string $userPassword): self
+    public function withUserPassword(?string $userPassword): self
     {
         $obj = clone $this;
 
