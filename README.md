@@ -111,7 +111,7 @@ User password for imported users.
 If empty then generates random values. For resetting the password use `bin/command set-password [username]`.
 
 - Attribute: `userPassword`
-- CLI attribute: `--user-password`
+- CLI attribute: `--user-password="PASSWORD"`
 - Possible values:
     - `any string`
 - Default: `null`
