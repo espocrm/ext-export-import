@@ -27,13 +27,13 @@ bin/command export-import erase
 #### Export
 
 ```
-bin/command export-import export --format=json --export-path="build/ExportImport/Export" --pretty-print"
+bin/command export-import export --format=json --export-path="build/ExportImport/Export" --pretty-print
 ```
 
 #### Import
 
 ```
-bin/command export-import import --format=json --import-path="build/ExportImport/Import" --import-type=createAndUpdate" --user-password="pass"
+bin/command export-import import --format=json --import-path="build/ExportImport/Import" --import-type=createAndUpdate --user-password="pass"
 ```
 
 ## Parameters
