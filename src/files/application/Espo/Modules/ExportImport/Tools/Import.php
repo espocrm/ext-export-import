@@ -241,7 +241,8 @@ class Import implements
             ->withPath($params->getImportPath())
             ->withManifest($manifest)
             ->withEntityTypeList($entityTypeList)
-            ->withExportImportDefs($params->getExportImportDefs());
+            ->withExportImportDefs($params->getExportImportDefs())
+            ->withConfigIgnoreList($params->getConfigIgnoreList());
 
         $configImport = $this->injectableFactory->create(
             ConfigImport::class

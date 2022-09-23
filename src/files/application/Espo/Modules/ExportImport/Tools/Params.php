@@ -93,6 +93,8 @@ class Params
 
     private $config;
 
+    private $configIgnoreList;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -119,6 +121,7 @@ class Params
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
         $obj->userPassword = $params['userPassword'] ?? null;
+        $obj->configIgnoreList = $params['configIgnoreList'] ?? null;
 
         if (!in_array(
             $obj->importType,
@@ -348,6 +351,15 @@ class Params
         return $obj;
     }
 
+    public function withConfigIgnoreList(array $configIgnoreList): self
+    {
+        $obj = clone $this;
+
+        $obj->configIgnoreList = $configIgnoreList;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -526,5 +538,13 @@ class Params
     public function getConfig(): bool
     {
         return $this->config;
+    }
+
+    /**
+     * List of ignore config params
+     */
+    public function getConfigIgnoreList(): array
+    {
+        return $this->configIgnoreList ?? [];
     }
 }

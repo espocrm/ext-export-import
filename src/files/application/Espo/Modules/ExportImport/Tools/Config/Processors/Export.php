@@ -51,6 +51,7 @@ class Export implements
         $ignoreList = $config->get('systemItems');
         $ignoreList = array_merge($ignoreList, $config->get('adminItems'));
         $ignoreList = array_merge($ignoreList, $config->get('superAdminItems'));
+        $ignoreList = array_merge($ignoreList, $params->getConfigIgnoreList());
 
         $configData = $config->getAllNonInternalData();
         $configData = get_object_vars($configData);

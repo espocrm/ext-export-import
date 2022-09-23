@@ -234,7 +234,8 @@ class Export implements
         $params = ConfigParams::create()
             ->withPath($params->getExportPath())
             ->withEntityTypeList($entityTypeList)
-            ->withExportImportDefs($params->getExportImportDefs());
+            ->withExportImportDefs($params->getExportImportDefs())
+            ->withConfigIgnoreList($params->getConfigIgnoreList());
 
         $configExport = $this->injectableFactory->create(
             ConfigExport::class

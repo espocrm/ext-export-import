@@ -46,6 +46,10 @@
         "User\\Password": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\User\\Password"
     },
 
+    "configIgnoreList": [
+        "version"
+    ],
+
     "defsSource": "exportImportDefs",
 
     "exportPath": "build/ExportImport/Export",

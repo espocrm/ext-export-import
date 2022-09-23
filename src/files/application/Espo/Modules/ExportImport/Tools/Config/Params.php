@@ -47,6 +47,8 @@ class Params
 
     private $entityTypeList;
 
+    private $configIgnoreList;
+
     public static function create(): self
     {
         return new self();
@@ -84,6 +86,15 @@ class Params
         $obj = clone $this;
 
         $obj->entityTypeList = $entityTypeList;
+
+        return $obj;
+    }
+
+    public function withConfigIgnoreList(array $configIgnoreList): self
+    {
+        $obj = clone $this;
+
+        $obj->configIgnoreList = $configIgnoreList;
 
         return $obj;
     }
@@ -140,5 +151,13 @@ class Params
     public function getEntityTypeList(): array
     {
         return $this->entityTypeList;
+    }
+
+    /**
+     * List of ignore config params
+     */
+    public function getConfigIgnoreList(): array
+    {
+        return $this->configIgnoreList ?? [];
     }
 }
