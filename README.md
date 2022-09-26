@@ -65,10 +65,11 @@ The export / import process can be configured in `custom/Espo/Custom/Resources/m
 The needed Entity type list can be defined. If empty, then gets all Entity types.
 
 - Attribute: `entityTypeList`
-- CLI attribute: `--entity-type-list-list="ENTITY_TYPE1, ENTITY_TYPE2"`
+- CLI attribute: `--entity-type-list="ENTITY_TYPE1, ENTITY_TYPE2"`
 - Possible values:
     - `a string`, e.g. `"Account"`
     - `a string which is separated by a comma`, e.g. `"Account, Contact"`
+    - `merge with a default list`, e.g. `"__APPEND__, Account"`
 - Default: `all available entities`
 
 ### Import Type
@@ -180,7 +181,6 @@ This option enables import feature for an entity which is disabled in `exportImp
 - Possible values:
     - `a string`, e.g. `"Account"`
     - `a string which is separated by a comma`, e.g. `"Account, Contact"`
-    - `merge with a default list`, e.g. `"__APPEND__, Account"`
 - Default: `null`
 
 ### Config: ignore list
