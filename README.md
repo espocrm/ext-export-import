@@ -176,11 +176,22 @@ This option enables export feature for an entity which is disabled in `exportImp
 This option enables import feature for an entity which is disabled in `exportImportDefs`.
 
 - Attribute: `hardImportList`
-- CLI attribute: `hard-import-list="ENTITY_TYPE"`
+- CLI attribute: `--hard-import-list="ENTITY_TYPE"`
 - Possible values:
     - `a string`, e.g. `"Account"`
     - `a string which is separated by a comma`, e.g. `"Account, Contact"`
 - Default: `null`
+
+### Config: ignore list
+
+Additional ignore list for the config.
+
+- Attribute: `configIgnoreList`
+- CLI attribute: `--config-ignore-list="option"`
+- Possible values:
+    - `a string`, e.g. `"version"`
+    - `a string which is separated by a comma`, e.g. `"version, useCache"`
+- Default: see at `application/Espo/Modules/ExportImport/Resources/metadata/app/exportImport.json`
 
 ## Export Import Defs
 
