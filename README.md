@@ -180,6 +180,7 @@ This option enables import feature for an entity which is disabled in `exportImp
 - Possible values:
     - `a string`, e.g. `"Account"`
     - `a string which is separated by a comma`, e.g. `"Account, Contact"`
+    - `merge with a default list`, e.g. `"__APPEND__, Account"`
 - Default: `null`
 
 ### Config: ignore list
@@ -191,6 +192,7 @@ Additional ignore list for the config.
 - Possible values:
     - `a string`, e.g. `"version"`
     - `a string which is separated by a comma`, e.g. `"version, useCache"`
+    - `merge with a default list`, e.g. `"__APPEND__, useCache"`
 - Default: see at `application/Espo/Modules/ExportImport/Resources/metadata/app/exportImport.json`
 
 ## Export Import Defs
