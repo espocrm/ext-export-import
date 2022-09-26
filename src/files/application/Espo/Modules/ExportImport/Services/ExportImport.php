@@ -89,7 +89,11 @@ class ExportImport implements
 
     protected function createParams(?array $extraParams = null, ?IO $io = null): Params
     {
-        $params = $this->metadata->get(['app', 'exportImport']);
+        $default = $this->metadata->get(['app', 'exportImport']);
+
+        $params = array_merge($default, [
+            'default' => $default
+        ]);
 
         if ($extraParams) {
             $params = array_merge($params, $extraParams);

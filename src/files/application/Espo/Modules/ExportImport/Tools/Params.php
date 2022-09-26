@@ -41,6 +41,8 @@ use RuntimeException;
 
 class Params
 {
+    public const APPEND = '__APPEND__';
+
     public const PATH_ENTITIES = 'Entities';
 
     public const PATH_FILES = 'Files';
@@ -134,11 +136,13 @@ class Params
         }
 
         $obj->entityTypeList = ToolUtils::normalizeList(
-            $params['entityTypeList'] ?? null
+            $params['entityTypeList'] ?? null,
+            $params['default']['entityTypeList'] ?? null,
         );
 
         $obj->configIgnoreList = ToolUtils::normalizeList(
-            $params['configIgnoreList'] ?? null
+            $params['configIgnoreList'] ?? null,
+            $params['default']['configIgnoreList'] ?? null,
         );
 
         $obj->quiet = ToolUtils::normalizeBoolFromArray(

@@ -149,6 +149,11 @@ class Utils
             return $default;
         }
 
+        if (array_search(ToolParams::APPEND, $value, true) !== false) {
+            $value = Util::unsetInArrayByValue(ToolParams::APPEND, $value);
+            $value = array_merge($default ?? [], $value);
+        }
+
         return $value;
     }
 
