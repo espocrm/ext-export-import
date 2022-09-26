@@ -48,7 +48,7 @@
 
     "configIgnoreList": [
         "version",
-        "useCache,",
+        "useCache",
         "isDeveloperMode",
         "microtime",
         "appTimestamp",
