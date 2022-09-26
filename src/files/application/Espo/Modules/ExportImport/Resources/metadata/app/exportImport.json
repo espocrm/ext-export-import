@@ -47,7 +47,13 @@
     },
 
     "configIgnoreList": [
-        "version"
+        "version",
+        "useCache,",
+        "isDeveloperMode",
+        "microtime",
+        "appTimestamp",
+        "cacheTimestamp",
+        "systemUserAttributes"
     ],
 
     "defsSource": "exportImportDefs",

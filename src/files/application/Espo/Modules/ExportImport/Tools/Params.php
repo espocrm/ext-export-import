@@ -121,7 +121,6 @@ class Params
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
         $obj->userPassword = $params['userPassword'] ?? null;
-        $obj->configIgnoreList = $params['configIgnoreList'] ?? null;
 
         if (!in_array(
             $obj->importType,
@@ -136,6 +135,10 @@ class Params
 
         $obj->entityTypeList = ToolUtils::normalizeList(
             $params['entityTypeList'] ?? null
+        );
+
+        $obj->configIgnoreList = ToolUtils::normalizeList(
+            $params['configIgnoreList'] ?? null
         );
 
         $obj->quiet = ToolUtils::normalizeBoolFromArray(
