@@ -87,7 +87,7 @@ class Entity implements
             if ($id) {
                 $entity = $this->entityManager->getEntity($entityType, $id);
 
-                if (!isset($entity)) {
+                if (!$entity) {
                     $query = $this->entityManager
                         ->getQueryBuilder()
                         ->delete()

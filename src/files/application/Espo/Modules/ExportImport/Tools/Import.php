@@ -42,6 +42,7 @@ use Espo\Modules\ExportImport\Tools\{
     Customization\Processors\Import as CustomizationImport,
     Config\Params as ConfigParams,
     Config\Processors\Import as ConfigImport,
+    Processor\Utils as ToolUtils,
 };
 
 use Exception;
@@ -124,6 +125,8 @@ class Import implements
             $list = $this->loadEntityTypeList($params);
         }
 
+        $list = $this->sortEntityTypeList($list);
+
         $defs = $params->getExportImportDefs();
 
         foreach ($list as $key => $entityType) {
@@ -161,6 +164,26 @@ class Import implements
         }
 
         return $entityTypeList;
+    }
+
+    private function sortEntityTypeList(array $entityTypeList): array
+    {
+        sort($entityTypeList);
+
+        $scopeEntityList = [];
+        $otherEntityList = [];
+
+        foreach ($entityTypeList as $entityType) {
+            if (ToolUtils::isScopeEntity($this->metadata, $entityType)) {
+                $scopeEntityList[] = $entityType;
+
+                continue;
+            }
+
+            $otherEntityList[] = $entityType;
+        }
+
+        return array_merge($scopeEntityList, $otherEntityList);
     }
 
     private function importEntity(string $entityType, Params $params, Manifest $manifest): ?string
