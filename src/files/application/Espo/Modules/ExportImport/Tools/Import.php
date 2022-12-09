@@ -125,7 +125,7 @@ class Import implements
             $list = $this->loadEntityTypeList($params);
         }
 
-        $list = $this->sortEntityTypeList($list);
+        $list = ToolUtils::sortEntityTypeListByType($this->metadata, $list);
 
         $defs = $params->getExportImportDefs();
 
@@ -164,26 +164,6 @@ class Import implements
         }
 
         return $entityTypeList;
-    }
-
-    private function sortEntityTypeList(array $entityTypeList): array
-    {
-        sort($entityTypeList);
-
-        $scopeEntityList = [];
-        $otherEntityList = [];
-
-        foreach ($entityTypeList as $entityType) {
-            if (ToolUtils::isScopeEntity($this->metadata, $entityType)) {
-                $scopeEntityList[] = $entityType;
-
-                continue;
-            }
-
-            $otherEntityList[] = $entityType;
-        }
-
-        return array_merge($scopeEntityList, $otherEntityList);
     }
 
     private function importEntity(string $entityType, Params $params, Manifest $manifest): ?string

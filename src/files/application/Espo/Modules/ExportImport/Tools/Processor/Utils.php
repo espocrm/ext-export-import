@@ -169,4 +169,55 @@ class Utils
 
         return filter_var($data[$optionName], FILTER_VALIDATE_BOOLEAN);
     }
+
+    /**
+     * Get a list of sorted EntityType
+     */
+    public static function sortEntityTypeListByType(
+        Metadata $metadata,
+        array $entityTypeList
+    ): array
+    {
+        sort($entityTypeList);
+
+        $priorityList = [];
+
+        foreach ($entityTypeList as $entityType) {
+            $scopeMetadata = $metadata->get(['scopes', $entityType]);
+
+            $isEntity = $scopeMetadata['entity'] ?? false;
+            $isObject = $scopeMetadata['object'] ?? false;
+            $isTab = $scopeMetadata['tab'] ?? false;
+
+            if ($isEntity && $isObject && $isTab) {
+                $priorityList['p3'][] = $entityType;
+
+                continue;
+            }
+
+            if ($isEntity && $isObject) {
+                $priorityList['p2'][] = $entityType;
+
+                continue;
+            }
+
+            if ($isEntity) {
+                $priorityList['p1'][] = $entityType;
+
+                continue;
+            }
+
+            $priorityList['p0'][] = $entityType;
+        }
+
+        ksort($priorityList);
+
+        $list = [];
+
+        foreach ($priorityList as $rowList) {
+            $list = array_merge($list, $rowList);
+        }
+
+        return $list;
+    }
 }
