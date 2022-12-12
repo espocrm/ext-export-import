@@ -55,7 +55,11 @@ class Json implements Processor
     protected $preferences;
     protected $metadata;
 
-    public function __construct(Config $config, Preferences $preferences, Metadata $metadata)
+    public function __construct(
+        Config $config,
+        Preferences $preferences,
+        Metadata $metadata
+    )
     {
         $this->config = $config;
         $this->preferences = $preferences;
@@ -65,7 +69,9 @@ class Json implements Processor
     public function loadAdditionalFields(Entity $entity, $fieldList)
     {
         foreach ($fieldList as $field) {
-            $fieldType = $this->metadata->get(['entityDefs', $entity->getEntityType(), 'fields', $field, 'type']);
+            $fieldType = $this->metadata->get([
+                'entityDefs', $entity->getEntityType(), 'fields', $field, 'type'
+            ]);
 
             switch ($fieldType) {
                 case 'linkMultiple':
