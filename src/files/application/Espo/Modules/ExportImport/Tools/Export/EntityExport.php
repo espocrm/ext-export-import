@@ -338,12 +338,24 @@ class EntityExport
             return false;
         }
 
-        $attributeType = $entity->getAttributeParam($attribute, 'type');
+        $type = $entity->getAttributeParam($attribute, 'type');
 
-        switch ($attributeType) {
+        switch ($type) {
             case 'foreign':
                 return false;
                 break;
+        }
+
+        if ($entity->getAttributeParam($attribute, 'notStorable')) {
+            $fieldType = $entity->getAttributeParam($attribute, 'fieldType') ?? $type;
+
+            switch ($fieldType) {
+                case 'jsonArray':
+                case 'jsonObject':
+                case 'linkParent':
+                    return false;
+                    break;
+            }
         }
 
         return true;
