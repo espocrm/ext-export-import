@@ -250,7 +250,11 @@ class EntityExport
 
                 $value = $entity->get($attribute);
 
-                return Json::encode($value, \JSON_UNESCAPED_UNICODE);
+                if (!empty($value)) {
+                    return Json::encode($value, \JSON_UNESCAPED_UNICODE);
+                }
+
+                return null;
 
             case Entity::JSON_ARRAY:
                 if ($entity->getAttributeParam($attribute, 'isLinkMultipleIdList')) {
