@@ -389,7 +389,7 @@ class EntityExport
         $collectionClass = $params->getCollectionClass();
 
         if ($collectionClass) {
-            return $collectionClass->getCollection($query);
+            return $collectionClass->getCollection($params, $query);
         }
 
         return $this->entityManager

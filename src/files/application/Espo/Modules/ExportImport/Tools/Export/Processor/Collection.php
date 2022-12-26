@@ -31,7 +31,11 @@ use Espo\{
     ORM\EntityCollection
 };
 
+use Espo\Modules\ExportImport\{
+    Tools\Export\Params
+};
+
 interface Collection
 {
-    public function getCollection(Select $query): EntityCollection;
+    public function getCollection(Params $params, Select $query): EntityCollection;
 }

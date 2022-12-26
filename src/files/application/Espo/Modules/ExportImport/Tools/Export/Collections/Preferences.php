@@ -35,8 +35,9 @@ use Espo\{
     ORM\EntityCollection,
 };
 
-use Espo\Modules\ExportImport\Tools\Export\Processor\{
-    Collection
+use Espo\Modules\ExportImport\{
+    Tools\Export\Params,
+    Tools\Export\Processor\Collection
 };
 
 class Preferences implements
@@ -46,7 +47,7 @@ class Preferences implements
 {
     use Di\EntityManagerSetter;
 
-    public function getCollection(Select $query): EntityCollection
+    public function getCollection(Params $params, Select $query): EntityCollection
     {
         $collection = $this->entityManager
             ->getRDBRepository('User')
