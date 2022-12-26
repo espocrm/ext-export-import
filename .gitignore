@@ -7,3 +7,4 @@
 /extensions/
 /.vscode/
 /src/files/application/Espo/Modules/**/vendor/
+/test.php
