@@ -4,7 +4,7 @@
  * This file is part of Export Import extension for EspoCRM.
  *
  * Export Import extension for EspoCRM.
- * Copyright (C) 2014-2022 Yurii Kuznietsov, Taras Machyshyn, Oleksii Avramenko
+ * Copyright (C) 2014-2023 Yurii Kuznietsov, Taras Machyshyn, Oleksii Avramenko
  * Website: https://www.espocrm.com
  *
  * Export Import extension is free software: you can redistribute it and/or modify
