@@ -1,7 +1,7 @@
 {
   "name": "ext-export-import",
   "version": "1.0.4",
-  "description": "Data export and import tool for EspoCRM",
+  "description": "Data export and import tool",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
