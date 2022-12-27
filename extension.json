@@ -1,7 +1,7 @@
 {
     "module": "ExportImport",
     "name": "ExportImport",
-    "description": "Tool for export / import data of EspoCRM",
+    "description": "Data export and import tool for EspoCRM",
     "author": "EspoCRM",
     "acceptableVersions": [
         ">=7.2.0"

@@ -1,6 +1,6 @@
-# Export and Import Data
+# Data export and import tool for EspoCRM
 
-Export and import data in EspoCRM
+A tool for exporting & importing data in EspoCRM
 
 ## Usage
 
