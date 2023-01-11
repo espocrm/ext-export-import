@@ -29,6 +29,7 @@ namespace Espo\Modules\ExportImport\Tools\Processor;
 use Espo\{
     Core\Utils\Util,
     Core\Utils\Metadata,
+    Entities\User,
 };
 
 use Espo\Modules\ExportImport\Tools\{
@@ -190,13 +191,13 @@ class Utils
             $isTab = $scopeMetadata['tab'] ?? false;
 
             if ($isEntity && $isObject && $isTab) {
-                $priorityList['p3'][] = $entityType;
+                $priorityList['p2'][] = $entityType;
 
                 continue;
             }
 
             if ($isEntity && $isObject) {
-                $priorityList['p2'][] = $entityType;
+                $priorityList['p3'][] = $entityType;
 
                 continue;
             }
@@ -208,6 +209,13 @@ class Utils
             }
 
             $priorityList['p0'][] = $entityType;
+        }
+
+        $p2 = $priorityList['p2'] ?? [];
+
+        if (in_array(User::ENTITY_TYPE, $p2)) {
+            array_unshift($p2, User::ENTITY_TYPE);
+            $priorityList['p2'] = array_unique($p2);
         }
 
         ksort($priorityList);
