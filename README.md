@@ -376,6 +376,43 @@ To get the initial value from a couple fields. The value will be obtained from t
 }
 ```
 
+## Run by the code
+
+### Import
+
+The ExportImport service can be used at any class. For example, create a `custom/Espo/Custom/Services/Test.php` service:
+
+```php
+namespace Espo\Custom\Services;
+
+use Espo\Core\Di;
+
+class Test implements Di\ServiceFactoryAware
+{
+    use Di\ServiceFactorySetter;
+
+    public function runImport()
+    {
+        $eiService = $this->serviceFactory->create('ExportImport');
+
+        $eiService->runImport([
+            'importPath' => 'custom/Espo/Custom/MyData',
+            'customization' => true,
+            'config' => true,
+            'userPassword' => 'password',
+            'userActive' => true,
+            'updateCurrency' => true,
+            'updateCreatedAt' => true,
+            'hardImportList' => [
+                'ScheduledJob'
+            ],
+        ]);
+    }
+}
+```
+
+For more information, follow the [documentation](https://docs.espocrm.com/development/services/#creating-new-service-class).
+
 ## Development
 
 Mode information about configuring the extension for development purposes, read the https://github.com/espocrm/ext-template#readme.
