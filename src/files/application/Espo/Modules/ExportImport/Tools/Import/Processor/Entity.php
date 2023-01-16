@@ -196,8 +196,10 @@ class Entity implements
                     $updateCurrency = $params->getUpdateCurrency();
 
                     if ($updateCurrency) {
-                        $row[$attributeName . 'Currency'] =
-                            $this->config->get('defaultCurrency');
+                        $currency = $params->getCurrency()
+                            ?? $this->config->get('defaultCurrency');
+
+                        $row[$attributeName . 'Currency'] = $currency;
                     }
                     break;
 

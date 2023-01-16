@@ -79,6 +79,8 @@ class Params
 
     private $updateCurrency= null;
 
+    private $currency= null;
+
     private $quiet;
 
     private $userActive = false;
@@ -123,6 +125,7 @@ class Params
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
         $obj->userPassword = $params['userPassword'] ?? null;
+        $obj->currency = $params['currency'] ?? null;
 
         if (!in_array(
             $obj->importType,
@@ -282,6 +285,15 @@ class Params
         $obj = clone $this;
 
         $obj->updateCurrency = $updateCurrency;
+
+        return $obj;
+    }
+
+    public function withCurrency(?string $currency): self
+    {
+        $obj = clone $this;
+
+        $obj->currency = $currency;
 
         return $obj;
     }
@@ -472,11 +484,19 @@ class Params
     }
 
     /**
-     * Use a default currency
+     * Is update a currency
      */
-    public function getUpdateCurrency(): string
+    public function getUpdateCurrency(): bool
     {
-        return $this->updateCurrency;
+        return $this->updateCurrency ?? false;
+    }
+
+    /**
+     * Currency
+     */
+    public function getCurrency(): ?string
+    {
+        return $this->currency ?? null;
     }
 
     /**

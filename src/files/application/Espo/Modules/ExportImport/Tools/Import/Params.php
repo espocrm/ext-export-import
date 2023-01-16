@@ -52,6 +52,8 @@ class Params implements IParams
 
     private $updateCurrency= null;
 
+    private $currency= null;
+
     private $processHookClass;
 
     private $entitiesPath;
@@ -124,6 +126,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->updateCurrency = $updateCurrency;
+
+        return $obj;
+    }
+
+    public function withCurrency(?string $currency): self
+    {
+        $obj = clone $this;
+
+        $obj->currency = $currency;
 
         return $obj;
     }
@@ -242,11 +253,19 @@ class Params implements IParams
     }
 
     /**
-     * Use a default currency
+     * Is update a currency
      */
-    public function getUpdateCurrency(): string
+    public function getUpdateCurrency(): bool
     {
         return $this->updateCurrency ?? false;
+    }
+
+    /**
+     * Currency
+     */
+    public function getCurrency(): ?string
+    {
+        return $this->currency ?? null;
     }
 
     /**
