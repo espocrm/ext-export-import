@@ -134,7 +134,7 @@ class Params implements IParams
     {
         $obj = clone $this;
 
-        $obj->currency = $currency;
+        $obj->currency = strtoupper($currency);
 
         return $obj;
     }
