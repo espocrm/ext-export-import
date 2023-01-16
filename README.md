@@ -117,9 +117,10 @@ If empty then generates random values. For resetting the password use `bin/comma
     - `any string`
 - Default: `null`
 
-### Default Currency
+### Update Currency
 
-The default currency can be defined for every currency field.
+Update all currency fields.
+This option is depends on `currency`. If `currency` option is not defined, the default currency will be used instead.
 
 - Attribute: `updateCurrency`
 - CLI attribute: `--update-currency`
@@ -127,6 +128,18 @@ The default currency can be defined for every currency field.
     - `true`
     - `false`
 - Default: `false`
+
+### Currency
+
+Currency symbol, ex. `USD`.
+If not defined, the default currency will be used instead.
+
+- Attribute: `currency`
+- CLI attribute: `--currency=""`
+- Possible values:
+    - `USD`
+    - other currency symbols
+- Default: `default currency`
 
 ### Customization
 
