@@ -27,20 +27,27 @@
 namespace Espo\Modules\ExportImport\Core\Console\Commands;
 
 use Espo\Core\{
-    Di,
+    Utils\Log,
     Console\IO,
     Console\Command,
     Console\Command\Params,
 };
 
+use Espo\Modules\ExportImport\Tools\ExportImport as Tool;
+
 use Throwable;
 
-class ExportImport implements
-
-    Command,
-    Di\ServiceFactoryAware
+class ExportImport implements Command
 {
-    use Di\ServiceFactorySetter;
+    private Log $log;
+
+    private Tool $tool;
+
+    public function __construct(Log $log, Tool $tool)
+    {
+        $this->log = $log;
+        $this->tool = $tool;
+    }
 
     public function run(Params $params, IO $io): void
     {
@@ -64,25 +71,24 @@ class ExportImport implements
             return;
         }
 
-        $service = $this->serviceFactory->create('ExportImport');
         $method = 'run' . ucfirst($action);
 
-        if (!method_exists($service, $method)) {
+        if (!method_exists($this->tool, $method)) {
             $io->writeLine(
-                "Error: Unknow \"" . $action . "\" action."
+                "Error: Unknown \"" . $action . "\" action."
             );
 
             return;
         }
 
         try {
-            $service->$method($options, $io);
+            $this->tool->$method($options, $io);
         } catch (Throwable $e) {
             $io->writeLine(
                 "Error: " . $e->getMessage()
             );
 
-            $GLOBALS['log']->error(
+            $this->log->error(
                 'ExportImport Error: ' . $e->getMessage() .
                 ' at '. $e->getFile() . ':' . $e->getLine()
             );

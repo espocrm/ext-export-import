@@ -24,25 +24,35 @@
  * Section 5 of the GNU General Public License version 3.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Services;
+namespace Espo\Modules\ExportImport\Tools;
 
 use Espo\Core\{
-    Di,
+    Utils\Log,
     Console\IO,
+    Utils\Metadata,
+    InjectableFactory,
     Exceptions\Error,
 };
 
 use Espo\Modules\ExportImport\Tools\Params;
 
-class ExportImport implements
-
-    Di\MetadataAware,
-    Di\InjectableFactoryAware,
-    Di\LogAware
+class ExportImport
 {
-    use Di\InjectableFactorySetter;
-    use Di\MetadataSetter;
-    use Di\LogSetter;
+    private Log $log;
+
+    private Metadata $metadata;
+
+    private InjectableFactory $injectableFactory;
+
+    public function __construct(
+        Log $log,
+        Metadata $metadata,
+        InjectableFactory $injectableFactory
+    ) {
+        $this->log = $log;
+        $this->metadata = $metadata;
+        $this->injectableFactory = $injectableFactory;
+    }
 
     public function runExport(?array $extraParams = null, ?IO $io = null) : void
     {
