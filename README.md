@@ -396,19 +396,18 @@ To get the initial value from a couple fields. The value will be obtained from t
 The ExportImport service can be used at any class. For example, create a `custom/Espo/Custom/Services/Test.php` service:
 
 ```php
-namespace Espo\Custom\Services;
+namespace Espo\Custom\Services\Tools;
 
-use Espo\Core\Di;
+use Espo\Modules\ExportImport\Tools\ExportImport as Tool;
 
-class Test implements Di\ServiceFactoryAware
+class ImportTest
 {
-    use Di\ServiceFactorySetter;
+    public function __construct(private Tool $tool)
+    {}
 
     public function runImport()
     {
-        $eiService = $this->serviceFactory->create('ExportImport');
-
-        $eiService->runImport([
+        $this->tool->runImport([
             'importPath' => 'custom/Espo/Custom/MyData',
             'customization' => true,
             'config' => true,
@@ -424,7 +423,7 @@ class Test implements Di\ServiceFactoryAware
 }
 ```
 
-For more information, follow the [documentation](https://docs.espocrm.com/development/services/#creating-new-service-class).
+For more information, follow the [documentation](https://docs.espocrm.com/development/services/#__code_2).
 
 ## Development
 
