@@ -411,10 +411,7 @@ class EntityExport
 
         $attributeListToSkip = $params->applyAccessControl() ?
             $this->acl->getScopeForbiddenAttributeList($entityType, Table::ACTION_READ) :
-            $this->acl->getScopeRestrictedAttributeList($entityType, [
-                GlobalRestriction::TYPE_FORBIDDEN,
-                GlobalRestriction::TYPE_INTERNAL,
-            ]);
+            [];
 
         $attributeListToSkip[] = 'deleted';
 
