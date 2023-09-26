@@ -393,21 +393,21 @@ To get the initial value from a couple fields. The value will be obtained from t
 
 ### Import
 
-The ExportImport service can be used at any class. For example, create a `custom/Espo/Custom/Services/Test.php` service:
+The ExportImport service can be injected as a constructor parameter.
 
 ```php
-namespace Espo\Custom\Services\Tools;
+namespace Espo\Custom\Tools;
 
-use Espo\Modules\ExportImport\Tools\ExportImport as Tool;
+use Espo\Modules\ExportImport\Tools\ExportImport;
 
-class ImportTest
+class MyImportTest
 {
-    public function __construct(private Tool $tool)
+    public function __construct(private ExportImport $exportImportTool)
     {}
 
     public function runImport()
     {
-        $this->tool->runImport([
+        $this->exportImportTool->runImport([
             'importPath' => 'custom/Espo/Custom/MyData',
             'customization' => true,
             'config' => true,
