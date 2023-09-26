@@ -423,8 +423,6 @@ class ImportTest
 }
 ```
 
-For more information, follow the [documentation](https://docs.espocrm.com/development/services/#__code_2).
-
 ## Development
 
 Mode information about configuring the extension for development purposes, read the https://github.com/espocrm/ext-template#readme.
