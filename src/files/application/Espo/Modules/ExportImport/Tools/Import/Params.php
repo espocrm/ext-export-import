@@ -66,6 +66,8 @@ class Params implements IParams
 
     private $updateCreatedAt;
 
+    private bool $isCustomEntity = false;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -193,6 +195,15 @@ class Params implements IParams
         return $obj;
     }
 
+    public function withIsCustomEntity(bool $isCustomEntity): self
+    {
+        $obj = clone $this;
+
+        $obj->isCustomEntity = $isCustomEntity;
+
+        return $obj;
+    }
+
     /**
      * Get a target entity type.
      */
@@ -314,5 +325,13 @@ class Params implements IParams
     public function getUpdateCreatedAt(): bool
     {
         return $this->updateCreatedAt;
+    }
+
+    /**
+     * Is a custom entity
+     */
+    public function isCustomEntity(): bool
+    {
+        return $this->isCustomEntity;
     }
 }

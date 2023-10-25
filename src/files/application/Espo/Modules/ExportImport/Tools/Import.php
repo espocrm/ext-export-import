@@ -170,6 +170,10 @@ class Import implements
     {
         $processHookClass = $this->getProcessHookClass($entityType);
 
+        $isCustomEntity = $this->metadata->get([
+            'scopes', $entityType, 'isCustom'
+        ], false);
+
         $importParams = ImportParams::create($entityType)
             ->withFormat($params->getFormat())
             ->withPath($params->getImportPath())
@@ -183,7 +187,8 @@ class Import implements
             ->withProcessHookClass($processHookClass)
             ->withUserActive($params->getUserActive())
             ->withUpdateCreatedAt($params->getUpdateCreatedAt())
-            ->withUserPassword($params->getUserPassword());
+            ->withUserPassword($params->getUserPassword())
+            ->withIsCustomEntity($isCustomEntity);
 
         $import = $this->injectableFactory->create(EntityImportTool::class);
         $import->setParams($importParams);

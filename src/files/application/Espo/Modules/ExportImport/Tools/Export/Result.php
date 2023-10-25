@@ -38,6 +38,8 @@ class Result implements IResult
 
     private $successCount = 0;
 
+    private string $warning = null;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -66,6 +68,15 @@ class Result implements IResult
         return $obj;
     }
 
+    public function withWarning(string $text): self
+    {
+        $obj = clone $this;
+
+        $obj->warning = $text;
+
+        return $obj;
+    }
+
     public function getMessage(): ?string
     {
         return "  Total: " . $this->successCount;
@@ -74,6 +85,11 @@ class Result implements IResult
     public function getGlobalMessage(): ?string
     {
         return "Files saved at \"" . $this->storagePath ."\".";
+    }
+
+    public function getWarning(): ?string
+    {
+        return $this->warning ?? null;
     }
 
     /**

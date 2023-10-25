@@ -45,6 +45,7 @@ use Espo\Modules\ExportImport\Tools\{
     Processor\Utils as ProcessorUtils,
     Customization\Processors\Export as CustomizationExport,
     Config\Processors\Export as ConfigExport,
+    Export\Result as EntityResult,
 };
 
 use Exception;
@@ -65,6 +66,8 @@ class Export implements
     use Di\ConfigSetter;
 
     private $defs;
+
+    private array $warningList = [];
 
     public function __construct(Defs $defs)
     {
@@ -92,7 +95,7 @@ class Export implements
             ProcessorUtils::writeLine($params, "{$entityType}...");
 
             try {
-                $globalMessage = $this->exportEntity($params, $entityType);
+                $result = $this->exportEntity($params, $entityType);
             } catch (Exception $e) {
                 ProcessorUtils::writeLine(
                     $params, "  Error: " . $e->getMessage()
@@ -101,6 +104,12 @@ class Export implements
                 $this->log->warning(
                     'ExportImport [' . $entityType . ']:' . $e->getMessage()
                 );
+
+                continue;
+            }
+
+            if ($result->getWarning()) {
+                $this->warningList[] = $result->getWarning();
             }
         }
 
@@ -110,7 +119,9 @@ class Export implements
 
         $this->createManifest($params);
 
-        ProcessorUtils::writeLine($params, $globalMessage);
+        $this->printWarnings($params);
+
+        ProcessorUtils::writeLine($params, $result->getGlobalMessage());
     }
 
     private function getEntityTypeList(Params $params): array
@@ -131,7 +142,7 @@ class Export implements
         return array_values($list);
     }
 
-    private function exportEntity(Params $params, string $entityType): string
+    private function exportEntity(Params $params, string $entityType): EntityResult
     {
         $format = $params->getFormat();
         $collectionClass = $this->getCollectionClass($entityType);
@@ -140,6 +151,10 @@ class Export implements
         $fileExtension = $this->metadata->get([
             'app', 'exportImport', 'formatDefs', $format, 'fileExtension'
         ]);
+
+        $isCustomEntity = $this->metadata->get([
+            'scopes', $entityType, 'isCustom'
+        ], false);
 
         $searchParams = $this->getSearchParams($params, $entityType);
 
@@ -154,7 +169,8 @@ class Export implements
             ->withFileExtension($fileExtension)
             ->withProcessHookClass($processHookClass)
             ->withSearchParams($searchParams)
-            ->withPrettyPrint($params->getPrettyPrint());
+            ->withPrettyPrint($params->getPrettyPrint())
+            ->withIsCustomEntity($isCustomEntity);
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);
@@ -163,7 +179,7 @@ class Export implements
 
         ProcessorUtils::writeLine($params, $result->getMessage());
 
-        return $result->getGlobalMessage();
+        return $result;
     }
 
     private function getCollectionClass(string $entityType): ?Collection
@@ -280,5 +296,19 @@ class Export implements
         return SearchParams::fromRaw([
             'where' => $where
         ]);
+    }
+
+    private function printWarnings(Params $params): void
+    {
+        if (empty($this->warningList)) {
+
+            return;
+        }
+
+        ProcessorUtils::writeLine($params, "Warning:");
+
+        foreach ($this->warningList as $warning) {
+            ProcessorUtils::writeLine($params, "  - " . $warning);
+        }
     }
 }
