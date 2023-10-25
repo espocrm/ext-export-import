@@ -332,7 +332,7 @@ class Params implements IParams
     /**
      * Get a prettyPrint option
      */
-    public function getPrettyPrint(): string
+    public function getPrettyPrint(): bool
     {
         return $this->prettyPrint;
     }
