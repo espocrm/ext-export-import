@@ -69,6 +69,8 @@ class Params implements IParams
 
     private bool $isCustomEntity = false;
 
+    private bool $customization = false;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -201,6 +203,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->isCustomEntity = $isCustomEntity;
+
+        return $obj;
+    }
+
+    public function withCustomization(bool $customization): self
+    {
+        $obj = clone $this;
+
+        $obj->customization = $customization;
 
         return $obj;
     }
@@ -354,5 +365,13 @@ class Params implements IParams
     public function isCustomEntity(): bool
     {
         return $this->isCustomEntity;
+    }
+
+    /**
+     * Export / import customization
+     */
+    public function getCustomization(): bool
+    {
+        return $this->customization;
     }
 }
