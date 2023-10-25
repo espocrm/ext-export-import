@@ -94,6 +94,41 @@ class Utils
         $io->writeLine($message);
     }
 
+    public static function writeNewLine(ToolParams $params): void
+    {
+        if ($params->isQuiet()) {
+            return;
+        }
+
+        $params->getIO()->writeLine("");
+    }
+
+    /**
+     * Write a list of messages
+     */
+    public static function writeList(
+        ToolParams $params,
+        ?array $list,
+        ?string $title = null
+    ): void {
+        if (empty($list)) {
+
+            return;
+        }
+
+        $list = array_unique($list);
+
+        self::writeNewLine($params);
+
+        if ($title) {
+            self::writeLine($params, $title);
+        }
+
+        foreach ($list as $item) {
+            self::writeLine($params, "  - " . $item);
+        }
+    }
+
     /**
      * Quote a string for regular expression
      */

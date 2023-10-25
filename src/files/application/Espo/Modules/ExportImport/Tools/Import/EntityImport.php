@@ -78,6 +78,8 @@ class EntityImport
 
         $processorData = new ProcessorData($dataResource);
 
+        $warningList = [];
+
         $processor->process($params, $processorData);
 
         $processorEntity = $this->processorFactory->createEntityProcessor();
@@ -85,8 +87,13 @@ class EntityImport
 
         fclose($dataResource);
 
+        if ($params->isCustomEntity() && !$params->getCustomization()) {
+            $warningList[] = 'Use --customization option to be able to import custom entities.';
+        }
+
         return Result::create($entityType)
             ->withFailCount($result->getFailCount())
-            ->withSuccessCount($result->getSuccessCount());
+            ->withSuccessCount($result->getSuccessCount())
+            ->withWarningList($warningList ?? null);
     }
 }

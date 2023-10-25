@@ -43,6 +43,7 @@ use Espo\Modules\ExportImport\Tools\{
     Config\Params as ConfigParams,
     Config\Processors\Import as ConfigImport,
     Processor\Utils as ToolUtils,
+    Import\Result as EntityResult,
 };
 
 use Exception;
@@ -63,6 +64,8 @@ class Import implements
     use Di\InjectableFactorySetter;
 
     private $defs;
+
+    private array $warningList = [];
 
     public function __construct(Defs $defs)
     {
@@ -100,7 +103,7 @@ class Import implements
             ProcessorUtils::writeLine($params, "{$entityType}...");
 
             try {
-                $globalMessage = $this->importEntity($entityType, $params, $manifest);
+                $result = $this->importEntity($entityType, $params, $manifest);
             } catch (Exception $e) {
                 ProcessorUtils::writeLine(
                     $params, "  Error: " . $e->getMessage()
@@ -109,10 +112,23 @@ class Import implements
                 $this->log->warning(
                     'ExportImport [' . $entityType . ']:' . $e->getMessage()
                 );
+
+                continue;
+            }
+
+            if ($result->getWarningList()) {
+                $this->warningList = array_merge(
+                    $this->warningList,
+                    $result->getWarningList()
+                );
             }
         }
 
-        ProcessorUtils::writeLine($params, $globalMessage);
+        ProcessorUtils::writeList($params, $this->warningList, "Warnings:");
+
+        ProcessorUtils::writeNewLine($params);
+
+        ProcessorUtils::writeLine($params, $result->getGlobalMessage());
     }
 
     private function getEntityTypeList(Params $params): array
@@ -166,8 +182,11 @@ class Import implements
         return $entityTypeList;
     }
 
-    private function importEntity(string $entityType, Params $params, Manifest $manifest): ?string
-    {
+    private function importEntity(
+        string $entityType,
+        Params $params,
+        Manifest $manifest
+    ): EntityResult {
         $processHookClass = $this->getProcessHookClass($entityType);
 
         $isCustomEntity = $this->metadata->get([
@@ -188,7 +207,8 @@ class Import implements
             ->withUserActive($params->getUserActive())
             ->withUpdateCreatedAt($params->getUpdateCreatedAt())
             ->withUserPassword($params->getUserPassword())
-            ->withIsCustomEntity($isCustomEntity);
+            ->withIsCustomEntity($isCustomEntity)
+            ->withCustomization($params->getCustomization());
 
         $import = $this->injectableFactory->create(EntityImportTool::class);
         $import->setParams($importParams);
@@ -197,7 +217,7 @@ class Import implements
 
         ProcessorUtils::writeLine($params, $result->getMessage());
 
-        return $result->getGlobalMessage();
+        return $result;
     }
 
     private function getProcessHookClass(string $entityType): ?ProcessHook

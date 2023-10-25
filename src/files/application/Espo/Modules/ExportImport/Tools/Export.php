@@ -108,8 +108,11 @@ class Export implements
                 continue;
             }
 
-            if ($result->getWarning()) {
-                $this->warningList[] = $result->getWarning();
+            if ($result->getWarningList()) {
+                $this->warningList = array_merge(
+                    $this->warningList,
+                    $result->getWarningList()
+                );
             }
         }
 
@@ -119,7 +122,9 @@ class Export implements
 
         $this->createManifest($params);
 
-        $this->printWarnings($params);
+        ProcessorUtils::writeList($params, $this->warningList, "Warnings:");
+
+        ProcessorUtils::writeNewLine($params);
 
         ProcessorUtils::writeLine($params, $result->getGlobalMessage());
     }
@@ -170,7 +175,8 @@ class Export implements
             ->withProcessHookClass($processHookClass)
             ->withSearchParams($searchParams)
             ->withPrettyPrint($params->getPrettyPrint())
-            ->withIsCustomEntity($isCustomEntity);
+            ->withIsCustomEntity($isCustomEntity)
+            ->withCustomization($params->getCustomization());
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);
@@ -296,19 +302,5 @@ class Export implements
         return SearchParams::fromRaw([
             'where' => $where
         ]);
-    }
-
-    private function printWarnings(Params $params): void
-    {
-        if (empty($this->warningList)) {
-
-            return;
-        }
-
-        ProcessorUtils::writeLine($params, "Warning:");
-
-        foreach ($this->warningList as $warning) {
-            ProcessorUtils::writeLine($params, "  - " . $warning);
-        }
     }
 }

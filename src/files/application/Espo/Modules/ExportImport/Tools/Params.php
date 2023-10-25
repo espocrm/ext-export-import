@@ -89,7 +89,7 @@ class Params
 
     private $io = null;
 
-    private $customization;
+    private bool $customization = false;
 
     private $exportTime;
 

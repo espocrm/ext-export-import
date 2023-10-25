@@ -159,6 +159,8 @@ class EntityExport
             $this->serviceContainer->get($entityType) :
             null;
 
+        $warningList = [];
+
         $successCount = 0;
 
         foreach ($collection as $entity) {
@@ -223,9 +225,15 @@ class EntityExport
 
         fclose($dataResource);
 
+        if ($params->isCustomEntity() && !$params->getCustomization()) {
+            $warningList[] = 'Use --customization option to be able to import ' .
+                'custom entities later.';
+        }
+
         return Result::create($entityType)
             ->withStoragePath($params->getPath())
-            ->withSuccessCount($successCount);
+            ->withSuccessCount($successCount)
+            ->withWarningList($warningList ?? null);
     }
 
     protected function getAttributeFromEntity(Entity $entity, string $attribute)

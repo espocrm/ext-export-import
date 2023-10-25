@@ -40,6 +40,8 @@ class Result implements IResult
 
     private $failCount = 0;
 
+    private ?array $warningList = null;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -64,6 +66,15 @@ class Result implements IResult
         $obj = clone $this;
 
         $obj->failCount = $count;
+
+        return $obj;
+    }
+
+    public function withWarningList(?array $textList): self
+    {
+        $obj = clone $this;
+
+        $obj->warningList = $textList;
 
         return $obj;
     }
@@ -106,5 +117,10 @@ class Result implements IResult
     public function getFailCount(): int
     {
         return $this->failCount;
+    }
+
+    public function getWarningList(): ?array
+    {
+        return !empty($this-> warningList) ? $this-> warningList : null;
     }
 }

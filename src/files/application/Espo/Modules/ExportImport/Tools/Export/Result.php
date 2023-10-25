@@ -38,7 +38,7 @@ class Result implements IResult
 
     private $successCount = 0;
 
-    private string $warning = null;
+    private ?array $warningList = null;
 
     public function __construct(string $entityType)
     {
@@ -68,11 +68,11 @@ class Result implements IResult
         return $obj;
     }
 
-    public function withWarning(string $text): self
+    public function withWarningList(?array $textList): self
     {
         $obj = clone $this;
 
-        $obj->warning = $text;
+        $obj->warningList = $textList;
 
         return $obj;
     }
@@ -87,9 +87,9 @@ class Result implements IResult
         return "Files saved at \"" . $this->storagePath ."\".";
     }
 
-    public function getWarning(): ?string
+    public function getWarningList(): ?array
     {
-        return $this->warning ?? null;
+        return !empty($this-> warningList) ? $this-> warningList : null;
     }
 
     /**
