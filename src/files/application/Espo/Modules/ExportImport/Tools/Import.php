@@ -89,8 +89,6 @@ class Import implements
             throw new Error("Import path \"{$importPath}\" does not exist.");
         }
 
-        $entityTypeList = $this->getEntityTypeList($params);
-
         $manifest = $this->injectableFactory->createWith(Manifest::class, [
             'params' => $params,
         ]);
@@ -98,6 +96,8 @@ class Import implements
         $this->importConfig($params, $manifest);
 
         $this->importCustomization($params, $manifest);
+
+        $entityTypeList = $this->getEntityTypeList($params);
 
         foreach ($entityTypeList as $entityType) {
             ProcessorUtils::writeLine($params, "{$entityType}...");
