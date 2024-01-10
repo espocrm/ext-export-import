@@ -76,7 +76,7 @@ class Json implements Processor
             switch ($fieldType) {
                 case 'linkMultiple':
                 case 'attachmentMultiple':
-                    if (!$entity->has($field . 'Ids')) {
+                    if ($entity->hasLinkMultipleField($field)) {
                         $entity->loadLinkMultipleField($field);
                     }
                     break;
