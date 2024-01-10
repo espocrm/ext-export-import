@@ -429,4 +429,4 @@ Mode information about configuring the extension for development purposes, read 
 
 ## License
 
-This extension is published under the GNU GPLv3 license.
+This extension is published under GNU AGPLv3 [license](https://raw.githubusercontent.com/espocrm/ext-export-import/master/LICENSE).
