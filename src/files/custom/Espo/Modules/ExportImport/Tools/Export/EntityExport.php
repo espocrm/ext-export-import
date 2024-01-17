@@ -30,33 +30,27 @@
 
 namespace Espo\Modules\ExportImport\Tools\Export;
 
-use Espo\Core\{
-    Exceptions\Error,
-    Utils\Json,
-    Select\SelectBuilderFactory,
-    Acl,
-    Acl\Table,
-    Acl\GlobalRestriction,
-    Record\ServiceContainer,
-    Utils\Metadata,
-    Utils\File\Manager as FileManager,
-    FieldProcessing\ListLoadProcessor,
-    FieldProcessing\Loader\Params as LoaderParams,
-    Utils\FieldUtil,
-};
+use Espo\ORM\Entity;
+use Espo\ORM\Collection;
+use Espo\ORM\EntityManager;
 
-use Espo\{
-    ORM\Entity,
-    ORM\Collection,
-    ORM\EntityManager,
-};
+use Espo\Core\Acl;
+use Espo\Core\Acl\Table;
+use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Metadata;
+use Espo\Core\Utils\FieldUtil;
+use Espo\Core\Exceptions\Error;
+use Espo\Core\Select\SearchParams;
+use Espo\Core\Select\SelectBuilderFactory;
+use Espo\Core\Record\ServiceContainer;
+use Espo\Core\Utils\File\Manager as FileManager;
+use Espo\Core\FieldProcessing\ListLoadProcessor;
+use Espo\Core\FieldProcessing\Loader\Params as LoaderParams;
 
-use Espo\Modules\ExportImport\Tools\{
-    Export\Params,
-    Processor\Data as ProcessorData,
-    Processor\Exceptions\Skip as SkipException,
-    Processor\Utils as ToolUtils,
-};
+use Espo\Modules\ExportImport\Tools\Export\Params;
+use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
+use Espo\Modules\ExportImport\Tools\Processor\Data as ProcessorData;
+use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
 
 use RuntimeException;
 
@@ -384,12 +378,14 @@ class EntityExport
 
         $entityType = $params->getEntityType();
 
-        $searchParams = $params->getSearchParams();
+        $searchParams = $params->getSearchParams()
+            ->withOrder(SearchParams::ORDER_ASC);
 
         $builder = $this->selectBuilderFactory
             ->create()
             ->from($entityType)
-            ->withSearchParams($searchParams);
+            ->withSearchParams($searchParams)
+            ->withDefaultOrder();
 
         if ($params->applyAccessControl()) {
             $builder->withStrictAccessControl();
