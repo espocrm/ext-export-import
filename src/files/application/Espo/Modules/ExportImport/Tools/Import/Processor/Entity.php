@@ -29,22 +29,20 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Processor;
 
-use Espo\{
-    Core\Di,
-    ORM\Entity as OrmEntity,
-    Core\Utils\DateTime as DateTimeUtils,
-};
+use Espo\Core\Di;
+use Espo\Core\Utils\DateTime as DateTimeUtils;
+use Espo\Core\ORM\Repository\Option\SaveOption;
 
-use Espo\Modules\ExportImport\Tools\{
-    Params as ToolParams,
-    Import\Result,
-    Import\Processor,
-    Processor\Data,
-    Import\Params,
-    Import\Placeholder\Handler as PlaceholderHandler,
-    Processor\Exceptions\Skip as SkipException,
-    Processor\Utils as ToolUtils,
-};
+use Espo\ORM\Entity as OrmEntity;
+
+use Espo\Modules\ExportImport\Tools\Import\Result;
+use Espo\Modules\ExportImport\Tools\Import\Processor;
+use Espo\Modules\ExportImport\Tools\Processor\Data;
+use Espo\Modules\ExportImport\Tools\Import\Params;
+use Espo\Modules\ExportImport\Tools\Params as ToolParams;
+use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Handler as PlaceholderHandler;
+use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
 
 use Exception;
 
@@ -138,8 +136,8 @@ class Entity implements
                 $this->entityManager->saveEntity($entity, [
                     'noStream' => true,
                     'noNotifications' => true,
-                    'import' => true,
-                    'silent' => true,
+                    SaveOption::IMPORT => true,
+                    SaveOption::SILENT => true,
                 ]);
 
                 $successCount++;
