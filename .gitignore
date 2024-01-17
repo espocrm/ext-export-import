@@ -6,5 +6,5 @@
 /config.php
 /extensions/
 /.vscode/
-/src/files/application/Espo/Modules/**/vendor/
+/src/files/custom/Espo/Modules/**/vendor/
 /test.php
