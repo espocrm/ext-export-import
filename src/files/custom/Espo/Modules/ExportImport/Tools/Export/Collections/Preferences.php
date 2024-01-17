@@ -63,7 +63,7 @@ class Preferences implements
 
         foreach ($collection as $user) {
             $entityList[] = $this->entityManager->getEntity(
-                'Preferences', $user->id
+                'Preferences', $user->getId()
             );
         }
 

@@ -263,7 +263,7 @@ class Entity implements
                 ->findOne();
 
             if ($record) {
-                return $record->id;
+                return $record->getId();
             }
         }
 

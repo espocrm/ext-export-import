@@ -59,7 +59,7 @@ class Attachment implements
             return;
         }
 
-        $srcFile = Utils::getFilePathInData($params, $entity->id);
+        $srcFile = Utils::getFilePathInData($params, $entity->getId());
         $destDir = Utils::getDirPathInUpload($params);
 
         $result = $this->fileManager->copy(
