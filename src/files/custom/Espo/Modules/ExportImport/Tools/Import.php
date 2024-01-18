@@ -29,51 +29,43 @@
 
 namespace Espo\Modules\ExportImport\Tools;
 
-use Espo\{
-    Core\Di,
-    ORM\Defs,
-    Core\Exceptions\Error,
-};
+use Espo\ORM\Defs;
+use Espo\Core\Utils\Log;
+use Espo\Core\DataManager;
+use Espo\Core\Utils\Metadata;
+use Espo\Core\InjectableFactory;
+use Espo\Core\Utils\File\Manager as FileManager;
 
-use Espo\Modules\ExportImport\Tools\{
-    Params,
-    Import\Params as ImportParams,
-    Import\EntityImport as EntityImportTool,
-    Processor\ProcessHook,
-    Processor\Utils as ProcessorUtils,
-    Customization\Params as CustomizationParams,
-    Customization\Processors\Import as CustomizationImport,
-    Config\Params as ConfigParams,
-    Config\Processors\Import as ConfigImport,
-    Processor\Utils as ToolUtils,
-    Import\Result as EntityResult,
-};
+use Espo\Modules\ExportImport\Tools\Params;
+use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
+use Espo\Modules\ExportImport\Tools\Metadata\Entity as EntityTool;
+use Espo\Modules\ExportImport\Tools\Import\Params as ImportParams;
+use Espo\Modules\ExportImport\Tools\Import\EntityImport as EntityImportTool;
+use Espo\Modules\ExportImport\Tools\Processor\Utils as ProcessorUtils;
+use Espo\Modules\ExportImport\Tools\Customization\Params as CustomizationParams;
+use Espo\Modules\ExportImport\Tools\Customization\Processors\Import as CustomizationImport;
+use Espo\Modules\ExportImport\Tools\Config\Params as ConfigParams;
+use Espo\Modules\ExportImport\Tools\Config\Processors\Import as ConfigImport;
+use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
+use Espo\Modules\ExportImport\Tools\Import\Result as EntityResult;
+
+use Espo\Core\Exceptions\Error;
 
 use Exception;
 
-class Import implements
-
-    Tool,
-    Di\LogAware,
-    Di\MetadataAware,
-    Di\FileManagerAware,
-    Di\DataManagerAware,
-    Di\InjectableFactoryAware
+class Import implements Tool
 {
-    use Di\LogSetter;
-    use Di\MetadataSetter;
-    use Di\FileManagerSetter;
-    use Di\DataManagerSetter;
-    use Di\InjectableFactorySetter;
-
-    private $defs;
-
     private array $warningList = [];
 
-    public function __construct(Defs $defs)
-    {
-        $this->defs = $defs;
-    }
+    public function __construct(
+        private Log $log,
+        private Defs $defs,
+        private Metadata $metadata,
+        private EntityTool $entityTool,
+        private FileManager $fileManager,
+        private DataManager $dataManager,
+        private InjectableFactory $injectableFactory
+    ) {}
 
     public function run(Params $params) : void
     {
@@ -144,17 +136,9 @@ class Import implements
             $list = $this->loadEntityTypeList($params);
         }
 
+        $list = $this->filterEntityTypeList($params, $list);
+
         $list = ToolUtils::sortEntityTypeListByType($this->metadata, $list);
-
-        $defs = $params->getExportImportDefs();
-
-        foreach ($list as $key => $entityType) {
-            $importDisabled = $defs[$entityType]['importDisabled'] ?? false;
-
-            if ($importDisabled) {
-                unset($list[$key]);
-            }
-        }
 
         return array_values($list);
     }
@@ -185,16 +169,35 @@ class Import implements
         return $entityTypeList;
     }
 
+    private function filterEntityTypeList(Params $params, array $list): array
+    {
+        $filteredList = [];
+
+        $defs = $params->getExportImportDefs();
+
+        foreach ($list as $entityType) {
+            $isImportDisabled = $defs[$entityType]['importDisabled'] ?? false;
+
+            if ($isImportDisabled) {
+                continue;
+            }
+
+            if ($this->entityTool->isCategoryTreeAdditionalTable($entityType)) {
+                continue;
+            }
+
+            $filteredList[] = $entityType;
+        }
+
+        return $filteredList;
+    }
+
     private function importEntity(
         string $entityType,
         Params $params,
         Manifest $manifest
     ): EntityResult {
         $processHookClass = $this->getProcessHookClass($entityType);
-
-        $isCustomEntity = $this->metadata->get([
-            'scopes', $entityType, 'isCustom'
-        ], false);
 
         $importParams = ImportParams::create($entityType)
             ->withFormat($params->getFormat())
@@ -210,7 +213,7 @@ class Import implements
             ->withUserActive($params->getUserActive())
             ->withUpdateCreatedAt($params->getUpdateCreatedAt())
             ->withUserPassword($params->getUserPassword())
-            ->withIsCustomEntity($isCustomEntity)
+            ->withIsCustomEntity($this->entityTool->isCustom($entityType))
             ->withCustomization($params->getCustomization());
 
         $import = $this->injectableFactory->create(EntityImportTool::class);
