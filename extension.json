@@ -4,9 +4,9 @@
     "description": "Data export and import tool",
     "author": "EspoCRM",
     "acceptableVersions": [
-        ">=7.2.0"
+        ">=7.3.0"
     ],
     "php": [
-        ">=7.4"
+        ">=8.0"
     ]
 }
