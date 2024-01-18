@@ -29,53 +29,44 @@
 
 namespace Espo\Modules\ExportImport\Tools;
 
-use Espo\{
-    Core\Di,
-    ORM\Defs,
-    Core\Exceptions\Error,
-    Core\Select\SearchParams,
-};
+use Espo\ORM\Defs;
+use Espo\Core\Utils\Log;
+use Espo\Core\Utils\Config;
+use Espo\Core\Utils\Metadata;
+use Espo\Core\Exceptions\Error;
+use Espo\Core\InjectableFactory;
+use Espo\Core\Select\SearchParams;
+use Espo\Core\Utils\File\Manager as FileManager;
 
-use Espo\Modules\ExportImport\Tools\{
-    Params,
-    Export\Params as ExportParams,
-    Config\Params as ConfigParams,
-    Customization\Params as CustomizationParams,
-    Export\Processor\Collection,
-    Export\EntityExport as EntityExportTool,
-    Manifest\ManifestWriter,
-    Processor\ProcessHook,
-    Processor\Utils as ProcessorUtils,
-    Customization\Processors\Export as CustomizationExport,
-    Config\Processors\Export as ConfigExport,
-    Export\Result as EntityResult,
-};
+use Espo\Modules\ExportImport\Tools\Params;
+use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
+use Espo\Modules\ExportImport\Tools\Manifest\ManifestWriter;
+use Espo\Modules\ExportImport\Tools\Export\Processor\Collection;
+use Espo\Modules\ExportImport\Tools\Metadata\Entity as EntityTool;
+use Espo\Modules\ExportImport\Tools\Export\Result as EntityResult;
+use Espo\Modules\ExportImport\Tools\Export\Params as ExportParams;
+use Espo\Modules\ExportImport\Tools\Config\Params as ConfigParams;
+use Espo\Modules\ExportImport\Tools\Processor\Utils as ProcessorUtils;
+use Espo\Modules\ExportImport\Tools\Export\EntityExport as EntityExportTool;
+use Espo\Modules\ExportImport\Tools\Config\Processors\Export as ConfigExport;
+use Espo\Modules\ExportImport\Tools\Customization\Params as CustomizationParams;
+use Espo\Modules\ExportImport\Tools\Customization\Processors\Export as CustomizationExport;
 
 use Exception;
 
-class Export implements
-
-    Tool,
-    Di\MetadataAware,
-    Di\FileManagerAware,
-    Di\InjectableFactoryAware,
-    Di\LogAware,
-    Di\ConfigAware
+class Export implements Tool
 {
-    use Di\MetadataSetter;
-    use Di\FileManagerSetter;
-    use Di\InjectableFactorySetter;
-    use Di\LogSetter;
-    use Di\ConfigSetter;
-
-    private $defs;
-
     private array $warningList = [];
 
-    public function __construct(Defs $defs)
-    {
-        $this->defs = $defs;
-    }
+    public function __construct(
+        private Log $log,
+        private Defs $defs,
+        private Config $config,
+        private Metadata $metadata,
+        private EntityTool $entityTool,
+        private FileManager $fileManager,
+        private InjectableFactory $injectableFactory
+    ) {}
 
     public function run(Params $params) : void
     {
@@ -137,17 +128,32 @@ class Export implements
         $list = $params->getEntityTypeList() ??
             $this->defs->getEntityTypeList();
 
-        $defs = $params->getExportImportDefs();
-
-        foreach ($list as $key => $entityType) {
-            $exportDisabled = $defs[$entityType]['exportDisabled'] ?? false;
-
-            if ($exportDisabled) {
-                unset($list[$key]);
-            }
-        }
+        $list = $this->filterEntityTypeList($params, $list);
 
         return array_values($list);
+    }
+
+    private function filterEntityTypeList(Params $params, array $list): array
+    {
+        $filteredList = [];
+
+        $defs = $params->getExportImportDefs();
+
+        foreach ($list as $entityType) {
+            $isExportDisabled = $defs[$entityType]['exportDisabled'] ?? false;
+
+            if ($isExportDisabled) {
+                continue;
+            }
+
+            if ($this->entityTool->isCategoryTreeAdditionalTable($entityType)) {
+                continue;
+            }
+
+            $filteredList[] = $entityType;
+        }
+
+        return $filteredList;
     }
 
     private function exportEntity(Params $params, string $entityType): EntityResult
@@ -159,10 +165,6 @@ class Export implements
         $fileExtension = $this->metadata->get([
             'app', 'exportImport', 'formatDefs', $format, 'fileExtension'
         ]);
-
-        $isCustomEntity = $this->metadata->get([
-            'scopes', $entityType, 'isCustom'
-        ], false);
 
         $searchParams = $this->getSearchParams($params, $entityType);
 
@@ -178,7 +180,7 @@ class Export implements
             ->withProcessHookClass($processHookClass)
             ->withSearchParams($searchParams)
             ->withPrettyPrint($params->getPrettyPrint())
-            ->withIsCustomEntity($isCustomEntity)
+            ->withIsCustomEntity($this->entityTool->isCustom($entityType))
             ->withCustomization($params->getCustomization());
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
