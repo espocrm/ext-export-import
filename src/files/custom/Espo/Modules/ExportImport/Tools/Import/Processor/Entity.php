@@ -30,10 +30,7 @@
 namespace Espo\Modules\ExportImport\Tools\Import\Processor;
 
 use Espo\Core\Di;
-use Espo\Core\Utils\DateTime as DateTimeUtils;
 use Espo\Core\ORM\Repository\Option\SaveOption;
-
-use Espo\ORM\Entity as OrmEntity;
 
 use Espo\Modules\ExportImport\Tools\Import\Result;
 use Espo\Modules\ExportImport\Tools\Import\Processor;
@@ -52,18 +49,16 @@ class Entity implements
     Di\LogAware,
     Di\ConfigAware,
     Di\MetadataAware,
-    Di\EntityManagerAware
+    Di\EntityManagerAware,
+    Di\InjectableFactoryAware
 {
     use Di\LogSetter;
     use Di\ConfigSetter;
     use Di\MetadataSetter;
     use Di\EntityManagerSetter;
+    use Di\InjectableFactorySetter;
 
     protected $placeholderHandler;
-
-    protected const CREATED_AT_LIST = [
-        'createdAt'
-    ];
 
     public function __construct(PlaceholderHandler $placeholderHandler)
     {
@@ -160,15 +155,12 @@ class Entity implements
 
     private function prepareData(Params $params, array $row)
     {
-        $entityType = $params->getEntityType();
-
-        $entityDefs = $this->entityManager
+        $attributeList = $this->entityManager
             ->getDefs()
-            ->getEntity($entityType);
+            ->getEntity($params->getEntityType())
+            ->getAttributeNameList();
 
-        $attributeList = $entityDefs->getAttributeNameList();
-
-        foreach ($row as $attributeName => &$attributeValue) {
+        foreach ($row as $attributeName => $attributeValue) {
 
             if (!in_array($attributeName, $attributeList)) {
                 unset($row[$attributeName]);
@@ -176,43 +168,7 @@ class Entity implements
                 continue;
             }
 
-            $attributeType = $entityDefs
-                ->getAttribute($attributeName)
-                ->getType();
-
-            switch ($attributeType) {
-                case OrmEntity::FOREIGN_ID:
-                    if ($attributeValue === null) {
-                        unset($row[$attributeName]);
-                    }
-                    break;
-            }
-
-            $fieldType = $this->metadata->get([
-                'entityDefs', $entityType, 'fields', $attributeName, 'type'
-            ]);
-
-            switch ($fieldType) {
-                case 'currency':
-                    $updateCurrency = $params->getUpdateCurrency();
-
-                    if ($updateCurrency) {
-                        $currency = $params->getCurrency()
-                            ?? $this->config->get('defaultCurrency');
-
-                        $row[$attributeName . 'Currency'] = $currency;
-                    }
-                    break;
-
-                case 'datetime':
-                    if (
-                        $params->getUpdateCreatedAt() &&
-                        in_array($attributeName, self::CREATED_AT_LIST)
-                    ) {
-                        $attributeValue = DateTimeUtils::getSystemNowString();
-                    }
-                    break;
-            }
+            $this->processAttribute($params, $row, $attributeName);
         }
 
         return $this->placeholderHandler->process($params, $row);
@@ -268,5 +224,29 @@ class Entity implements
         }
 
         return $row['id'] ?? null;
+    }
+
+    private function processAttribute(
+        Params $params,
+        array $row,
+        string $attributeName
+    ): void {
+        $attributeType = $this->entityManager
+            ->getDefs()
+            ->getEntity($params->getEntityType())
+            ->getAttribute($attributeName)
+            ?->getType();
+
+        $className = $this->metadata->get([
+            'app', 'exportImport', 'importProcessAttributeClassNameMap', $attributeType
+        ]);
+
+        if (!$className) {
+            return;
+        }
+
+        $this->injectableFactory
+            ->create($className)
+            ?->process($params, $row, $attributeName);
     }
 }

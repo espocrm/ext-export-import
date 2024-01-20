@@ -35,6 +35,12 @@
         "Attachment": "Espo\\Modules\\ExportImport\\Tools\\Import\\ProcessHooks\\Attachment"
     },
 
+    "importProcessAttributeClassNameMap": {
+        "float": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\FloatObj",
+        "datetime": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\Datetime",
+        "foreignId": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\ForeignId"
+    },
+
     "placeholderActionClassNameMap": {
         "Config\\Get": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Config\\Get",
         "Config\\ObjectData": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\Config\\ObjectData",
