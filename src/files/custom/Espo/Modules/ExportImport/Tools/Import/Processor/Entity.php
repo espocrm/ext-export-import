@@ -72,6 +72,7 @@ class Entity implements
         $entityType = $params->getEntityType();
         $importType = $params->getImportType();
 
+        $skipCount = 0;
         $failCount = 0;
         $successCount = 0;
 
@@ -123,6 +124,12 @@ class Entity implements
                     $processHook->process($params, $entity, $row);
                 }
                 catch (SkipException $e) {
+                    $skipCount++;
+
+                    $this->log->warning(
+                        'ExportImport [Import] [Skip]: ' . $e->getMessage()
+                    );
+
                     continue;
                 }
             }
@@ -149,6 +156,7 @@ class Entity implements
         }
 
         return Result::create($entityType)
+            ->withSkipCount($skipCount)
             ->withFailCount($failCount)
             ->withSuccessCount($successCount);
     }

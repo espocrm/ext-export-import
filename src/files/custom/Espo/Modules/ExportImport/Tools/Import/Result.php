@@ -43,6 +43,8 @@ class Result implements IResult
 
     private $failCount = 0;
 
+    private $skipCount = 0;
+
     private ?array $warningList = null;
 
     public function __construct(string $entityType)
@@ -73,6 +75,15 @@ class Result implements IResult
         return $obj;
     }
 
+    public function withSkipCount(int $count): self
+    {
+        $obj = clone $this;
+
+        $obj->skipCount = $count;
+
+        return $obj;
+    }
+
     public function withWarningList(?array $textList): self
     {
         $obj = clone $this;
@@ -85,6 +96,10 @@ class Result implements IResult
     public function getMessage(): ?string
     {
         $message = "  Total: " . $this->successCount;
+
+        if ($this->skipCount) {
+            $message .= ", skipped: " . $this->skipCount;
+        }
 
         if ($this->failCount) {
             $message .= ", failed: " . $this->failCount;
@@ -120,6 +135,14 @@ class Result implements IResult
     public function getFailCount(): int
     {
         return $this->failCount;
+    }
+
+    /**
+     * Get skip count
+     */
+    public function getSkipCount(): int
+    {
+        return $this->skipCount;
     }
 
     public function getWarningList(): ?array

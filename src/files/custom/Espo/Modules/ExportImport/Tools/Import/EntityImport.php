@@ -95,6 +95,7 @@ class EntityImport
         }
 
         return Result::create($entityType)
+            ->withSkipCount($result->getSkipCount())
             ->withFailCount($result->getFailCount())
             ->withSuccessCount($result->getSuccessCount())
             ->withWarningList($warningList ?? null);
