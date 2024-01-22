@@ -71,8 +71,6 @@ class EntityImport
 
         $params = $this->params;
 
-        $entityType = $params->getEntityType();
-
         $format = $params->getFormat() ?? 'json';
 
         $processor = $this->processorFactory->create($format);
@@ -94,10 +92,10 @@ class EntityImport
             $warningList[] = 'Use --customization option to be able to import custom entities.';
         }
 
-        return Result::create($entityType)
-            ->withSkipCount($result->getSkipCount())
-            ->withFailCount($result->getFailCount())
-            ->withSuccessCount($result->getSuccessCount())
-            ->withWarningList($warningList ?? null);
+        if (!empty($warningList)) {
+            $result = $result->withWarningList($warningList);
+        }
+
+        return $result;
     }
 }
