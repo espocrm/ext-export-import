@@ -251,9 +251,11 @@ class Utils
 
         $p2 = $priorityList['p2'] ?? [];
 
-        if (in_array(User::ENTITY_TYPE, $p2)) {
-            array_unshift($p2, User::ENTITY_TYPE);
+        if (($key = array_search(User::ENTITY_TYPE, $p2)) !== false) {
+            unset($p2[$key]);
             $priorityList['p2'] = array_unique($p2);
+
+            array_unshift($priorityList['p0'], User::ENTITY_TYPE);
         }
 
         ksort($priorityList);
