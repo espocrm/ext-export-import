@@ -30,8 +30,12 @@
 namespace Espo\Modules\ExportImport\Tools\Metadata;
 
 use Espo\ORM\Defs;
+use Espo\ORM\Defs\RelationDefs;
+
 use Espo\Core\Utils\Metadata;
 use Espo\Core\ORM\EntityManager;
+
+use Espo\Modules\ExportImport\Tools\Metadata\Relation as RelationTool;
 
 class Entity
 {
@@ -40,7 +44,8 @@ class Entity
     public function __construct(
         private Defs $defs,
         private Metadata $metadata,
-        private EntityManager $entityManager
+        private EntityManager $entityManager,
+        private RelationTool $relationTool
     ) {}
 
     public function isCustom(string $entityType): bool

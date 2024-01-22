@@ -158,10 +158,11 @@ class Entity implements
         return Result::create($entityType)
             ->withSkipCount($skipCount)
             ->withFailCount($failCount)
-            ->withSuccessCount($successCount);
+            ->withSuccessCount($successCount)
+            ->withReplaceIdMap($params->getReplaceIdMap());
     }
 
-    private function prepareData(Params $params, array $row)
+    private function prepareData(Params $params, array &$row)
     {
         $attributeList = $this->entityManager
             ->getDefs()
@@ -236,7 +237,7 @@ class Entity implements
 
     private function processAttribute(
         Params $params,
-        array $row,
+        array &$row,
         string $attributeName
     ): void {
         $attributeType = $this->entityManager

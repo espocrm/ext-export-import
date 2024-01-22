@@ -73,7 +73,7 @@ class Params implements IParams
 
     private bool $customization = false;
 
-    private array $userIdMap = [];
+    private array $replaceIdMap = [];
 
     public function __construct(string $entityType)
     {
@@ -220,18 +220,21 @@ class Params implements IParams
         return $obj;
     }
 
-    public function withUserIdMap(array $idMap): self
+    public function withReplaceIdMap(array $idMap): self
     {
         $obj = clone $this;
 
-        $obj->userIdMap = $idMap;
+        $obj->replaceIdMap = $idMap;
 
         return $obj;
     }
 
-    public function addUserIdMapItem(string $importId, string $actualId): void
-    {
-        $this->userIdMap[$importId] = $actualId;
+    public function addReplaceIdMapItem(
+        string $entityType,
+        string $fromId,
+        string $toId
+    ): void {
+        $this->replaceIdMap[$entityType][$fromId] = $toId;
     }
 
     /**
@@ -376,11 +379,13 @@ class Params implements IParams
     /**
      * Get a map of users ids
      * [
+     *  ENTITY_TYPE => [
      *     IMPORT_USER_ID => ACTUAL_USER_ID
+     *  ]
      * ]
      */
-    public function getUserIdMap(): array
+    public function getReplaceIdMap(): array
     {
-        return $this->userIdMap;
+        return $this->replaceIdMap;
     }
 }

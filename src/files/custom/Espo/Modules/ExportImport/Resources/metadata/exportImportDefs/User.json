@@ -11,5 +11,13 @@
         "isActive": {
             "placeholderAction": "User\\Active"
         }
+    },
+    "foreignAttributes": {
+        "Subscription": [
+            "userId"
+        ],
+        "Note": [
+            "data"
+        ]
     }
 }

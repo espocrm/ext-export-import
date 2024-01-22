@@ -102,6 +102,8 @@ class Params
 
     private $configIgnoreList;
 
+    private ?array $replaceIdMap;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -382,6 +384,15 @@ class Params
         return $obj;
     }
 
+    public function withReplaceIdMap(?array $idMap): self
+    {
+        $obj = clone $this;
+
+        $obj->replaceIdMap = $idMap;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -576,5 +587,10 @@ class Params
     public function getConfigIgnoreList(): array
     {
         return $this->configIgnoreList ?? [];
+    }
+
+    public function getReplaceIdMap(): array
+    {
+        return $this->replaceIdMap ?? [];
     }
 }

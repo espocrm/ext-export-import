@@ -27,54 +27,33 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import\ProcessHooks;
+namespace Espo\Modules\ExportImport\Tools\Import\Processor\Attributes;
 
-use Espo\ORM\Entity;
 use Espo\ORM\EntityManager;
 
-use Espo\Entities\User as UserEntity;
+use Espo\Modules\ExportImport\Tools\Import\Params;
+use Espo\Modules\ExportImport\Tools\Import\DataReplacer;
+use Espo\Modules\ExportImport\Tools\Import\ProcessorAttribute;
 
-use Espo\Modules\ExportImport\Tools\Processor\Params;
-use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
-use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
-
-class User implements ProcessHook
+class JsonObject implements ProcessorAttribute
 {
     public function __construct(
-        private EntityManager $entityManager
+        private EntityManager $entityManager,
+        private DataReplacer $dataReplacer,
     ) {}
 
-    public function process(Params $params, Entity $entity, array &$row): void
+    public function process(Params $params, array &$row, string $attributeName): void
     {
-        if (!$entity->isNew()) {
+        if (!array_key_exists($attributeName, $row)) {
             return;
         }
 
-        $actualEntity = $this->entityManager
-            ->getRDBRepository(UserEntity::ENTITY_TYPE)
-            ->where([
-                'userName' => $entity->get('userName'),
-            ])
-            ->findOne();
+        $value = $row[$attributeName];
 
-        if (!$actualEntity) {
+        if (empty($value)) {
             return;
         }
 
-        if ($entity->getId() === $actualEntity->getId()) {
-            return;
-        }
-
-        $params->addReplaceIdMapItem(
-            UserEntity::ENTITY_TYPE,
-            $entity->getId(),
-            $actualEntity->getId()
-        );
-
-        throw new SkipException(
-            'Imported User [' . $entity->getId() . '] is linked ' .
-            'to the User [' . $actualEntity->getId() . '] ' .
-            'identified by the username [' . $entity->get('userName') . '].'
-        );
+        $this->dataReplacer->processObject($params, $row, $attributeName);
     }
 }

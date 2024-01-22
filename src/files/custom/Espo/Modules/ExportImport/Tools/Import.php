@@ -111,6 +111,12 @@ class Import implements Tool
                 continue;
             }
 
+            if ($result->hasReplaceIdMap()) {
+                $params = $params->withReplaceIdMap(
+                    $result->getReplaceIdMap()
+                );
+            }
+
             if ($result->getWarningList()) {
                 $this->warningList = array_merge(
                     $this->warningList,
@@ -214,7 +220,8 @@ class Import implements Tool
             ->withUpdateCreatedAt($params->getUpdateCreatedAt())
             ->withUserPassword($params->getUserPassword())
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))
-            ->withCustomization($params->getCustomization());
+            ->withCustomization($params->getCustomization())
+            ->withReplaceIdMap($params->getReplaceIdMap());
 
         $import = $this->injectableFactory->create(EntityImportTool::class);
         $import->setParams($importParams);

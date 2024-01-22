@@ -39,7 +39,8 @@
     "importProcessAttributeClassNameMap": {
         "float": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\FloatObj",
         "datetime": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\Datetime",
-        "foreignId": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\ForeignId"
+        "foreignId": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\ForeignId",
+        "jsonObject": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\JsonObject"
     },
 
     "placeholderActionClassNameMap": {
