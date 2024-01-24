@@ -253,7 +253,9 @@ class Utils
 
         if (($key = array_search(User::ENTITY_TYPE, $p2)) !== false) {
             unset($p2[$key]);
+
             $priorityList['p2'] = array_unique($p2);
+            $priorityList['p0'] = $priorityList['p0'] ?? [];
 
             array_unshift($priorityList['p0'], User::ENTITY_TYPE);
         }
