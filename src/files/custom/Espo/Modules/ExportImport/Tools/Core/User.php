@@ -27,56 +27,24 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import\ProcessHooks;
+namespace Espo\Modules\ExportImport\Tools\Core;
 
-use Espo\ORM\Entity;
-use Espo\ORM\EntityManager;
-
+use Espo\Core\ORM\EntityManager;
 use Espo\Entities\User as UserEntity;
 
-use Espo\Modules\ExportImport\Tools\Processor\Params;
-use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
-use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
-use Espo\Modules\ExportImport\Tools\Import\Params as ImportParams;
-use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
-
-class User implements ProcessHook
+class User
 {
     public function __construct(
-        private UserTool $userTool,
         private EntityManager $entityManager
     ) {}
 
-    public function process(Params $params, Entity $entity, array &$row): void
+    public function getByUserName(string $userName): ?UserEntity
     {
-        /** @var ImportParams $params */
-
-        if (!$entity->isNew()) {
-            return;
-        }
-
-        $actualEntity = $this->userTool->getByUserName(
-            $entity->get('userName')
-        );
-
-        if (!$actualEntity) {
-            return;
-        }
-
-        if ($entity->getId() === $actualEntity->getId()) {
-            return;
-        }
-
-        $params->addReplaceIdMapItem(
-            UserEntity::ENTITY_TYPE,
-            $entity->getId(),
-            $actualEntity->getId()
-        );
-
-        throw new SkipException(
-            'Imported User [' . $entity->getId() . '] is linked ' .
-            'to the User [' . $actualEntity->getId() . '] ' .
-            'identified by the username [' . $entity->get('userName') . '].'
-        );
+        return $this->entityManager
+            ->getRDBRepository(UserEntity::ENTITY_TYPE)
+            ->where([
+                'userName' => $userName,
+            ])
+            ->findOne();
     }
 }
