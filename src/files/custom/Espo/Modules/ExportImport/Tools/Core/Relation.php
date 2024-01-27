@@ -27,7 +27,7 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Metadata;
+namespace Espo\Modules\ExportImport\Tools\Core;
 
 use Espo\ORM\Defs;
 use Espo\ORM\Defs\RelationDefs;

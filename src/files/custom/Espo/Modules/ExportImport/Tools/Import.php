@@ -38,7 +38,7 @@ use Espo\Core\Utils\File\Manager as FileManager;
 
 use Espo\Modules\ExportImport\Tools\Params;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
-use Espo\Modules\ExportImport\Tools\Metadata\Entity as EntityTool;
+use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
 use Espo\Modules\ExportImport\Tools\Import\Params as ImportParams;
 use Espo\Modules\ExportImport\Tools\Import\EntityImport as EntityImportTool;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ProcessorUtils;

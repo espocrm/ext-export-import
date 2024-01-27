@@ -32,7 +32,7 @@ namespace Espo\Modules\ExportImport\Tools\Import;
 use Espo\Core\Utils\Json as JsonUtil;
 
 use Espo\Modules\ExportImport\Tools\Import\Params;
-use Espo\Modules\ExportImport\Tools\Metadata\Relation as RelationTool;
+use Espo\Modules\ExportImport\Tools\Core\Relation as RelationTool;
 
 class DataReplacer
 {

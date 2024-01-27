@@ -42,7 +42,7 @@ use Espo\Modules\ExportImport\Tools\Params;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 use Espo\Modules\ExportImport\Tools\Manifest\ManifestWriter;
 use Espo\Modules\ExportImport\Tools\Export\Processor\Collection;
-use Espo\Modules\ExportImport\Tools\Metadata\Entity as EntityTool;
+use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
 use Espo\Modules\ExportImport\Tools\Export\Result as EntityResult;
 use Espo\Modules\ExportImport\Tools\Export\Params as ExportParams;
 use Espo\Modules\ExportImport\Tools\Config\Params as ConfigParams;

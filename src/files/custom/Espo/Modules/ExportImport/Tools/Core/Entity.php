@@ -27,7 +27,7 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Metadata;
+namespace Espo\Modules\ExportImport\Tools\Core;
 
 use Espo\ORM\Defs;
 use Espo\ORM\Defs\RelationDefs;
@@ -35,7 +35,7 @@ use Espo\ORM\Defs\RelationDefs;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\ORM\EntityManager;
 
-use Espo\Modules\ExportImport\Tools\Metadata\Relation as RelationTool;
+use Espo\Modules\ExportImport\Tools\Core\Relation as RelationTool;
 
 class Entity
 {
