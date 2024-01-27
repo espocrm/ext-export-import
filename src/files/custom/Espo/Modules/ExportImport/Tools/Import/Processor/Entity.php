@@ -29,7 +29,11 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Processor;
 
-use Espo\Core\Di;
+use Espo\Core\Utils\Log;
+use Espo\Core\Utils\Config;
+use Espo\ORM\EntityManager;
+use Espo\Core\Utils\Metadata;
+use Espo\Core\InjectableFactory;
 use Espo\Core\ORM\Repository\Option\SaveOption;
 
 use Espo\Modules\ExportImport\Tools\Import\Result;
@@ -43,27 +47,16 @@ use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
 
 use Exception;
 
-class Entity implements
-
-    Processor,
-    Di\LogAware,
-    Di\ConfigAware,
-    Di\MetadataAware,
-    Di\EntityManagerAware,
-    Di\InjectableFactoryAware
+class Entity implements Processor
 {
-    use Di\LogSetter;
-    use Di\ConfigSetter;
-    use Di\MetadataSetter;
-    use Di\EntityManagerSetter;
-    use Di\InjectableFactorySetter;
-
-    protected $placeholderHandler;
-
-    public function __construct(PlaceholderHandler $placeholderHandler)
-    {
-        $this->placeholderHandler = $placeholderHandler;
-    }
+    public function __construct(
+        private Log $log,
+        private Config $config,
+        private Metadata $metadata,
+        private EntityManager $entityManager,
+        private InjectableFactory $injectableFactory,
+        private PlaceholderHandler $placeholderHandler
+    ) {}
 
     public function process(Params $params, Data $data): Result
     {
@@ -190,6 +183,8 @@ class Entity implements
         $entityType = $params->getEntityType();
 
         if (ToolUtils::isScopeEntity($this->metadata, $entityType)) {
+
+
             return $id;
         }
 
