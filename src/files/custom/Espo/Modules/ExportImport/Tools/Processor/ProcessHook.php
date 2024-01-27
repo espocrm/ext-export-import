@@ -35,5 +35,5 @@ use Espo\{
 
 interface ProcessHook
 {
-    public function process(Params $params, Entity $entity, array &$row): void;
+    public function process(Params $params, Entity $entity, array $row): void;
 }

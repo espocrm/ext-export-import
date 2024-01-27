@@ -47,7 +47,7 @@ class User implements ProcessHook
         private EntityManager $entityManager
     ) {}
 
-    public function process(Params $params, Entity $entity, array &$row): void
+    public function process(Params $params, Entity $entity, array $row): void
     {
         /** @var ImportParams $params */
 
