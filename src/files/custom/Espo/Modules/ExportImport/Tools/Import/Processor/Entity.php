@@ -155,12 +155,14 @@ class Entity implements Processor
             ->withReplaceIdMap($params->getReplaceIdMap());
     }
 
-    private function prepareData(Params $params, array &$row)
+    private function prepareData(Params $params, array $initRow)
     {
         $attributeList = $this->entityManager
             ->getDefs()
             ->getEntity($params->getEntityType())
             ->getAttributeNameList();
+
+        $row = $initRow;
 
         foreach ($row as $attributeName => $attributeValue) {
 
@@ -183,8 +185,6 @@ class Entity implements Processor
         $entityType = $params->getEntityType();
 
         if (ToolUtils::isScopeEntity($this->metadata, $entityType)) {
-
-
             return $id;
         }
 

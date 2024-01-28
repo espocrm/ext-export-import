@@ -29,6 +29,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Processor\Attributes;
 
+use Espo\Core\Utils\Log;
 use Espo\ORM\Type\AttributeType;
 use Espo\Entities\User as UserEntity;
 
@@ -39,6 +40,7 @@ use Espo\Modules\ExportImport\Tools\Import\ProcessorAttribute;
 class Id implements ProcessorAttribute
 {
     public function __construct(
+        private Log $log,
         private UserTool $userTool
     ) {}
 
@@ -55,6 +57,7 @@ class Id implements ProcessorAttribute
             return;
         }
 
+        $id = $row['id'] ?? null;
         $userName = $row['userName'] ?? null;
 
         if (!$userName) {
@@ -68,5 +71,33 @@ class Id implements ProcessorAttribute
         }
 
         $row[$attributeName] = $user->getId();
+
+        $this->addUserReplaceId($params, $row, $id);
+    }
+
+    private function addUserReplaceId(Params $params, array $row, ?string $id): void
+    {
+        $actualId = $row['id'] ?? null;
+        $userName = $row['userName'] ?? null;
+
+        if (!$id || !$actualId) {
+            return;
+        }
+
+        if ($id == $actualId) {
+            return;
+        }
+
+        $params->addReplaceIdMapItem(
+            UserEntity::ENTITY_TYPE,
+            $id,
+            $actualId
+        );
+
+        $this->log->debug(
+            'Imported User [' . $id . '] is linked ' .
+            'to the User [' . $actualId . '] ' .
+            'identified by the username [' . $userName . '].'
+        );
     }
 }
