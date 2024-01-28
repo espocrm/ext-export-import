@@ -50,7 +50,7 @@ class Attachment implements
     use Di\LogSetter;
     use Di\FileManagerSetter;
 
-    public function process(Params $params, Entity $entity, array &$row): void
+    public function process(Params $params, Entity $entity, array $row): void
     {
         if (
             $entity->get('storage') &&
