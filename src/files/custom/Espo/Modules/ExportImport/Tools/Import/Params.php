@@ -75,6 +75,8 @@ class Params implements IParams
 
     private array $replaceIdMap = [];
 
+    private bool $clearPassword;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -225,6 +227,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->replaceIdMap = $idMap;
+
+        return $obj;
+    }
+
+    public function withClearPassword(bool $clearPassword): self
+    {
+        $obj = clone $this;
+
+        $obj->clearPassword = $clearPassword;
 
         return $obj;
     }
@@ -387,5 +398,13 @@ class Params implements IParams
     public function getReplaceIdMap(): array
     {
         return $this->replaceIdMap;
+    }
+
+    /**
+     * Get clearPassword option
+     */
+    public function getClearPassword(): bool
+    {
+        return $this->clearPassword ?? false;
     }
 }

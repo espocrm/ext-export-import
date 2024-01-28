@@ -104,6 +104,8 @@ class Params
 
     private ?array $replaceIdMap;
 
+    private bool $clearPassword;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -131,6 +133,7 @@ class Params
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
         $obj->userPassword = $params['userPassword'] ?? null;
         $obj->currency = $params['currency'] ?? null;
+        $obj->clearPassword = $params['clearPassword'] ?? false;
 
         if (!in_array(
             $obj->importType,
@@ -393,6 +396,15 @@ class Params
         return $obj;
     }
 
+    public function withClearPassword(bool $clearPassword): self
+    {
+        $obj = clone $this;
+
+        $obj->clearPassword = $clearPassword;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -592,5 +604,13 @@ class Params
     public function getReplaceIdMap(): array
     {
         return $this->replaceIdMap ?? [];
+    }
+
+    /**
+     * Get clearPassword option
+     */
+    public function getClearPassword(): bool
+    {
+        return $this->clearPassword ?? false;
     }
 }

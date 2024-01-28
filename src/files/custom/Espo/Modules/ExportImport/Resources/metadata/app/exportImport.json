@@ -38,6 +38,7 @@
     "importProcessAttributeClassNameMap": {
         "id": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\Id",
         "float": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\FloatObj",
+        "password": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\Password",
         "datetime": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\Datetime",
         "foreignId": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\ForeignId",
         "jsonObject": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\JsonObject"
@@ -78,5 +79,6 @@
 
     "updateCurrency": false,
     "updateCreatedAt": false,
-    "userActive": false
+    "userActive": false,
+    "clearPassword": false
 }

@@ -174,7 +174,7 @@ class EntityExport
             $row = [];
 
             foreach ($attributeList as $attribute) {
-                $value = $this->getAttributeFromEntity($entity, $attribute);
+                $value = $this->getAttributeFromEntity($params, $entity, $attribute);
 
                 if ($this->skipValue($entity, $attribute, $value)) {
 
@@ -233,8 +233,11 @@ class EntityExport
             ->withWarningList($warningList ?? null);
     }
 
-    protected function getAttributeFromEntity(Entity $entity, string $attribute)
-    {
+    protected function getAttributeFromEntity(
+        Params $params,
+        Entity $entity,
+        string $attribute
+    ) {
         $methodName = 'getAttribute' . ucfirst($attribute) . 'FromEntity';
 
         if (method_exists($this, $methodName)) {
@@ -275,7 +278,10 @@ class EntityExport
                 return null;
 
             case Entity::PASSWORD:
-                return null;
+                if ($params->getClearPassword()) {
+                    return null;
+                }
+                break;
         }
 
         return $entity->get($attribute);

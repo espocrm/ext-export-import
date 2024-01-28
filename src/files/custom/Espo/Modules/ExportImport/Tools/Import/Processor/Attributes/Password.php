@@ -27,36 +27,19 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\User;
+namespace Espo\Modules\ExportImport\Tools\Import\Processor\Attributes;
 
-use Espo\Core\Utils\PasswordHash;
+use Espo\Modules\ExportImport\Tools\Import\Params;
+use Espo\Modules\ExportImport\Tools\Import\ProcessorAttribute;
 
-use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Action;
-use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Params;
-
-class Password implements Action
+class Password implements ProcessorAttribute
 {
-    public function __construct(
-        private PasswordHash $passwordHash
-    ) {}
-
-    public function normalize(Params $params, $actualValue)
+    public function process(Params $params, array &$row, string $attributeName): void
     {
-        $password = $params->getUserPassword();
-
-        if (!$password) {
-            $password = $params->getPlaceholderDefs()['placeholderData']['value']
-                ?? null;
+        if (!$params->getClearPassword()) {
+            return;
         }
 
-        if (!$password && !empty($actualValue)) {
-            return $actualValue;
-        }
-
-        if (!$password) {
-            $password = uniqid('', true);
-        }
-
-        return $this->passwordHash->hash($password);
+        $row[$attributeName] = null;
     }
 }

@@ -181,7 +181,8 @@ class Export implements Tool
             ->withSearchParams($searchParams)
             ->withPrettyPrint($params->getPrettyPrint())
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))
-            ->withCustomization($params->getCustomization());
+            ->withCustomization($params->getCustomization())
+            ->withClearPassword($params->getClearPassword());
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);

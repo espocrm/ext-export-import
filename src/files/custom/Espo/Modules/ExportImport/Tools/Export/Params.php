@@ -74,6 +74,8 @@ class Params implements IParams
 
     private bool $customization = false;
 
+    private bool $clearPassword;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -215,6 +217,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->customization = $customization;
+
+        return $obj;
+    }
+
+    public function withClearPassword(bool $clearPassword): self
+    {
+        $obj = clone $this;
+
+        $obj->clearPassword = $clearPassword;
 
         return $obj;
     }
@@ -376,5 +387,13 @@ class Params implements IParams
     public function getCustomization(): bool
     {
         return $this->customization;
+    }
+
+    /**
+     * Get clearPassword option
+     */
+    public function getClearPassword(): bool
+    {
+        return $this->clearPassword ?? false;
     }
 }
