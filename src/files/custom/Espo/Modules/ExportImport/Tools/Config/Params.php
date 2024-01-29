@@ -42,6 +42,8 @@ class Params
 {
     public const CONFIG_FILE = 'config.json';
 
+    public const INTERNAL_CONFIG_FILE = 'config-internal.json';
+
     private $path;
 
     private $exportImportDefs;
@@ -51,6 +53,10 @@ class Params
     private $entityTypeList;
 
     private $configIgnoreList;
+
+    private bool $skipInternalConfig;
+
+    private bool $clearPassword;
 
     public static function create(): self
     {
@@ -102,6 +108,15 @@ class Params
         return $obj;
     }
 
+    public function withSkipInternalConfig(bool $isSkip): self
+    {
+        $obj = clone $this;
+
+        $obj->skipInternalConfig = $isSkip;
+
+        return $obj;
+    }
+
     /**
      * Get path
      */
@@ -129,6 +144,26 @@ class Params
         return Util::concatPath(
             $this->getConfigPath(),
             self::CONFIG_FILE
+        );
+    }
+
+    public function withClearPassword(bool $clearPassword): self
+    {
+        $obj = clone $this;
+
+        $obj->clearPassword = $clearPassword;
+
+        return $obj;
+    }
+
+    /**
+     * Get path
+     */
+    public function getInternalConfigFile(): string
+    {
+        return Util::concatPath(
+            $this->getConfigPath(),
+            self::INTERNAL_CONFIG_FILE
         );
     }
 
@@ -162,5 +197,21 @@ class Params
     public function getConfigIgnoreList(): array
     {
         return $this->configIgnoreList ?? [];
+    }
+
+    /**
+     * Get clearPassword option
+     */
+    public function getClearPassword(): bool
+    {
+        return $this->clearPassword ?? false;
+    }
+
+    /**
+     * Get skipInternalConfig option
+     */
+    public function getSkipInternalConfig(): bool
+    {
+        return $this->skipInternalConfig ?? false;
     }
 }

@@ -76,8 +76,6 @@ class Params implements IParams
 
     private bool $clearPassword;
 
-    private bool $skipInternalConfig;
-
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -228,15 +226,6 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->clearPassword = $clearPassword;
-
-        return $obj;
-    }
-
-    public function withSkipInternalConfig(bool $isSkip): self
-    {
-        $obj = clone $this;
-
-        $obj->skipInternalConfig = $isSkip;
 
         return $obj;
     }
@@ -406,13 +395,5 @@ class Params implements IParams
     public function getClearPassword(): bool
     {
         return $this->clearPassword ?? false;
-    }
-
-    /**
-     * Get skipInternalConfig option
-     */
-    public function getSkipInternalConfig(): bool
-    {
-        return $this->skipInternalConfig ?? false;
     }
 }

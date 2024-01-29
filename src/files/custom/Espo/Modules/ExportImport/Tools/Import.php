@@ -222,8 +222,7 @@ class Import implements Tool
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))
             ->withCustomization($params->getCustomization())
             ->withReplaceIdMap($params->getReplaceIdMap())
-            ->withClearPassword($params->getClearPassword())
-            ->withSkipInternalConfig($params->getSkipInternalConfig());
+            ->withClearPassword($params->getClearPassword());
 
         $import = $this->injectableFactory->create(EntityImportTool::class);
         $import->setParams($importParams);
@@ -286,7 +285,9 @@ class Import implements Tool
             ->withManifest($manifest)
             ->withEntityTypeList($entityTypeList)
             ->withExportImportDefs($params->getExportImportDefs())
-            ->withConfigIgnoreList($params->getConfigIgnoreList());
+            ->withConfigIgnoreList($params->getConfigIgnoreList())
+            ->withClearPassword($params->getClearPassword())
+            ->withSkipInternalConfig($params->getSkipInternalConfig());
 
         $configImport = $this->injectableFactory->create(
             ConfigImport::class
