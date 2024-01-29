@@ -80,5 +80,6 @@
     "updateCurrency": false,
     "updateCreatedAt": false,
     "userActive": false,
-    "clearPassword": false
+    "clearPassword": false,
+    "skipInternalConfig": false
 }

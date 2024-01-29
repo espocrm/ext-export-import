@@ -106,6 +106,8 @@ class Params
 
     private bool $clearPassword;
 
+    private bool $skipInternalConfig;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -405,6 +407,15 @@ class Params
         return $obj;
     }
 
+    public function withSkipInternalConfig(bool $isSkip): self
+    {
+        $obj = clone $this;
+
+        $obj->skipInternalConfig = $isSkip;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -612,5 +623,13 @@ class Params
     public function getClearPassword(): bool
     {
         return $this->clearPassword ?? false;
+    }
+
+    /**
+     * Get skipInternalConfig option
+     */
+    public function getSkipInternalConfig(): bool
+    {
+        return $this->skipInternalConfig ?? false;
     }
 }
