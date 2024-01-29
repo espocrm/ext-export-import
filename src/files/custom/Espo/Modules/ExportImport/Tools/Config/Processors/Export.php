@@ -74,6 +74,8 @@ class Export implements Processor
             $ignoreList = array_merge($ignoreList, self::PASSWORD_PARAM_LIST);
         }
 
+        $ignoreList = $this->applyHardList($params, $ignoreList);
+
         $configData = $config->getAllNonInternalData();
         $configData = get_object_vars($configData);
 
@@ -92,6 +94,8 @@ class Export implements Processor
         }
 
         $ignoreList = $params->getConfigIgnoreList();
+
+        $ignoreList = $this->applyHardList($params, $ignoreList);
 
         $data = [];
 
@@ -128,5 +132,24 @@ class Export implements Processor
             $this->fileManager->getPhpContents($internalConfigPath) : [];
 
         return array_keys($internalData);
+    }
+
+    private function applyHardList($params, array $ignoreList): array
+    {
+        $hardList = $params->getConfigHardList();
+
+        if (empty($hardList)) {
+            return $ignoreList;
+        }
+
+        foreach ($ignoreList as $key => $value) {
+            if (!in_array($value, $hardList)) {
+                continue;
+            }
+
+            unset($ignoreList[$key]);
+        }
+
+        return array_values($ignoreList);
     }
 }
