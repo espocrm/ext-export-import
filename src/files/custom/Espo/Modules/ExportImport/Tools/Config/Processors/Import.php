@@ -29,32 +29,28 @@
 
 namespace Espo\Modules\ExportImport\Tools\Config\Processors;
 
-use Espo\Core\{
-    Di,
-    Utils\Config\ConfigWriter,
-};
+use Espo\Core\Utils\Config;
+use Espo\Core\Utils\Config\ConfigWriter;
+use Espo\Core\Utils\File\Manager as FileManager;
 
-use Espo\Modules\ExportImport\Tools\{
-    Config\Processor,
-    Config\Params,
-};
+use Espo\Modules\ExportImport\Tools\Config\Params;
+use Espo\Modules\ExportImport\Tools\Config\Processor;
 
-class Import implements
-
-    Processor,
-    Di\ConfigAware,
-    Di\FileManagerAware
+class Import implements Processor
 {
-    use Di\ConfigSetter;
-    use Di\FileManagerSetter;
-
-    private $configWriter;
-
-    public function __construct(ConfigWriter $configWriter) {
-        $this->configWriter = $configWriter;
-    }
+    public function __construct(
+        private Config $config,
+        private ConfigWriter $configWriter,
+        private FileManager $fileManager,
+    ) {}
 
     public function process(Params $params): void
+    {
+        $this->processConfig($params);
+        $this->processInternalConfig($params);
+    }
+
+    private function processConfig(Params $params): void
     {
         $contents = $this->fileManager->getContents(
             $params->getConfigFile()
@@ -64,7 +60,48 @@ class Import implements
             json_decode($contents)
         );
 
+        if (empty($configData)) {
+            return;
+        }
+
+        $configData = $this->applyClearPassword($params, $configData);
+
         $this->configWriter->setMultiple($configData);
         $this->configWriter->save();
+    }
+
+    private function processInternalConfig(Params $params): void
+    {
+        if ($params->getSkipInternalConfig()) {
+            return;
+        }
+
+        $contents = $this->fileManager->getContents(
+            $params->getInternalConfigFile()
+        );
+
+        $configData = get_object_vars(
+            json_decode($contents)
+        );
+
+        if (empty($configData)) {
+            return;
+        }
+
+        $configData = $this->applyClearPassword($params, $configData);
+
+        $this->configWriter->setMultiple($configData);
+        $this->configWriter->save();
+    }
+
+    private function applyClearPassword(Params $params, array $configData): array
+    {
+        if (!$params->getClearPassword()) {
+            return $configData;
+        }
+
+        $ignoreList = Params::PASSWORD_PARAM_LIST;
+
+        return array_diff_key($configData, array_flip($ignoreList));
     }
 }

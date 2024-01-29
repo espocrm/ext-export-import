@@ -44,6 +44,16 @@ class Params
 
     public const INTERNAL_CONFIG_FILE = 'config-internal.json';
 
+    public const PASSWORD_PARAM_LIST = [
+        'passwordSalt',
+        'cryptKey',
+        'hashSecretKey',
+        'apiSecretKeys',
+        'smtpPassword',
+        'internalSmtpPassword',
+        'ldapPassword',
+    ];
+
     private $path;
 
     private $exportImportDefs;

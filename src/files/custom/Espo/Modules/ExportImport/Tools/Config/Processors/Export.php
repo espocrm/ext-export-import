@@ -37,16 +37,6 @@ use Espo\Modules\ExportImport\Tools\Config\Processor;
 
 class Export implements Processor
 {
-    private const PASSWORD_PARAM_LIST = [
-        'passwordSalt',
-        'cryptKey',
-        'hashSecretKey',
-        'apiSecretKeys',
-        'smtpPassword',
-        'internalSmtpPassword',
-        'ldapPassword',
-    ];
-
     public function __construct(
         private Config $config,
         private FileManager $fileManager
@@ -71,7 +61,7 @@ class Export implements Processor
         }
 
         if ($params->getClearPassword()) {
-            $ignoreList = array_merge($ignoreList, self::PASSWORD_PARAM_LIST);
+            $ignoreList = array_merge($ignoreList, Params::PASSWORD_PARAM_LIST);
         }
 
         $ignoreList = $this->applyHardList($params, $ignoreList);
@@ -106,7 +96,7 @@ class Export implements Processor
 
             if (
                 $params->getClearPassword() &&
-                in_array($param, self::PASSWORD_PARAM_LIST)
+                in_array($param, Params::PASSWORD_PARAM_LIST)
             ) {
                 continue;
             }
