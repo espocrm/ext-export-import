@@ -47,7 +47,7 @@ class Params
 
     private $exportImportDefs = null;
 
-    private $userActive = false;
+    private ?bool $userActive = null;
 
     private $userPassword = null;
 
@@ -106,7 +106,7 @@ class Params
         return $obj;
     }
 
-    public function withUserActive(bool $userActive): self
+    public function withUserActive(?bool $userActive): self
     {
         $obj = clone $this;
 
@@ -192,7 +192,7 @@ class Params
     /**
      * User active status
      */
-    public function getUserActive(): bool
+    public function getUserActive(): ?bool
     {
         return $this->userActive;
     }

@@ -86,7 +86,7 @@ class Params
 
     private $quiet;
 
-    private $userActive = false;
+    private ?bool $userActive = null;
 
     private $userPassword = null;
 
@@ -186,7 +186,7 @@ class Params
         );
 
         $obj->userActive = ToolUtils::normalizeBoolFromArray(
-            $params, 'userActive'
+            $params, 'userActive', null
         );
 
         $obj->exportTime = $obj->normalizeExportTime(
@@ -334,7 +334,7 @@ class Params
         return $obj;
     }
 
-    public function withUserActive(bool $userActive): self
+    public function withUserActive(?bool $userActive): self
     {
         $obj = clone $this;
 
@@ -576,7 +576,7 @@ class Params
     /**
      * User active status
      */
-    public function getUserActive(): bool
+    public function getUserActive(): ?bool
     {
         return $this->userActive;
     }

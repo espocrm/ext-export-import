@@ -199,10 +199,14 @@ class Utils
     public static function normalizeBoolFromArray(
         array $data,
         string $optionName,
-        bool $default = false
-    ): bool
+        ?bool $default = false
+    ): ?bool
     {
         if (!array_key_exists($optionName, $data)) {
+            return $default;
+        }
+
+        if (is_null($data[$optionName])) {
             return $default;
         }
 

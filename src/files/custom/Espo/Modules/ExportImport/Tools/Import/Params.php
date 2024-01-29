@@ -63,7 +63,7 @@ class Params implements IParams
 
     private $filesPath;
 
-    private $userActive = false;
+    private ?bool $userActive = null;
 
     private $userPassword = null;
 
@@ -177,7 +177,7 @@ class Params implements IParams
         return $obj;
     }
 
-    public function withUserActive(bool $userActive): self
+    public function withUserActive(?bool $userActive): self
     {
         $obj = clone $this;
 
@@ -350,7 +350,7 @@ class Params implements IParams
     /**
      * User active status
      */
-    public function getUserActive(): bool
+    public function getUserActive(): ?bool
     {
         return $this->userActive;
     }
