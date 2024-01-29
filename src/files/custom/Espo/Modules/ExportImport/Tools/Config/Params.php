@@ -58,6 +58,8 @@ class Params
 
     private bool $clearPassword;
 
+    private ?array $configHardList;
+
     public static function create(): self
     {
         return new self();
@@ -113,6 +115,15 @@ class Params
         $obj = clone $this;
 
         $obj->skipInternalConfig = $isSkip;
+
+        return $obj;
+    }
+
+    public function withConfigHardList(array $list): self
+    {
+        $obj = clone $this;
+
+        $obj->configHardList = $list;
 
         return $obj;
     }
@@ -213,5 +224,13 @@ class Params
     public function getSkipInternalConfig(): bool
     {
         return $this->skipInternalConfig ?? false;
+    }
+
+    /**
+     * List of hard list params
+     */
+    public function getConfigHardList(): array
+    {
+        return $this->configHardList ?? [];
     }
 }

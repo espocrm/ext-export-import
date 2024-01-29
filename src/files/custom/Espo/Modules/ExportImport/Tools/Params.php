@@ -108,6 +108,8 @@ class Params
 
     private bool $skipInternalConfig;
 
+    private ?array $configHardList;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -189,6 +191,11 @@ class Params
 
         $obj->exportTime = $obj->normalizeExportTime(
             $params['exportTime'] ?? null
+        );
+
+        $obj->configHardList = ToolUtils::normalizeList(
+            $params['configHardList'] ?? null,
+            $params['default']['configHardList'] ?? null,
         );
 
         return $obj;
@@ -386,6 +393,15 @@ class Params
         $obj = clone $this;
 
         $obj->configIgnoreList = $configIgnoreList;
+
+        return $obj;
+    }
+
+    public function withConfigHardList(array $list): self
+    {
+        $obj = clone $this;
+
+        $obj->configHardList = $list;
 
         return $obj;
     }
@@ -611,6 +627,14 @@ class Params
     public function getConfigIgnoreList(): array
     {
         return $this->configIgnoreList ?? [];
+    }
+
+    /**
+     * List of hard list params
+     */
+    public function getConfigHardList(): array
+    {
+        return $this->configHardList ?? [];
     }
 
     public function getReplaceIdMap(): array

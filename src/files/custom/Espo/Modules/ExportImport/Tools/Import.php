@@ -287,7 +287,8 @@ class Import implements Tool
             ->withExportImportDefs($params->getExportImportDefs())
             ->withConfigIgnoreList($params->getConfigIgnoreList())
             ->withClearPassword($params->getClearPassword())
-            ->withSkipInternalConfig($params->getSkipInternalConfig());
+            ->withSkipInternalConfig($params->getSkipInternalConfig())
+            ->withConfigHardList($params->getConfigHardList());
 
         $configImport = $this->injectableFactory->create(
             ConfigImport::class

@@ -265,7 +265,8 @@ class Export implements Tool
             ->withExportImportDefs($params->getExportImportDefs())
             ->withConfigIgnoreList($params->getConfigIgnoreList())
             ->withClearPassword($params->getClearPassword())
-            ->withSkipInternalConfig($params->getSkipInternalConfig());
+            ->withSkipInternalConfig($params->getSkipInternalConfig())
+            ->withConfigHardList($params->getConfigHardList());
 
         $configExport = $this->injectableFactory->create(
             ConfigExport::class
