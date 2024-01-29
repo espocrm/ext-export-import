@@ -29,32 +29,50 @@
 
 namespace Espo\Modules\ExportImport\Tools\Config\Processors;
 
-use Espo\Core\{
-    Di,
-};
+use Espo\Core\Utils\Config;
+use Espo\Core\Utils\File\Manager as FileManager;
 
-use Espo\Modules\ExportImport\Tools\{
-    Config\Processor,
-    Config\Params,
-};
+use Espo\Modules\ExportImport\Tools\Config\Params;
+use Espo\Modules\ExportImport\Tools\Config\Processor;
 
-class Export implements
-
-    Processor,
-    Di\ConfigAware,
-    Di\FileManagerAware
+class Export implements Processor
 {
-    use Di\ConfigSetter;
-    use Di\FileManagerSetter;
+    private const PASSWORD_PARAM_LIST = [
+        'passwordSalt',
+        'cryptKey',
+        'hashSecretKey',
+        'apiSecretKeys',
+        'smtpPassword',
+        'internalSmtpPassword',
+        'ldapPassword',
+    ];
+
+    public function __construct(
+        private Config $config,
+        private FileManager $fileManager
+    ) {}
 
     public function process(Params $params): void
     {
+        $this->processConfig($params);
+        $this->processInternalConfig($params);
+    }
+
+    private function processConfig(Params $params): void
+    {
         $config = $this->config;
 
-        $ignoreList = $config->get('systemItems');
-        $ignoreList = array_merge($ignoreList, $config->get('adminItems'));
-        $ignoreList = array_merge($ignoreList, $config->get('superAdminItems'));
-        $ignoreList = array_merge($ignoreList, $params->getConfigIgnoreList());
+        $ignoreList = $params->getConfigIgnoreList();
+
+        if ($params->getSkipInternalConfig()) {
+            $ignoreList = array_merge($ignoreList, $config->get('systemItems'));
+            $ignoreList = array_merge($ignoreList, $config->get('adminItems'));
+            $ignoreList = array_merge($ignoreList, $config->get('superAdminItems'));
+        }
+
+        if ($params->getClearPassword()) {
+            $ignoreList = array_merge($ignoreList, self::PASSWORD_PARAM_LIST);
+        }
 
         $configData = $config->getAllNonInternalData();
         $configData = get_object_vars($configData);
@@ -65,5 +83,50 @@ class Export implements
             $params->getConfigFile(),
             $configData
         );
+    }
+
+    private function processInternalConfig(Params $params): void
+    {
+        if ($params->getSkipInternalConfig()) {
+            return;
+        }
+
+        $ignoreList = $params->getConfigIgnoreList();
+
+        $data = [];
+
+        foreach ($this->getInternalParamList() as $param) {
+            if (in_array($param, $ignoreList)) {
+                continue;
+            }
+
+            if (
+                $params->getClearPassword() &&
+                in_array($param, self::PASSWORD_PARAM_LIST)
+            ) {
+                continue;
+            }
+
+            $data[$param] = $this->config->get($param);
+        }
+
+        if (empty($data)) {
+            return;
+        }
+
+        $this->fileManager->putJsonContents(
+            $params->getInternalConfigFile(),
+            $data
+        );
+    }
+
+    private function getInternalParamList()
+    {
+        $internalConfigPath = $this->config->getInternalConfigPath();
+
+        $internalData = $this->fileManager->isFile($internalConfigPath) ?
+            $this->fileManager->getPhpContents($internalConfigPath) : [];
+
+        return array_keys($internalData);
     }
 }

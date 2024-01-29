@@ -136,6 +136,7 @@ class Params
         $obj->userPassword = $params['userPassword'] ?? null;
         $obj->currency = $params['currency'] ?? null;
         $obj->clearPassword = $params['clearPassword'] ?? false;
+        $obj->skipInternalConfig = $params['skipInternalConfig'] ?? false;
 
         if (!in_array(
             $obj->importType,
