@@ -93,8 +93,7 @@
 
     "defsSource": "exportImportDefs",
 
-    "exportPath": "build/ExportImport/Export",
-    "importPath": "build/ExportImport/Import",
+    "path": "./data/export-import",
     "manifestFile": "manifest.json",
 
     "format": "json",

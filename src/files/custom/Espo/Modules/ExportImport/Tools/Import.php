@@ -72,7 +72,7 @@ class Import implements Tool
     public function run(Params $params) : void
     {
         $format = $params->getFormat() ?? null;
-        $importPath = $params->getImportPath() ?? null;
+        $importPath = $params->getPath() ?? null;
 
         if (!$format) {
             throw new Error('Option "format" is not defined.');
@@ -154,7 +154,7 @@ class Import implements Tool
     private function loadEntityTypeList(Params $params): array
     {
         $entityFileList = $this->fileManager->getFileList(
-            $params->getDataEntitiesPath(),
+            $params->getEntitiesPath(),
             false,
             '\.json$'
         );
@@ -209,9 +209,9 @@ class Import implements Tool
 
         $importParams = ImportParams::create($entityType)
             ->withFormat($params->getFormat())
-            ->withPath($params->getImportPath())
-            ->withEntitiesPath($params->getDataEntitiesPath())
-            ->withFilesPath($params->getDataFilesPath())
+            ->withPath($params->getPath())
+            ->withEntitiesPath($params->getEntitiesPath())
+            ->withFilesPath($params->getFilesPath())
             ->withExportImportDefs($params->getExportImportDefs())
             ->withManifest($manifest)
             ->withImportType($params->getImportType())
@@ -262,7 +262,7 @@ class Import implements Tool
         $entityTypeList = $this->getEntityTypeList($params);
 
         $params = CustomizationParams::create()
-            ->withPath($params->getImportPath())
+            ->withPath($params->getPath())
             ->withManifest($manifest)
             ->withEntityTypeList($entityTypeList)
             ->withExportImportDefs($params->getExportImportDefs());
@@ -286,7 +286,7 @@ class Import implements Tool
         $entityTypeList = $this->getEntityTypeList($params);
 
         $params = ConfigParams::create()
-            ->withPath($params->getImportPath())
+            ->withPath($params->getPath())
             ->withManifest($manifest)
             ->withEntityTypeList($entityTypeList)
             ->withExportImportDefs($params->getExportImportDefs())

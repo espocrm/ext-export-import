@@ -61,7 +61,7 @@ class Manifest
 
     protected function loadData(): void
     {
-        $this->manifestFile = $this->params->getDataManifestFile();
+        $this->manifestFile = $this->params->getManifestFile();
 
         $contents = $this->fileManager->getContents($this->manifestFile);
 

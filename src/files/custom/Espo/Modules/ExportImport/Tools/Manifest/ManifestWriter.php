@@ -67,7 +67,7 @@ class ManifestWriter
 
     protected function loadData(): void
     {
-        $this->manifestFile = $this->params->getExportManifestFile();
+        $this->manifestFile = $this->params->getManifestFile();
         $this->applicationName = $this->config->get('applicationName');
         $this->version = $this->config->get('version');
         $this->exportTime = $this->params->getExportTime();

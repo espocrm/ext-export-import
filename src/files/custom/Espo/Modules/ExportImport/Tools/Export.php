@@ -71,7 +71,7 @@ class Export implements Tool
     public function run(Params $params) : void
     {
         $format = $params->getFormat() ?? null;
-        $exportPath = $params->getExportPath() ?? null;
+        $exportPath = $params->getPath() ?? null;
 
         if (!$format) {
             throw new Error('Option "format" is not defined.');
@@ -171,9 +171,9 @@ class Export implements Tool
         $exportParams = ExportParams::create($entityType)
             ->withFormat($format)
             ->withAccessControl(false)
-            ->withPath($params->getExportPath())
-            ->withEntitiesPath($params->getExportEntitiesPath())
-            ->withFilesPath($params->getExportFilesPath())
+            ->withPath($params->getPath())
+            ->withEntitiesPath($params->getEntitiesPath())
+            ->withFilesPath($params->getFilesPath())
             ->withExportImportDefs($params->getExportImportDefs())
             ->withCollectionClass($collectionClass)
             ->withFileExtension($fileExtension)
@@ -239,7 +239,7 @@ class Export implements Tool
         $entityTypeList = $this->getEntityTypeList($params);
 
         $params = CustomizationParams::create()
-            ->withPath($params->getExportPath())
+            ->withPath($params->getPath())
             ->withEntityTypeList($entityTypeList)
             ->withExportImportDefs($params->getExportImportDefs());
 
@@ -260,7 +260,7 @@ class Export implements Tool
         $entityTypeList = $this->getEntityTypeList($params);
 
         $params = ConfigParams::create()
-            ->withPath($params->getExportPath())
+            ->withPath($params->getPath())
             ->withEntityTypeList($entityTypeList)
             ->withExportImportDefs($params->getExportImportDefs())
             ->withConfigIgnoreList($params->getConfigIgnoreList())

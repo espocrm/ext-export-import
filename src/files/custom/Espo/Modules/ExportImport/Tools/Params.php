@@ -70,9 +70,7 @@ class Params
 
     private $entityTypeList = null;
 
-    private $exportPath = null;
-
-    private $importPath = null;
+    private $path = null;
 
     private $prettyPrint = false;
 
@@ -132,8 +130,7 @@ class Params
 
         $obj = new self($format);
 
-        $obj->exportPath = $params['exportPath'] ?? null;
-        $obj->importPath = $params['importPath'] ?? null;
+        $obj->path = $params['path'] ?? null;
         $obj->manifestFile = $params['manifestFile'] ?? null;
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
@@ -280,20 +277,11 @@ class Params
         return $obj;
     }
 
-    public function withExportPath(?string $exportPath): self
+    public function withPath(?string $path): self
     {
         $obj = clone $this;
 
-        $obj->exportPath = $exportPath;
-
-        return $obj;
-    }
-
-    public function withImportPath(?string $importPath): self
-    {
-        $obj = clone $this;
-
-        $obj->importPath = $importPath;
+        $obj->path = $path;
 
         return $obj;
     }
@@ -486,19 +474,11 @@ class Params
     }
 
     /**
-     * Get a path for an export
+     * Get a path for an export / import
      */
-    public function getExportPath(): string
+    public function getPath(): string
     {
-        return $this->exportPath;
-    }
-
-    /**
-     * Get a path of stored data
-     */
-    public function getImportPath(): string
-    {
-        return $this->importPath;
+        return $this->path;
     }
 
     /**
@@ -518,51 +498,27 @@ class Params
     }
 
     /**
-     * Get export ENTITIES path
+     * Get export / import ENTITIES path
      */
-    public function getExportEntitiesPath(): string
+    public function getEntitiesPath(): string
     {
-        return Util::concatPath($this->exportPath, self::PATH_ENTITIES);
+        return Util::concatPath($this->path, self::PATH_ENTITIES);
     }
 
     /**
-     * Get data ENTITIES path
+     * Get export / import FILES path
      */
-    public function getDataEntitiesPath(): string
+    public function getFilesPath(): string
     {
-        return Util::concatPath($this->importPath, self::PATH_ENTITIES);
-    }
-
-    /**
-     * Get export FILES path
-     */
-    public function getExportFilesPath(): string
-    {
-        return Util::concatPath($this->exportPath, self::PATH_FILES);
-    }
-
-    /**
-     * Get data FILES path
-     */
-    public function getDataFilesPath(): string
-    {
-        return Util::concatPath($this->importPath, self::PATH_FILES);
+        return Util::concatPath($this->path, self::PATH_FILES);
     }
 
     /**
      * Get a manifest file
      */
-    public function getExportManifestFile(): string
+    public function getManifestFile(): string
     {
-        return Util::concatPath($this->exportPath, $this->manifestFile);
-    }
-
-    /**
-     * Get a manifest file
-     */
-    public function getDataManifestFile(): string
-    {
-        return Util::concatPath($this->importPath, $this->manifestFile);
+        return Util::concatPath($this->path, $this->manifestFile);
     }
 
     /**
