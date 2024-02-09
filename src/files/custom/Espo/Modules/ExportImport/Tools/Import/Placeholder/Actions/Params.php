@@ -49,6 +49,8 @@ class Params
 
     private ?bool $userActive = null;
 
+    private ?array $userActiveIdList;
+
     private $userPassword = null;
 
     public function __construct(string $entityType)
@@ -111,6 +113,15 @@ class Params
         $obj = clone $this;
 
         $obj->userActive = $userActive;
+
+        return $obj;
+    }
+
+    public function withUserActiveIdList(array $list): self
+    {
+        $obj = clone $this;
+
+        $obj->userActiveIdList = $list;
 
         return $obj;
     }
@@ -195,6 +206,14 @@ class Params
     public function getUserActive(): ?bool
     {
         return $this->userActive;
+    }
+
+    /**
+     * List of active users. It can be ID or userName
+     */
+    public function getUserActiveIdList(): array
+    {
+        return $this->userActiveIdList ?? [];
     }
 
     /**

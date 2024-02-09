@@ -48,6 +48,7 @@ use Espo\Modules\ExportImport\Tools\Config\Params as ConfigParams;
 use Espo\Modules\ExportImport\Tools\Config\Processors\Import as ConfigImport;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 use Espo\Modules\ExportImport\Tools\Import\Result as EntityResult;
+use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
 
 use Espo\Core\Exceptions\Error;
 
@@ -60,6 +61,7 @@ class Import implements Tool
     public function __construct(
         private Log $log,
         private Defs $defs,
+        private UserTool $userTool,
         private Metadata $metadata,
         private EntityTool $entityTool,
         private FileManager $fileManager,
@@ -217,6 +219,9 @@ class Import implements Tool
             ->withUpdateCurrency($params->getUpdateCurrency())
             ->withProcessHookClass($processHookClass)
             ->withUserActive($params->getUserActive())
+            ->withUserActiveIdList($this->userTool->getIdUserList(
+                $params->getUserActiveList()
+            ))
             ->withUpdateCreatedAt($params->getUpdateCreatedAt())
             ->withUserPassword($params->getUserPassword())
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))

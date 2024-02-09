@@ -29,34 +29,56 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\User;
 
-use Espo\Core\{
-    Di,
-};
+use Espo\Core\Utils\Config;
 
-use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\{
-    Action,
-    Params,
-};
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Params;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Action;
 
-class Active implements
-
-    Action,
-    Di\ConfigAware
+class Active implements Action
 {
-    use Di\ConfigSetter;
+    public function __construct(
+        private Config $config
+    ) {}
 
     public function normalize(Params $params, $actualValue)
     {
-        $recordData = $params->getRecordData();
+        $value = $this->getValueByUserIdList($params);
 
-        if ($recordData['id'] == '1') {
-            return true;
+        if (!is_null($value)) {
+            return $value;
         }
 
         if ($this->config->get('restrictedMode')) {
             return false;
         }
 
-        return $params->getUserActive();
+        $value = $params->getUserActive();
+
+        if (!is_null($value)) {
+            return $value;
+        }
+
+        return $actualValue;
+    }
+
+    private function getValueByUserIdList(Params $params): ?bool
+    {
+        $userIdList = $params->getUserActiveIdList();
+
+        if (empty($userIdList)) {
+            return null;
+        }
+
+        $userId = $params->getRecordData()['id'] ?? null;
+
+        if (!$userId) {
+            return false;
+        }
+
+        if (in_array($userId, $userIdList)) {
+            return true;
+        }
+
+        return $params->getUserActive() ?? false;
     }
 }

@@ -110,6 +110,8 @@ class Params
 
     private ?array $configHardList;
 
+    private ?array $userActiveList;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -196,6 +198,11 @@ class Params
         $obj->configHardList = ToolUtils::normalizeList(
             $params['configHardList'] ?? null,
             $params['default']['configHardList'] ?? null,
+        );
+
+        $obj->userActiveList = ToolUtils::normalizeList(
+            $params['userActiveList'] ?? null,
+            $params['default']['userActiveList'] ?? null,
         );
 
         return $obj;
@@ -339,6 +346,15 @@ class Params
         $obj = clone $this;
 
         $obj->userActive = $userActive;
+
+        return $obj;
+    }
+
+    public function withUserActiveList(array $list): self
+    {
+        $obj = clone $this;
+
+        $obj->userActiveList = $list;
 
         return $obj;
     }
@@ -579,6 +595,14 @@ class Params
     public function getUserActive(): ?bool
     {
         return $this->userActive;
+    }
+
+    /**
+     * List of active users. It can be ID or userName
+     */
+    public function getUserActiveList(): array
+    {
+        return $this->userActiveList ?? [];
     }
 
     /**

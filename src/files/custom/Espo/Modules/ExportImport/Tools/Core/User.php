@@ -47,4 +47,35 @@ class User
             ])
             ->findOne();
     }
+
+    /**
+     * Get user ID list of $userList - list of ID or userName
+     */
+    public function getIdUserList(?array $userList): array
+    {
+        if (!$userList) {
+            return [];
+        }
+
+        $userIdList = [];
+
+        foreach ($userList as $user) {
+            $entity = $this->entityManager->getEntityById(
+                UserEntity::ENTITY_TYPE,
+                $user
+            );
+
+            if (!$entity) {
+                $entity = $this->getByUserName($user);
+            }
+
+            if (!$entity) {
+                continue;
+            }
+
+            $userIdList[] = $entity->getId();
+        }
+
+        return $userIdList;
+    }
 }

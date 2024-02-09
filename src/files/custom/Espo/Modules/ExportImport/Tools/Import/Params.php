@@ -77,6 +77,8 @@ class Params implements IParams
 
     private bool $clearPassword;
 
+    private ?array $userActiveIdList;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -182,6 +184,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->userActive = $userActive;
+
+        return $obj;
+    }
+
+    public function withUserActiveIdList(array $list): self
+    {
+        $obj = clone $this;
+
+        $obj->userActiveIdList = $list;
 
         return $obj;
     }
@@ -353,6 +364,14 @@ class Params implements IParams
     public function getUserActive(): ?bool
     {
         return $this->userActive;
+    }
+
+    /**
+     * List of user IDs
+     */
+    public function getUserActiveIdList(): array
+    {
+        return $this->userActiveIdList ?? [];
     }
 
     /**
