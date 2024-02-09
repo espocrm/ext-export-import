@@ -44,6 +44,12 @@ use RuntimeException;
 
 class Params
 {
+    public const ACTION_EXPORT = 'export';
+
+    public const ACTION_IMPORT = 'import';
+
+    public const ACTION_ERASE = 'erase';
+
     public const APPEND = '__APPEND__';
 
     public const PATH_ENTITIES = 'Entities';
@@ -63,6 +69,8 @@ class Params
     public const DEFAULT_STORAGE = 'EspoUploadDir';
 
     public const STORAGE_PATH = 'data/upload';
+
+    private string $action;
 
     private $format = null;
 
@@ -123,13 +131,19 @@ class Params
     public static function fromRaw(array $params): self
     {
         $format = $params['format'] ?? null;
+        $action = $params['action'] ?? null;
 
         if (!$format) {
             throw new RuntimeException('Option "format" is not defined.');
         }
 
+        if (!$action) {
+            throw new RuntimeException('Unknown action.');
+        }
+
         $obj = new self($format);
 
+        $obj->action = $action;
         $obj->path = $params['path'] ?? null;
         $obj->manifestFile = $params['manifestFile'] ?? null;
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
@@ -152,8 +166,8 @@ class Params
         }
 
         $obj->entityTypeList = ToolUtils::normalizeList(
-            $params['entityTypeList'] ?? null,
-            $params['default']['entityTypeList'] ?? null,
+            $params['entityList'] ?? null,
+            $params['default']['entityList'] ?? null,
         );
 
         $obj->configIgnoreList = ToolUtils::normalizeList(
@@ -211,24 +225,26 @@ class Params
 
     private function normalizeExportImportDefs(array $params): array
     {
+        $action = $params['action'] ?? null;
         $exportImportDefs = $params['exportImportDefs'] ?? null;
 
         if (!$exportImportDefs) {
             throw new RuntimeException('Incorrect "exportImportDefs" data.');
         }
 
-        $hardExportList = isset($params['hardExportList']) ?
-            ToolUtils::normalizeList($params['hardExportList'], []) : [];
+        $hardList = isset($params['entityHardList']) ?
+            ToolUtils::normalizeList($params['entityHardList'], []) : [];
 
-        $hardImportList = isset($params['hardImportList']) ?
-            ToolUtils::normalizeList($params['hardImportList'], []) : [];
-
-        foreach ($hardExportList as $entityType) {
-            $exportImportDefs[$entityType]['exportDisabled'] = false;
+        if ($action == self::ACTION_EXPORT) {
+            foreach ($hardList as $entityType) {
+                $exportImportDefs[$entityType]['exportDisabled'] = false;
+            }
         }
 
-        foreach ($hardImportList as $entityType) {
-            $exportImportDefs[$entityType]['importDisabled'] = false;
+        if ($action == self::ACTION_IMPORT) {
+            foreach ($hardList as $entityType) {
+                $exportImportDefs[$entityType]['importDisabled'] = false;
+            }
         }
 
         return $exportImportDefs;
@@ -273,6 +289,15 @@ class Params
         $obj->entityTypeList = ToolUtils::normalizeList(
             $entityTypeList
         );
+
+        return $obj;
+    }
+
+    public function withAction(string $action): self
+    {
+        $obj = clone $this;
+
+        $obj->action = $action;
 
         return $obj;
     }
@@ -471,6 +496,14 @@ class Params
     public function getEntityTypeList(): ?array
     {
         return $this->entityTypeList;
+    }
+
+    /**
+     * Get an action (export / import / erase)
+     */
+    public function getAction(): string
+    {
+        return $this->action;
     }
 
     /**

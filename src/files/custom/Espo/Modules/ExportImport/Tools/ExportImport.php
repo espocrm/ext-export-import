@@ -57,19 +57,19 @@ class ExportImport
         $this->injectableFactory = $injectableFactory;
     }
 
-    public function runExport(?array $extraParams = null, ?IO $io = null) : void
+    public function runExport(array $extraParams = [], ?IO $io = null) : void
     {
-        $this->runTool('export', $extraParams, $io);
+        $this->runTool(Params::ACTION_EXPORT, $extraParams, $io);
     }
 
-    public function runImport(?array $extraParams = null, ?IO $io = null) : void
+    public function runImport(array $extraParams = [], ?IO $io = null) : void
     {
-        $this->runTool('import', $extraParams, $io);
+        $this->runTool(Params::ACTION_IMPORT, $extraParams, $io);
     }
 
-    public function runErase(?array $extraParams = null, ?IO $io = null) : void
+    public function runErase(array $extraParams = [], ?IO $io = null) : void
     {
-        $this->runTool('erase', $extraParams, $io);
+        $this->runTool(Params::ACTION_ERASE, $extraParams, $io);
     }
 
     protected function getClass($name): string
@@ -87,7 +87,7 @@ class ExportImport
 
     protected function runTool(
         string $action,
-        ?array $extraParams = null,
+        array $extraParams = [],
         ?IO $io = null
     ): void
     {
@@ -95,7 +95,9 @@ class ExportImport
 
         $tool = $this->injectableFactory->create($className);
 
-        $params = $this->createParams($extraParams, $io);
+        $params = $this->createParams(array_merge($extraParams, [
+            'action' => $action
+        ]), $io);
 
         $tool->run($params);
     }
