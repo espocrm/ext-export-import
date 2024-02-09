@@ -105,7 +105,6 @@
 
     "updateCurrency": false,
     "updateCreatedAt": false,
-    "userActive": null,
     "clearPassword": false,
     "skipInternalConfig": false
 }

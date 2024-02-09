@@ -141,6 +141,7 @@ class Params
         $obj->currency = $params['currency'] ?? null;
         $obj->clearPassword = $params['clearPassword'] ?? false;
         $obj->skipInternalConfig = $params['skipInternalConfig'] ?? false;
+        $obj->userActive = $obj->normalizeUserActive($params);
 
         if (!in_array(
             $obj->importType,
@@ -185,10 +186,6 @@ class Params
 
         $obj->updateCreatedAt = ToolUtils::normalizeBoolFromArray(
             $params, 'updateCreatedAt'
-        );
-
-        $obj->userActive = ToolUtils::normalizeBoolFromArray(
-            $params, 'userActive', null
         );
 
         $obj->exportTime = $obj->normalizeExportTime(
@@ -238,6 +235,29 @@ class Params
         }
 
         return $exportImportDefs;
+    }
+
+    private function normalizeUserActive(array $params): ?bool
+    {
+        $isActivate = $params['activateUsers'] ?? null;
+        $isDeactivate = $params['deactivateUsers'] ?? null;
+
+        if ($isActivate && $isDeactivate) {
+            throw new RuntimeException(
+                'The "--activate-users" and "--deactivate-users" options ' .
+                'cannot be used together.'
+            );
+        }
+
+        if ($isActivate) {
+            return true;
+        }
+
+        if ($isDeactivate) {
+            return false;
+        }
+
+        return null;
     }
 
     public function withExportImportDefs(array $exportImportDefs): self
