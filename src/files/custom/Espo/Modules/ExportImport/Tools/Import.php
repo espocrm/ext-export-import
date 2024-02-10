@@ -270,7 +270,8 @@ class Import implements Tool
         $params = CustomizationParams::create()
             ->withPath($params->getPath())
             ->withManifest($manifest)
-            ->withEntityTypeList($entityTypeList)
+            ->withEntityTypeFullList($entityTypeList)
+            ->withEntityTypeSpecifiedList($params->getEntityTypeList())
             ->withExportImportDefs($params->getExportImportDefs());
 
         $customizationImport = $this->injectableFactory->create(

@@ -248,7 +248,8 @@ class Export implements Tool
 
         $params = CustomizationParams::create()
             ->withPath($params->getPath())
-            ->withEntityTypeList($entityTypeList)
+            ->withEntityTypeFullList($entityTypeList)
+            ->withEntityTypeSpecifiedList($params->getEntityTypeList())
             ->withExportImportDefs($params->getExportImportDefs());
 
         $customizationExport = $this->injectableFactory->create(
