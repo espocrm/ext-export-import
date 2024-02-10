@@ -106,7 +106,7 @@ class Params
 
     private $updateCreatedAt;
 
-    private $config;
+    private bool $skipConfig;
 
     private $configIgnoreList;
 
@@ -186,8 +186,8 @@ class Params
             $params, 'customization'
         );
 
-        $obj->config = ToolUtils::normalizeBoolFromArray(
-            $params, 'config'
+        $obj->skipConfig = ToolUtils::normalizeBoolFromArray(
+            $params, 'skipConfig'
         );
 
         $obj->prettyPrint = ToolUtils::normalizeBoolFromArray(
@@ -440,11 +440,11 @@ class Params
         return $obj;
     }
 
-    public function withConfig(bool $config): self
+    public function withSkipConfig(bool $skip): self
     {
         $obj = clone $this;
 
-        $obj->config = $config;
+        $obj->skipConfig = $skip;
 
         return $obj;
     }
@@ -667,11 +667,11 @@ class Params
     }
 
     /**
-     * Export / import config
+     * Skip export / import config
      */
-    public function getConfig(): bool
+    public function getSkipConfig(): bool
     {
-        return $this->config;
+        return $this->skipConfig;
     }
 
     /**

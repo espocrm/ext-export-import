@@ -261,8 +261,7 @@ class Export implements Tool
 
     private function exportConfig(Params $params): void
     {
-        if (!$params->getConfig()) {
-
+        if ($params->getSkipConfig()) {
             return;
         }
 

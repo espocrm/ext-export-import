@@ -285,8 +285,7 @@ class Import implements Tool
 
     private function importConfig(Params $params, Manifest $manifest): void
     {
-        if (!$params->getConfig()) {
-
+        if ($params->getSkipConfig()) {
             return;
         }
 
