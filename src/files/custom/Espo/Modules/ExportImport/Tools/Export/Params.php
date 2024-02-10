@@ -72,7 +72,7 @@ class Params implements IParams
 
     private bool $isCustomEntity = false;
 
-    private bool $customization = false;
+    private bool $skipCustomization = false;
 
     private bool $clearPassword;
 
@@ -212,11 +212,11 @@ class Params implements IParams
         return $obj;
     }
 
-    public function withCustomization(bool $customization): self
+    public function withSkipCustomization(bool $skip): self
     {
         $obj = clone $this;
 
-        $obj->customization = $customization;
+        $obj->skipCustomization = $skip;
 
         return $obj;
     }
@@ -382,11 +382,11 @@ class Params implements IParams
     }
 
     /**
-     * Export / import customization
+     * Skip export / import customization
      */
-    public function getCustomization(): bool
+    public function getSkipCustomization(): bool
     {
-        return $this->customization;
+        return $this->skipCustomization;
     }
 
     /**

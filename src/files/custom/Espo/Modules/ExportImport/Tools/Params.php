@@ -100,7 +100,7 @@ class Params
 
     private $io = null;
 
-    private bool $customization = false;
+    private bool $skipCustomization;
 
     private $exportTime;
 
@@ -185,8 +185,8 @@ class Params
             $params, 'skipData'
         );
 
-        $obj->customization = ToolUtils::normalizeBoolFromArray(
-            $params, 'customization'
+        $obj->skipCustomization = ToolUtils::normalizeBoolFromArray(
+            $params, 'skipCustomization'
         );
 
         $obj->skipConfig = ToolUtils::normalizeBoolFromArray(
@@ -416,11 +416,11 @@ class Params
         return $obj;
     }
 
-    public function withCustomization(bool $customization): self
+    public function withSkipCustomization(bool $skip): self
     {
         $obj = clone $this;
 
-        $obj->customization = $customization;
+        $obj->skipCustomization = $skip;
 
         return $obj;
     }
@@ -646,11 +646,11 @@ class Params
     }
 
     /**
-     * Export / import customization
+     * Skip export / import customization
      */
-    public function getCustomization(): bool
+    public function getSkipCustomization(): bool
     {
-        return $this->customization;
+        return $this->skipCustomization;
     }
 
     /**

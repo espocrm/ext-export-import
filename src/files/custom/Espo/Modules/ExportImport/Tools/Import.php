@@ -232,7 +232,7 @@ class Import implements Tool
             ->withUpdateCreatedAt($params->getUpdateCreatedAt())
             ->withUserPassword($params->getUserPassword())
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))
-            ->withCustomization($params->getCustomization())
+            ->withSkipCustomization($params->getSkipCustomization())
             ->withReplaceIdMap($params->getReplaceIdMap())
             ->withClearPassword($params->getClearPassword());
 
@@ -261,8 +261,7 @@ class Import implements Tool
 
     private function importCustomization(Params $params, Manifest $manifest): void
     {
-        if (!$params->getCustomization()) {
-
+        if ($params->getSkipCustomization()) {
             return;
         }
 

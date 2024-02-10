@@ -190,7 +190,7 @@ class Export implements Tool
             ->withSearchParams($searchParams)
             ->withPrettyPrint($params->getPrettyPrint())
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))
-            ->withCustomization($params->getCustomization())
+            ->withSkipCustomization($params->getSkipCustomization())
             ->withClearPassword($params->getClearPassword());
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
@@ -240,8 +240,7 @@ class Export implements Tool
 
     private function exportCustomization(Params $params): void
     {
-        if (!$params->getCustomization()) {
-
+        if ($params->getSkipCustomization()) {
             return;
         }
 
