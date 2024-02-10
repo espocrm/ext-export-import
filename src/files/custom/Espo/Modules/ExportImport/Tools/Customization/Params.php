@@ -49,13 +49,13 @@ class Params
         'custom/Espo/Custom/Resources/routes.json',
     ];
 
-    private $path;
+    private string $path;
 
-    private $exportImportDefs;
+    private array $exportImportDefs;
 
-    private $manifest;
+    private ?Manifest $manifest;
 
-    private $entityTypeList;
+    private array $entityTypeList;
 
     public static function create(): self
     {
