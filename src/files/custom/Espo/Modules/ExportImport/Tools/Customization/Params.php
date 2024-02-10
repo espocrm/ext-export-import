@@ -153,9 +153,9 @@ class Params
     }
 
     /**
-     * Get a full entity type list
+     * Get an entity type list
      */
-    public function getEntityTypeFullList(): array
+    public function getEntityTypeList(): array
     {
         return $this->entityTypeList ?? [];
     }
