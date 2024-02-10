@@ -94,44 +94,11 @@ class Import implements Tool
 
         $this->importCustomization($params, $manifest);
 
-        $entityTypeList = $this->getEntityTypeList($params);
-
-        foreach ($entityTypeList as $entityType) {
-            ProcessorUtils::writeLine($params, "{$entityType}...");
-
-            try {
-                $result = $this->importEntity($entityType, $params, $manifest);
-            } catch (Exception $e) {
-                ProcessorUtils::writeLine(
-                    $params, "  Error: " . $e->getMessage()
-                );
-
-                $this->log->warning(
-                    'ExportImport [' . $entityType . ']:' . $e->getMessage()
-                );
-
-                continue;
-            }
-
-            if ($result->hasReplaceIdMap()) {
-                $params = $params->withReplaceIdMap(
-                    $result->getReplaceIdMap()
-                );
-            }
-
-            if ($result->getWarningList()) {
-                $this->warningList = array_merge(
-                    $this->warningList,
-                    $result->getWarningList()
-                );
-            }
-        }
+        $this->importData($params, $manifest);
 
         ProcessorUtils::writeList($params, $this->warningList, "Warnings:");
 
         ProcessorUtils::writeNewLine($params);
-
-        ProcessorUtils::writeLine($params, $result->getGlobalMessage());
     }
 
     private function getEntityTypeList(Params $params): array
@@ -198,6 +165,46 @@ class Import implements Tool
         }
 
         return $filteredList;
+    }
+
+    private function importData(Params $params, Manifest $manifest): void
+    {
+        if ($params->getSkipData()) {
+            return;
+        }
+
+        $entityTypeList = $this->getEntityTypeList($params);
+
+        foreach ($entityTypeList as $entityType) {
+            ProcessorUtils::writeLine($params, "{$entityType}...");
+
+            try {
+                $result = $this->importEntity($entityType, $params, $manifest);
+            } catch (Exception $e) {
+                ProcessorUtils::writeLine(
+                    $params, "  Error: " . $e->getMessage()
+                );
+
+                $this->log->warning(
+                    'ExportImport [' . $entityType . ']:' . $e->getMessage()
+                );
+
+                continue;
+            }
+
+            if ($result->hasReplaceIdMap()) {
+                $params = $params->withReplaceIdMap(
+                    $result->getReplaceIdMap()
+                );
+            }
+
+            if ($result->getWarningList()) {
+                $this->warningList = array_merge(
+                    $this->warningList,
+                    $result->getWarningList()
+                );
+            }
+        }
     }
 
     private function importEntity(

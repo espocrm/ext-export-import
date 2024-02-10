@@ -74,6 +74,8 @@ class Params
 
     private $format = null;
 
+    private bool $skipData;
+
     private $exportImportDefs;
 
     private $entityTypeList = null;
@@ -145,6 +147,7 @@ class Params
 
         $obj->action = $action;
         $obj->path = $params['path'] ?? null;
+        $obj->skipData = $params['skipData'] ?? false;
         $obj->manifestFile = $params['manifestFile'] ?? null;
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
@@ -307,6 +310,15 @@ class Params
         $obj = clone $this;
 
         $obj->path = $path;
+
+        return $obj;
+    }
+
+    public function withSkipData(bool $skip): self
+    {
+        $obj = clone $this;
+
+        $obj->skipData = $skip;
 
         return $obj;
     }
@@ -512,6 +524,14 @@ class Params
     public function getPath(): string
     {
         return $this->path;
+    }
+
+    /**
+     * Get skipData option
+     */
+    public function getSkipData(): bool
+    {
+        return $this->skipData ?? false;
     }
 
     /**

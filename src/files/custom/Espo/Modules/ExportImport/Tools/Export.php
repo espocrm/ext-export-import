@@ -83,32 +83,7 @@ class Export implements Tool
 
         $this->fileManager->removeInDir($exportPath);
 
-        $entityTypeList = $this->getEntityTypeList($params);
-
-        foreach ($entityTypeList as $entityType) {
-            ProcessorUtils::writeLine($params, "{$entityType}...");
-
-            try {
-                $result = $this->exportEntity($params, $entityType);
-            } catch (Exception $e) {
-                ProcessorUtils::writeLine(
-                    $params, "  Error: " . $e->getMessage()
-                );
-
-                $this->log->warning(
-                    'ExportImport [' . $entityType . ']:' . $e->getMessage()
-                );
-
-                continue;
-            }
-
-            if ($result->getWarningList()) {
-                $this->warningList = array_merge(
-                    $this->warningList,
-                    $result->getWarningList()
-                );
-            }
-        }
+        $this->exportData($params);
 
         $this->exportCustomization($params);
 
@@ -120,7 +95,7 @@ class Export implements Tool
 
         ProcessorUtils::writeNewLine($params);
 
-        ProcessorUtils::writeLine($params, $result->getGlobalMessage());
+        ProcessorUtils::writeLine($params, "Files saved at \"" . $exportPath ."\".");
     }
 
     private function getEntityTypeList(Params $params): array
@@ -154,6 +129,40 @@ class Export implements Tool
         }
 
         return $filteredList;
+    }
+
+    private function exportData(Params $params): void
+    {
+        if ($params->getSkipData()) {
+            return;
+        }
+
+        $entityTypeList = $this->getEntityTypeList($params);
+
+        foreach ($entityTypeList as $entityType) {
+            ProcessorUtils::writeLine($params, "{$entityType}...");
+
+            try {
+                $result = $this->exportEntity($params, $entityType);
+            } catch (Exception $e) {
+                ProcessorUtils::writeLine(
+                    $params, "  Error: " . $e->getMessage()
+                );
+
+                $this->log->warning(
+                    'ExportImport [' . $entityType . ']:' . $e->getMessage()
+                );
+
+                continue;
+            }
+
+            if ($result->getWarningList()) {
+                $this->warningList = array_merge(
+                    $this->warningList,
+                    $result->getWarningList()
+                );
+            }
+        }
     }
 
     private function exportEntity(Params $params, string $entityType): EntityResult
