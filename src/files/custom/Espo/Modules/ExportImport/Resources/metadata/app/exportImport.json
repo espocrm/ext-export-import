@@ -99,13 +99,13 @@
     "format": "json",
     "prettyPrint": false,
     "importType": "createAndUpdate",
-    "customization": false,
-    "config": false,
 
     "updateCurrency": false,
     "updateCreatedAt": false,
     "clearPassword": false,
 
     "skipData": false,
+    "skipConfig": false,
+    "skipCustomization": false,
     "skipInternalConfig": false
 }
