@@ -55,9 +55,9 @@ class Params
 
     private ?Manifest $manifest;
 
-    private array $entityTypeFullList;
+    private array $entityTypeList;
 
-    private ?array $entityTypeSpecifiedList;
+    private bool $isEntityTypeListSpecified;
 
     public static function create(): self
     {
@@ -91,20 +91,20 @@ class Params
         return $obj;
     }
 
-    public function withEntityTypeFullList(array $List): self
+    public function withEntityTypeList(array $List): self
     {
         $obj = clone $this;
 
-        $obj->entityTypeFullList = $List;
+        $obj->entityTypeList = $List;
 
         return $obj;
     }
 
-    public function withEntityTypeSpecifiedList(?array $List): self
+    public function withIsEntityTypeListSpecified(bool $value): self
     {
         $obj = clone $this;
 
-        $obj->entityTypeSpecifiedList = $List;
+        $obj->isEntityTypeListSpecified = $value;
 
         return $obj;
     }
@@ -157,14 +157,14 @@ class Params
      */
     public function getEntityTypeFullList(): array
     {
-        return $this->entityTypeFullList ?? [];
+        return $this->entityTypeList ?? [];
     }
 
     /**
-     * Get a specified entity type list
+     * Is a entity type list specified
      */
-    public function getEntityTypeSpecifiedList(): ?array
+    public function isEntityTypeListSpecified(): bool
     {
-        return $this->entityTypeSpecifiedList;
+        return $this->isEntityTypeListSpecified;
     }
 }

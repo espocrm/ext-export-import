@@ -266,12 +266,13 @@ class Import implements Tool
         }
 
         $entityTypeList = $this->getEntityTypeList($params);
+        $isListSpecified = $params->getEntityTypeList() ? true : false;
 
         $params = CustomizationParams::create()
             ->withPath($params->getPath())
             ->withManifest($manifest)
-            ->withEntityTypeFullList($entityTypeList)
-            ->withEntityTypeSpecifiedList($params->getEntityTypeList())
+            ->withEntityTypeList($entityTypeList)
+            ->withIsEntityTypeListSpecified($isListSpecified)
             ->withExportImportDefs($params->getExportImportDefs());
 
         $customizationImport = $this->injectableFactory->create(
