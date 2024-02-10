@@ -147,7 +147,6 @@ class Params
 
         $obj->action = $action;
         $obj->path = $params['path'] ?? null;
-        $obj->skipData = $params['skipData'] ?? false;
         $obj->manifestFile = $params['manifestFile'] ?? null;
         $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
@@ -180,6 +179,10 @@ class Params
 
         $obj->quiet = ToolUtils::normalizeBoolFromArray(
             $params, 'q'
+        );
+
+        $obj->skipData = ToolUtils::normalizeBoolFromArray(
+            $params, 'skipData'
         );
 
         $obj->customization = ToolUtils::normalizeBoolFromArray(
@@ -531,7 +534,7 @@ class Params
      */
     public function getSkipData(): bool
     {
-        return $this->skipData ?? false;
+        return $this->skipData;
     }
 
     /**
