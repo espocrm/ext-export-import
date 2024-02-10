@@ -127,12 +127,16 @@ class Entity implements Processor
                 }
             }
 
+            $skipHooks = $params->getExportImportDefs()[$entityType]['entity']['skipHooks']
+                ?? true;
+
             try {
                 $this->entityManager->saveEntity($entity, [
                     'noStream' => true,
                     'noNotifications' => true,
                     SaveOption::IMPORT => true,
                     SaveOption::SILENT => true,
+                    SaveOption::SKIP_HOOKS => $skipHooks,
                 ]);
 
                 $successCount++;
