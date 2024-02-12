@@ -47,7 +47,7 @@ class Export implements Processor
         $src = $params->getSystemCustomPath();
         $dest = $params->getCustomizationPath();
 
-        $fileList = $this->service->getCopyFileList($params, $src);
+        $fileList = $this->service->getCopyFileList($params, $src, true);
 
         foreach ($fileList as $file) {
             $this->fileManager->copy($file, $dest, false);

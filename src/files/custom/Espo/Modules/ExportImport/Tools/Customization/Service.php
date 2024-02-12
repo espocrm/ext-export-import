@@ -44,8 +44,11 @@ class Service
     /**
      * Get a list of all copied files
      */
-    public function getCopyFileList(Params $params, string $path): array
-    {
+    public function getCopyFileList(
+        Params $params,
+        string $path,
+        bool $isAppendPath = false
+    ): array {
         $list = [];
 
         $fileList = $this->fileManager->getFileList(
@@ -56,7 +59,7 @@ class Service
         $entitiesFileList = $params->getEntitiesFileList();
 
         foreach ($fileList as $file) {
-            $fullPath = Util::concatPath($path, $file);
+            $fullPath = $isAppendPath ? Util::concatPath($path, $file) : $file;
 
             if (
                 $isSpecifiedList &&
