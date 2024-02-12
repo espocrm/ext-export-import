@@ -54,7 +54,7 @@ class Import implements
     public function process(Params $params): void
     {
         $src = $params->getCustomizationPath();
-        $commonFileList = Params::COMMON_FILE_LIST;
+        $commonFileList = Params::GLOBAL_FILE_LIST;
 
         $fileList = $this->fileManager->getFileList(
             $src, true, '', true, true

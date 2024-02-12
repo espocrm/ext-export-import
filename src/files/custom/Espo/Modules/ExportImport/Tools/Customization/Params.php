@@ -46,7 +46,7 @@ class Params
      * Global file list
      * This is NOT a REGEX
      */
-    public const COMMON_FILE_LIST = [
+    public const GLOBAL_FILE_LIST = [
         'custom/Espo/Custom/Resources/i18n/*/*.json',
         'custom/Espo/Custom/Resources/metadata/app/*.json',
         'custom/Espo/Custom/Resources/metadata/*/*.json',
