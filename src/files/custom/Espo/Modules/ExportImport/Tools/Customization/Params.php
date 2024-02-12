@@ -190,6 +190,9 @@ class Params
         return $this->isEntityTypeListSpecified;
     }
 
+    /**
+     * Get file list for a single entity
+     */
     public function getEntityFileList(string $entityType): array
     {
         $normalizedEntityType = Util::normalizeClassName($entityType);
@@ -211,5 +214,21 @@ class Params
         }
 
         return $list;
+    }
+
+    /**
+     * Get file list of all specified entities
+     */
+    public function getEntitiesFileList(): array
+    {
+        $list = [];
+
+        foreach ($this->getEntityTypeList() as $entityType) {
+            $list = array_merge($list, $this->getEntityFileList($entityType));
+        }
+
+        $list = array_unique($list);
+
+        return array_values($list);
     }
 }
