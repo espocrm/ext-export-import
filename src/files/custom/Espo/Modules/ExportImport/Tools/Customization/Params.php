@@ -42,10 +42,32 @@ class Params
 {
     public const PATH_CUSTOM = 'custom/Espo/Custom';
 
+    /**
+     * Global file list
+     * This is NOT a REGEX
+     */
     public const COMMON_FILE_LIST = [
         'custom/Espo/Custom/Resources/i18n/*/*.json',
         'custom/Espo/Custom/Resources/metadata/app/*.json',
         'custom/Espo/Custom/Resources/metadata/*/*.json',
+        'custom/Espo/Custom/Resources/routes.json',
+    ];
+
+    /**
+     * A file list of a single entity
+     * This is NOT a REGEX
+     */
+    private const ENTITY_FILE_LIST = [
+        'custom/Espo/Custom/Resources/metadata/*/{ENTITY_TYPE}.json',
+        'custom/Espo/Custom/Entities/{NORMALIZED_ENTITY_TYPE}.php',
+        'custom/Espo/Custom/Services/{NORMALIZED_ENTITY_TYPE}.php',
+        'custom/Espo/Custom/Controllers/{NORMALIZED_ENTITY_TYPE}.php',
+        'custom/Espo/Custom/Hooks/{NORMALIZED_ENTITY_TYPE}/*.php',
+        'custom/Espo/Custom/Repositories/{NORMALIZED_ENTITY_TYPE}.php',
+        'custom/Espo/Custom/SelectManagers/{NORMALIZED_ENTITY_TYPE}.php',
+        'custom/Espo/Custom/Resources/layouts/{NORMALIZED_ENTITY_TYPE}/*.json',
+        'custom/Espo/Custom/Resources/i18n/*/{NORMALIZED_ENTITY_TYPE}.json',
+        'custom/Espo/Custom/Resources/i18n/*/Global.json',
         'custom/Espo/Custom/Resources/routes.json',
     ];
 
@@ -166,5 +188,28 @@ class Params
     public function isEntityTypeListSpecified(): bool
     {
         return $this->isEntityTypeListSpecified;
+    }
+
+    public function getEntityFileList(string $entityType): array
+    {
+        $normalizedEntityType = Util::normalizeClassName($entityType);
+
+        $list = [];
+
+        foreach (self::ENTITY_FILE_LIST as $file) {
+            $list[] = str_replace(
+                [
+                    '{ENTITY_TYPE}',
+                    '{NORMALIZED_ENTITY_TYPE}',
+                ],
+                [
+                    $entityType,
+                    $normalizedEntityType
+                ],
+                $file
+            );
+        }
+
+        return $list;
     }
 }

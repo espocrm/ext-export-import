@@ -27,53 +27,42 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Customization\Processors;
+namespace Espo\Modules\ExportImport\Tools\Customization;
 
 use Espo\Core\Utils\Util;
 use Espo\Core\Utils\File\Manager as FileManager;
 
 use Espo\Modules\ExportImport\Tools\Customization\Params;
-use Espo\Modules\ExportImport\Tools\Customization\Service;
-use Espo\Modules\ExportImport\Tools\Customization\Processor;
+use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 
-class Export implements Processor
+class Service
 {
     public function __construct(
-        private Service $service,
         private FileManager $fileManager
     ) {}
 
-    public function process(Params $params): void
+    public function getFileList(Params $params, string $path): array
     {
-        if ($params->isEntityTypeListSpecified()) {
-            $this->copySpecifiedCustom($params);
-            return;
-        }
+        $list = [];
 
-        $this->copyFullCustom($params);
-    }
-
-    private function copyFullCustom(Params $params): void
-    {
-        $src = $params->getSystemCustomPath();
-
-        $dest = Util::concatPath(
-            $params->getCustomizationPath(),
-            $params->getSystemCustomPath()
+        $fileList = $this->fileManager->getFileList(
+            $path, true, '', true, true
         );
 
-        $this->fileManager->copy($src, $dest, true);
-    }
+        foreach ($params->getEntityTypeList() as $entityType) {
+            $entityFileList = $params->getEntityFileList($entityType);
 
-    private function copySpecifiedCustom(Params $params): void
-    {
-        $src = $params->getSystemCustomPath();
-        $dest = $params->getCustomizationPath();
+            foreach ($fileList as $file) {
+                $fullPath = Util::concatPath($path, $file);
 
-        $fileList = $this->service->getFileList($params, $src);
+                if (!ToolUtils::isPatternMatched($entityFileList, $fullPath)) {
+                    continue;
+                }
 
-        foreach ($fileList as $file) {
-            $this->fileManager->copy($file, $dest, false);
+                $list[] = $fullPath;
+            }
         }
+
+        return $list;
     }
 }
