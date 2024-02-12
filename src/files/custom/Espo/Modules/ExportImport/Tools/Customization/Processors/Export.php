@@ -29,7 +29,6 @@
 
 namespace Espo\Modules\ExportImport\Tools\Customization\Processors;
 
-use Espo\Core\Utils\Util;
 use Espo\Core\Utils\File\Manager as FileManager;
 
 use Espo\Modules\ExportImport\Tools\Customization\Params;
@@ -45,32 +44,10 @@ class Export implements Processor
 
     public function process(Params $params): void
     {
-        if ($params->isEntityTypeListSpecified()) {
-            $this->copySpecifiedCustom($params);
-            return;
-        }
-
-        $this->copyFullCustom($params);
-    }
-
-    private function copyFullCustom(Params $params): void
-    {
-        $src = $params->getSystemCustomPath();
-
-        $dest = Util::concatPath(
-            $params->getCustomizationPath(),
-            $params->getSystemCustomPath()
-        );
-
-        $this->fileManager->copy($src, $dest, true);
-    }
-
-    private function copySpecifiedCustom(Params $params): void
-    {
         $src = $params->getSystemCustomPath();
         $dest = $params->getCustomizationPath();
 
-        $fileList = $this->service->getFileList($params, $src);
+        $fileList = $this->service->getCopyFileList($params, $src);
 
         foreach ($fileList as $file) {
             $this->fileManager->copy($file, $dest, false);

@@ -41,7 +41,10 @@ class Service
         private FileManager $fileManager
     ) {}
 
-    public function getFileList(Params $params, string $path): array
+    /**
+     * Get a list of all copied files
+     */
+    public function getCopyFileList(Params $params, string $path): array
     {
         $list = [];
 
@@ -49,18 +52,20 @@ class Service
             $path, true, '', true, true
         );
 
-        foreach ($params->getEntityTypeList() as $entityType) {
-            $entityFileList = $params->getEntityFileList($entityType);
+        $isSpecifiedList = $params->isEntityTypeListSpecified();
+        $entitiesFileList = $params->getEntitiesFileList();
 
-            foreach ($fileList as $file) {
-                $fullPath = Util::concatPath($path, $file);
+        foreach ($fileList as $file) {
+            $fullPath = Util::concatPath($path, $file);
 
-                if (!ToolUtils::isPatternMatched($entityFileList, $fullPath)) {
-                    continue;
-                }
-
-                $list[] = $fullPath;
+            if (
+                $isSpecifiedList &&
+                !ToolUtils::isPatternMatched($entitiesFileList, $fullPath)
+            ) {
+                continue;
             }
+
+            $list[] = $fullPath;
         }
 
         return $list;
