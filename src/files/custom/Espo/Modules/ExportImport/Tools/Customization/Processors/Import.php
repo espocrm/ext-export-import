@@ -29,75 +29,68 @@
 
 namespace Espo\Modules\ExportImport\Tools\Customization\Processors;
 
-use Espo\Core\{
-    Di,
-    Utils\Util,
-    Utils\Json,
-};
+use Espo\Core\Utils\Log;
+use Espo\Core\Utils\Util;
+use Espo\Core\Utils\Json;
+use Espo\Core\Utils\File\Manager as FileManager;
 
-use Espo\Modules\ExportImport\Tools\{
-    Customization\Processor,
-    Customization\Params,
-    Processor\Utils as ToolUtils,
-};
+use Espo\Modules\ExportImport\Tools\Customization\Params;
+use Espo\Modules\ExportImport\Tools\Customization\Service;
+use Espo\Modules\ExportImport\Tools\Customization\Processor;
+use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 
-class Import implements
-
-    Processor,
-    Di\LogAware,
-    Di\FileManagerAware
+class Import implements Processor
 {
-    use Di\LogSetter;
-    use Di\FileManagerSetter;
+    public function __construct(
+        private Log $log,
+        private Service $service,
+        private FileManager $fileManager
+    ) {}
 
-    //todo: copy only for $params->getEntityTypeList()
     public function process(Params $params): void
     {
         $src = $params->getCustomizationPath();
-        $commonFileList = Params::GLOBAL_FILE_LIST;
 
-        $fileList = $this->fileManager->getFileList(
-            $src, true, '', true, true
-        );
+        $fileList = $this->service->getCopyFileList($params, $src);
 
         foreach ($fileList as $file) {
-            $fullPath = Util::concatPath($src, $file);
+            $sourceFile = Util::concatPath($src, $file);
 
-            if (ToolUtils::isPatternMatched($commonFileList, $file)) {
-                $this->copyMerged($fullPath, $file);
+            if (ToolUtils::isPatternMatched(Params::GLOBAL_FILE_LIST, $file)) {
+                $this->copyMerged($sourceFile, $file);
                 continue;
             }
 
-            $this->copy($fullPath, $file);
+            $this->copy($sourceFile, $file);
         }
     }
 
-    private function copy(string $src, string $dest): bool
+    private function copy(string $srcFile, string $destFile): bool
     {
         $this->log->debug(
             "ExportImport [Customization.Import]: " .
-            "Copy {$src} > {$dest}"
+            "Copy {$srcFile} > {$destFile}"
         );
 
-        $destDir = dirname($dest);
+        $dest = dirname($destFile);
 
-        return $this->fileManager->copy($src, $destDir, false, null, true);
+        return $this->fileManager->copy($srcFile, $dest, false, null, true);
     }
 
-    private function copyMerged(string $src, string $dest): bool
+    private function copyMerged(string $srcFile, string $destFile): bool
     {
-        if (!file_exists($dest)) {
-            return $this->copy($src, $dest);
+        if (!file_exists($destFile)) {
+            return $this->copy($srcFile, $destFile);
         }
 
         $this->log->debug(
             "ExportImport [Customization.Import]: " .
-            "CopyMerged {$src} > {$dest}"
+            "CopyMerged {$srcFile} > {$destFile}"
         );
 
-        $content = $this->fileManager->getContents($src);
+        $content = $this->fileManager->getContents($srcFile);
         $data = Json::decode($content, true);
 
-        return $this->fileManager->mergeJsonContents($dest, $data);
+        return $this->fileManager->mergeJsonContents($destFile, $data);
     }
 }
