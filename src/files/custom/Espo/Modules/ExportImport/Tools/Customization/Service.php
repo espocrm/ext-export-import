@@ -63,7 +63,7 @@ class Service
 
             if (
                 $isSpecifiedList &&
-                !ToolUtils::isPatternMatched($entitiesFileList, $fullPath)
+                !ToolUtils::isPatternMatched($fullPath, $entitiesFileList)
             ) {
                 continue;
             }

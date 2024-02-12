@@ -148,7 +148,7 @@ class Utils
         return str_replace('*', '.*', $pattern);
     }
 
-    public static function isPatternMatched(array $patternList, string $value): bool
+    public static function isPatternMatched(string $value, array $patternList): bool
     {
         foreach ($patternList as $pattern) {
             $pattern = self::quotePattern($pattern);

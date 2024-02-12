@@ -56,7 +56,7 @@ class Import implements Processor
         foreach ($fileList as $file) {
             $sourceFile = Util::concatPath($src, $file);
 
-            if (ToolUtils::isPatternMatched(Params::GLOBAL_FILE_LIST, $file)) {
+            if (ToolUtils::isPatternMatched($file, Params::GLOBAL_FILE_LIST)) {
                 $this->copyMerged($sourceFile, $file);
                 continue;
             }
