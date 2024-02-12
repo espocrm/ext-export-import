@@ -103,9 +103,26 @@ class Export implements Tool
         $list = $params->getEntityTypeList() ??
             $this->defs->getEntityTypeList();
 
+        $list = array_merge($list, $this->getRelatedEntityTypeList($params));
+
+        $list = array_unique($list);
+
         $list = $this->filterEntityTypeList($params, $list);
 
         return array_values($list);
+    }
+
+    private function getRelatedEntityTypeList(Params $params): array
+    {
+        if (!$params->getEntityTypeList()) {
+            return [];
+        }
+
+        $entityTypeList = $params->getEntityTypeList();
+
+        return $this->entityTool->getRelatedEntitiesTypeList(
+            $entityTypeList
+        );
     }
 
     private function filterEntityTypeList(Params $params, array $list): array
@@ -243,6 +260,7 @@ class Export implements Tool
         if ($params->getSkipCustomization()) {
             return;
         }
+
         $entityTypeList = $this->getEntityTypeList($params);
         $isListSpecified = $params->getEntityTypeList() ? true : false;
 

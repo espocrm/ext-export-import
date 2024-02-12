@@ -139,4 +139,54 @@ class Entity
 
         return true;
     }
+
+    /**
+     * Get a list of related EntityType for a single EntityType
+     */
+    public function getRelatedEntityTypeList(string $entityType): array
+    {
+        $relationList = $this->defs
+            ->getEntity($entityType)
+            ->getRelationList();
+
+        $list = [];
+
+        foreach ($relationList as $relationDefs) {
+            if ($relationDefs->hasForeignEntityType()) {
+                $list[] = $relationDefs->getForeignEntityType();
+            }
+
+            if (!$relationDefs->hasRelationshipName()) {
+                continue;
+            }
+
+            $name = ucfirst($relationDefs->getRelationshipName());
+
+            if (!$this->defs->hasEntity($name)) {
+                continue;
+            }
+
+            $list[] = $name;
+        }
+
+        $list = array_unique($list);
+
+        return $list;
+    }
+
+    /**
+     * Get a list of related EntityType
+     */
+    public function getRelatedEntitiesTypeList(array $entityTypeList): array
+    {
+        $list = [];
+
+        foreach ($entityTypeList as $entityType) {
+            $list = array_merge($list, $this->getRelatedEntityTypeList($entityType));
+        }
+
+        $list = array_unique($list);
+
+        return array_values($list);
+    }
 }
