@@ -91,6 +91,12 @@ class Export implements Tool
 
         $this->createManifest($params);
 
+        if ($params->getEntityTypeList() && !$params->getSkipRelatedEntities()) {
+            $this->warningList[] = 'The data is exported along with the ' .
+                'related entities. Use --skip-related-entities option to ' .
+                'skip related entities.';
+        }
+
         ProcessorUtils::writeList($params, $this->warningList, "Warnings:");
 
         ProcessorUtils::writeNewLine($params);
@@ -114,6 +120,10 @@ class Export implements Tool
 
     private function getRelatedEntityTypeList(Params $params): array
     {
+        if ($params->getSkipRelatedEntities()) {
+            return [];
+        }
+
         if (!$params->getEntityTypeList()) {
             return [];
         }

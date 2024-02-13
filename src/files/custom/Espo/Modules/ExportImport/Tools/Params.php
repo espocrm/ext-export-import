@@ -120,6 +120,8 @@ class Params
 
     private ?array $userActiveList;
 
+    private bool $skipRelatedEntities;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -217,6 +219,10 @@ class Params
         $obj->userActiveList = ToolUtils::normalizeList(
             $params['userActiveList'] ?? null,
             $params['default']['userActiveList'] ?? null,
+        );
+
+        $obj->skipRelatedEntities = ToolUtils::normalizeBoolFromArray(
+            $params, 'skipRelatedEntities'
         );
 
         return $obj;
@@ -497,6 +503,15 @@ class Params
         return $obj;
     }
 
+    public function withSkipRelatedEntities(bool $value): self
+    {
+        $obj = clone $this;
+
+        $obj->skipRelatedEntities = $value;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -712,5 +727,13 @@ class Params
     public function getSkipInternalConfig(): bool
     {
         return $this->skipInternalConfig ?? false;
+    }
+
+    /**
+     * Get skipRelatedEntities option
+     */
+    public function getSkipRelatedEntities(): bool
+    {
+        return $this->skipRelatedEntities ?? false;
     }
 }
