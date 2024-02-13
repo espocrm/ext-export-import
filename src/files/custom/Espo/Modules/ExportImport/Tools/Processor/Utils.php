@@ -84,6 +84,18 @@ class Utils
     }
 
     /**
+     * Write a message in a terminal without a new line
+     */
+    public static function write(ToolParams $params, ?string $message): void
+    {
+        if ($params->isQuiet() || !$message) {
+            return;
+        }
+
+        $params->getIO()->write($message);
+    }
+
+    /**
      * Write a message in a terminal
      */
     public static function writeLine(ToolParams $params, ?string $message): void
@@ -92,9 +104,7 @@ class Utils
             return;
         }
 
-        $io = $params->getIO();
-
-        $io->writeLine($message);
+        $params->getIO()->writeLine($message);
     }
 
     public static function writeNewLine(ToolParams $params): void

@@ -194,6 +194,8 @@ class Import implements Tool
             return;
         }
 
+        ProcessorUtils::writeNewLine($params);
+
         $entityTypeList = $this->getEntityTypeList($params);
 
         foreach ($entityTypeList as $entityType) {
@@ -286,10 +288,12 @@ class Import implements Tool
             return;
         }
 
+        ProcessorUtils::write($params, "Customization...");
+
         $entityTypeList = $this->getEntityTypeList($params);
         $isListSpecified = $params->getEntityTypeList() ? true : false;
 
-        $params = CustomizationParams::create()
+        $customizationParams = CustomizationParams::create()
             ->withPath($params->getPath())
             ->withManifest($manifest)
             ->withEntityTypeList($entityTypeList)
@@ -300,9 +304,11 @@ class Import implements Tool
             CustomizationImport::class
         );
 
-        $customizationImport->process($params);
+        $customizationImport->process($customizationParams);
 
         $this->dataManager->rebuild();
+
+        ProcessorUtils::writeLine($params, " done");
     }
 
     private function importConfig(Params $params, Manifest $manifest): void
@@ -311,9 +317,11 @@ class Import implements Tool
             return;
         }
 
+        ProcessorUtils::write($params, "Configuration...");
+
         $entityTypeList = $this->getEntityTypeList($params);
 
-        $params = ConfigParams::create()
+        $configParams = ConfigParams::create()
             ->withPath($params->getPath())
             ->withManifest($manifest)
             ->withEntityTypeList($entityTypeList)
@@ -327,8 +335,10 @@ class Import implements Tool
             ConfigImport::class
         );
 
-        $configImport->process($params);
+        $configImport->process($configParams);
 
         $this->dataManager->clearCache();
+
+        ProcessorUtils::writeLine($params, " done");
     }
 }

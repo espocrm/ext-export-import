@@ -83,11 +83,11 @@ class Export implements Tool
 
         $this->fileManager->removeInDir($exportPath);
 
-        $this->exportData($params);
+        $this->exportConfig($params);
 
         $this->exportCustomization($params);
 
-        $this->exportConfig($params);
+        $this->exportData($params);
 
         $this->createManifest($params);
 
@@ -163,6 +163,8 @@ class Export implements Tool
         if ($params->getSkipData()) {
             return;
         }
+
+        ProcessorUtils::writeNewLine($params);
 
         $entityTypeList = $this->getEntityTypeList($params);
 
@@ -271,10 +273,12 @@ class Export implements Tool
             return;
         }
 
+        ProcessorUtils::write($params, "Customization...");
+
         $entityTypeList = $this->getEntityTypeList($params);
         $isListSpecified = $params->getEntityTypeList() ? true : false;
 
-        $params = CustomizationParams::create()
+        $customizationParams = CustomizationParams::create()
             ->withPath($params->getPath())
             ->withEntityTypeList($entityTypeList)
             ->withIsEntityTypeListSpecified($isListSpecified)
@@ -284,7 +288,9 @@ class Export implements Tool
             CustomizationExport::class
         );
 
-        $customizationExport->process($params);
+        $customizationExport->process($customizationParams);
+
+        ProcessorUtils::writeLine($params, " done");
     }
 
     private function exportConfig(Params $params): void
@@ -293,9 +299,11 @@ class Export implements Tool
             return;
         }
 
+        ProcessorUtils::write($params, "Configuration...");
+
         $entityTypeList = $this->getEntityTypeList($params);
 
-        $params = ConfigParams::create()
+        $configParams = ConfigParams::create()
             ->withPath($params->getPath())
             ->withEntityTypeList($entityTypeList)
             ->withExportImportDefs($params->getExportImportDefs())
@@ -308,7 +316,9 @@ class Export implements Tool
             ConfigExport::class
         );
 
-        $configExport->process($params);
+        $configExport->process($configParams);
+
+        ProcessorUtils::writeLine($params, " done");
     }
 
     private function getSearchParams(Params $params, string $entityType): ?SearchParams
