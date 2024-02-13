@@ -111,11 +111,32 @@ class Import implements Tool
             $list = $this->loadEntityTypeList($params);
         }
 
+        $list = array_merge($list, $this->getRelatedEntityTypeList($params));
+
+        $list = array_unique($list);
+
         $list = $this->filterEntityTypeList($params, $list);
 
         $list = ToolUtils::sortEntityTypeListByType($this->metadata, $list);
 
         return array_values($list);
+    }
+
+    private function getRelatedEntityTypeList(Params $params): array
+    {
+        if ($params->getSkipRelatedEntities()) {
+            return [];
+        }
+
+        if (!$params->getEntityTypeList()) {
+            return [];
+        }
+
+        $entityTypeList = $params->getEntityTypeList();
+
+        return $this->entityTool->getRelatedEntitiesTypeList(
+            $entityTypeList
+        );
     }
 
     private function loadEntityTypeList(Params $params): array
