@@ -222,11 +222,6 @@ class EntityExport
 
         fclose($dataResource);
 
-        if ($params->isCustomEntity() && $params->getSkipCustomization()) {
-            $warningList[] = 'Use --customization option to be able to import ' .
-                'custom entities later.';
-        }
-
         return Result::create($entityType)
             ->withStoragePath($params->getPath())
             ->withSuccessCount($successCount)

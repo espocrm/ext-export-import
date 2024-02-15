@@ -88,10 +88,6 @@ class EntityImport
 
         fclose($dataResource);
 
-        if ($params->isCustomEntity() && $params->getSkipCustomization()) {
-            $warningList[] = 'Use --customization option to be able to import custom entities.';
-        }
-
         if (!empty($warningList)) {
             $result = $result->withWarningList($warningList);
         }
