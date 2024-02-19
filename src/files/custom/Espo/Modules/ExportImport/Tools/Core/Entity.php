@@ -145,6 +145,10 @@ class Entity
      */
     public function getRelatedEntityTypeList(string $entityType): array
     {
+        if (!$this->defs->hasEntity($entityType)) {
+            return [];
+        }
+
         $relationList = $this->defs
             ->getEntity($entityType)
             ->getRelationList();
