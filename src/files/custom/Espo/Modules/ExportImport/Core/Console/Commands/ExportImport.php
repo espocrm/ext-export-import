@@ -87,6 +87,8 @@ class ExportImport implements Command
         try {
             $this->tool->$method($options, $io);
         } catch (Throwable $e) {
+            $io->writeLine("");
+
             $io->writeLine(
                 "Error: " . $e->getMessage()
             );
