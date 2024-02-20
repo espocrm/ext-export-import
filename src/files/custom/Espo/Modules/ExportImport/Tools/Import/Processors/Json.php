@@ -29,29 +29,31 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Processors;
 
-use Espo\Core\{
-    Exceptions\Error,
-};
+use Espo\Core\Utils\Log;
 
-use Espo\Modules\ExportImport\Tools\{
-    Processor\Data,
-    Import\Result,
-    Import\Processor,
-    Import\Params,
-};
-
-use GuzzleHttp\Psr7\Stream;
+use Espo\Modules\ExportImport\Tools\Import\Params;
+use Espo\Modules\ExportImport\Tools\Import\Result;
+use Espo\Modules\ExportImport\Tools\Processor\Data;
+use Espo\Modules\ExportImport\Tools\Import\Processor;
 
 use JsonMachine\Items;
 
 class Json implements Processor
 {
+    public function __construct(
+        private Log $log
+    ) {}
+
     public function process(Params $params, Data $data): Result
     {
+        $entityType = $params->getEntityType();
+
         $file = $params->getFile();
 
         if (!file_exists($file)) {
-            throw new Error("Import: file [" . $file . "] does not exist.");
+            $this->log->notice('Import: file [' . $file . '] does not exist.');
+
+            return Result::create($entityType);
         }
 
         $records = Items::fromFile($file);
@@ -62,8 +64,6 @@ class Json implements Processor
             $data->writeRow($row);
         }
 
-        return Result::create(
-            $params->getEntityType()
-        );
+        return Result::create($entityType);
     }
 }
