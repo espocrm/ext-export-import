@@ -95,6 +95,17 @@ class Utils
         $params->getIO()->write($message);
     }
 
+    public static function isPromptConfirmed(ToolParams $params): bool
+    {
+        $result = $params->getIO()->readLine();
+
+        if (in_array($result, ['y', 'Y', 'yes', 'YES'])) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Write a message in a terminal
      */

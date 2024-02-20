@@ -92,6 +92,8 @@ class Params
 
     private $currency= null;
 
+    private bool $confirmed;
+
     private $quiet;
 
     private ?bool $userActive = null;
@@ -179,6 +181,10 @@ class Params
         $obj->configIgnoreList = ToolUtils::normalizeList(
             $params['configIgnoreList'] ?? null,
             $params['default']['configIgnoreList'] ?? null,
+        );
+
+        $obj->confirmed = ToolUtils::normalizeBoolFromArray(
+            $params, 'y'
         );
 
         $obj->quiet = ToolUtils::normalizeBoolFromArray(
@@ -379,6 +385,15 @@ class Params
         $obj = clone $this;
 
         $obj->currency = strtoupper($currency);
+
+        return $obj;
+    }
+
+    public function withConfirmed(bool $value): self
+    {
+        $obj = clone $this;
+
+        $obj->confirmed = $value;
 
         return $obj;
     }
@@ -629,6 +644,14 @@ class Params
     public function getCurrency(): ?string
     {
         return $this->currency ?? null;
+    }
+
+    /**
+     * Is confirmed
+     */
+    public function isConfirmed(): bool
+    {
+        return $this->confirmed;
     }
 
     /**

@@ -86,6 +86,22 @@ class Import implements Tool
             throw new Error("Import path \"{$importPath}\" does not exist.");
         }
 
+        if (!$params->isConfirmed()) {
+            ProcessorUtils::writeLine(
+                $params,
+                "We recommend making a backup of your EspoCRM instance " .
+                "before running the import."
+            );
+
+            sleep(1);
+
+            ProcessorUtils::writeLine($params, "Do you want to continue? [y/n]");
+
+            if (!ProcessorUtils::isPromptConfirmed($params)) {
+                return;
+            }
+        }
+
         $manifest = $this->injectableFactory->createWith(Manifest::class, [
             'params' => $params,
         ]);
