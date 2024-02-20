@@ -108,5 +108,6 @@
     "skipConfig": false,
     "skipCustomization": false,
     "skipInternalConfig": false,
-    "skipRelatedEntities": false
+    "skipRelatedEntities": false,
+    "allCustomization": false
 }

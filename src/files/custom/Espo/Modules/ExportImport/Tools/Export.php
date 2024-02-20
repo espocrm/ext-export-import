@@ -278,6 +278,10 @@ class Export implements Tool
         $entityTypeList = $this->getEntityTypeList($params);
         $isListSpecified = $params->getEntityTypeList() ? true : false;
 
+        if ($params->getAllCustomization()) {
+            $isListSpecified = false;
+        }
+
         $customizationParams = CustomizationParams::create()
             ->withPath($params->getPath())
             ->withEntityTypeList($entityTypeList)
