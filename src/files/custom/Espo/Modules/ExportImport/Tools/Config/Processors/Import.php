@@ -52,9 +52,13 @@ class Import implements Processor
 
     private function processConfig(Params $params): void
     {
-        $contents = $this->fileManager->getContents(
-            $params->getConfigFile()
-        );
+        $file = $params->getConfigFile();
+
+        if (!file_exists($file)) {
+            return;
+        }
+
+        $contents = $this->fileManager->getContents($file);
 
         $configData = get_object_vars(
             json_decode($contents)
@@ -76,9 +80,13 @@ class Import implements Processor
             return;
         }
 
-        $contents = $this->fileManager->getContents(
-            $params->getInternalConfigFile()
-        );
+        $file = $params->getInternalConfigFile();
+
+        if (!file_exists($file)) {
+            return;
+        }
+
+        $contents = $this->fileManager->getContents($file);
 
         $configData = get_object_vars(
             json_decode($contents)

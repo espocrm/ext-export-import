@@ -304,8 +304,6 @@ class Import implements Tool
             return;
         }
 
-        ProcessorUtils::write($params, "Customization...");
-
         $entityTypeList = $this->getEntityTypeList($params);
         $isListSpecified = $params->getEntityTypeList() ? true : false;
 
@@ -319,6 +317,12 @@ class Import implements Tool
             ->withEntityTypeList($entityTypeList)
             ->withIsEntityTypeListSpecified($isListSpecified)
             ->withExportImportDefs($params->getExportImportDefs());
+
+        if (!file_exists($customizationParams->getCustomizationPath())) {
+            return;
+        }
+
+        ProcessorUtils::write($params, "Customization...");
 
         $customizationImport = $this->injectableFactory->create(
             CustomizationImport::class
@@ -337,8 +341,6 @@ class Import implements Tool
             return;
         }
 
-        ProcessorUtils::write($params, "Configuration...");
-
         $entityTypeList = $this->getEntityTypeList($params);
 
         $configParams = ConfigParams::create()
@@ -350,6 +352,12 @@ class Import implements Tool
             ->withClearPassword($params->getClearPassword())
             ->withSkipInternalConfig($params->getSkipInternalConfig())
             ->withConfigHardList($params->getConfigHardList());
+
+        if (!file_exists($configParams->getConfigPath())) {
+            return;
+        }
+
+        ProcessorUtils::write($params, "Configuration...");
 
         $configImport = $this->injectableFactory->create(
             ConfigImport::class
