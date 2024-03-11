@@ -97,6 +97,10 @@ class Utils
 
     public static function isPromptConfirmed(ToolParams $params): bool
     {
+        if ($params->isQuiet()) {
+            return true;
+        }
+
         $result = $params->getIO()->readLine();
 
         if (in_array($result, ['y', 'Y', 'yes', 'YES'])) {
