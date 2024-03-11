@@ -327,11 +327,6 @@ class EntityExport
         string $attribute,
         bool $exportAllFields = false
     ): bool {
-
-        if ($entity->getAttributeParam($attribute, 'notExportable')) {
-            return false;
-        }
-
         if (!$exportAllFields) {
             return true;
         }
@@ -488,16 +483,6 @@ class EntityExport
 
         if ($fieldList === null) {
             return null;
-        }
-
-        foreach ($fieldList as $i => $field) {
-            if ($field === 'id') {
-                continue;
-            }
-
-            if ($entityDefs->getField($field)->getParam('exportDisabled')) {
-                unset($fieldList[$i]);
-            }
         }
 
         if (method_exists($processor, 'filterFieldList')) {
