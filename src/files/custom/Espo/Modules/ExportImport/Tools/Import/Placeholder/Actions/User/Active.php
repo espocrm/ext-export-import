@@ -42,7 +42,7 @@ class Active implements Action
 
     public function normalize(Params $params, $actualValue)
     {
-        $value = $this->getValueByUserIdList($params);
+        $value = $this->getValueByUserActiveList($params);
 
         if (!is_null($value)) {
             return $value;
@@ -61,24 +61,37 @@ class Active implements Action
         return $actualValue;
     }
 
-    private function getValueByUserIdList(Params $params): ?bool
+    private function getValueByUserActiveList(Params $params): ?bool
     {
-        $userIdList = $params->getUserActiveIdList();
+        $userActiveList = $params->getUserActiveList();
 
-        if (empty($userIdList)) {
+        if (empty($userActiveList)) {
             return null;
         }
 
-        $userId = $params->getRecordData()['id'] ?? null;
-
-        if (!$userId) {
-            return false;
+        if ($this->isDefinedActive($params, 'id')) {
+            return true;
         }
 
-        if (in_array($userId, $userIdList)) {
+        if ($this->isDefinedActive($params, 'userName')) {
             return true;
         }
 
         return $params->getUserActive() ?? false;
+    }
+
+    private function isDefinedActive(Params $params, string $fieldName): bool
+    {
+        $value = $params->getRecordData()[$fieldName] ?? null;
+
+        if (!$value) {
+            return false;
+        }
+
+        if (!in_array($value, $params->getUserActiveList())) {
+            return false;
+        }
+
+        return true;
     }
 }

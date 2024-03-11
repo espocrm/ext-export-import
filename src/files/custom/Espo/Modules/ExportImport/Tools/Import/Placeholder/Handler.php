@@ -91,7 +91,7 @@ class Handler implements
                     ->withExportImportDefs($params->getExportImportDefs())
                     ->withManifest($params->getManifest())
                     ->withUserActive($params->getUserActive())
-                    ->withUserActiveIdList($params->getUserActiveIdList())
+                    ->withUserActiveList($params->getUserActiveList())
                     ->withUserPassword($params->getUserPassword());
 
                 try {

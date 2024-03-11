@@ -49,7 +49,7 @@ class Params
 
     private ?bool $userActive = null;
 
-    private ?array $userActiveIdList;
+    private ?array $userActiveList;
 
     private $userPassword = null;
 
@@ -117,11 +117,11 @@ class Params
         return $obj;
     }
 
-    public function withUserActiveIdList(array $list): self
+    public function withUserActiveList(array $list): self
     {
         $obj = clone $this;
 
-        $obj->userActiveIdList = $list;
+        $obj->userActiveList = $list;
 
         return $obj;
     }
@@ -211,9 +211,9 @@ class Params
     /**
      * List of active users. It can be ID or userName
      */
-    public function getUserActiveIdList(): array
+    public function getUserActiveList(): array
     {
-        return $this->userActiveIdList ?? [];
+        return $this->userActiveList ?? [];
     }
 
     /**

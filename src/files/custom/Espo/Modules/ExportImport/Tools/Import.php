@@ -265,9 +265,7 @@ class Import implements Tool
             ->withUpdateCurrency($params->getUpdateCurrency())
             ->withProcessHookClass($processHookClass)
             ->withUserActive($params->getUserActive())
-            ->withUserActiveIdList($this->userTool->getIdUserList(
-                $params->getUserActiveList()
-            ))
+            ->withUserActiveList($params->getUserActiveList())
             ->withUpdateCreatedAt($params->getUpdateCreatedAt())
             ->withUserPassword($params->getUserPassword())
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))
