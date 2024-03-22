@@ -27,7 +27,7 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import\Processors;
+namespace Espo\Modules\ExportImport\Tools\Import\DataProcessors;
 
 use Espo\Core\Utils\Log;
 

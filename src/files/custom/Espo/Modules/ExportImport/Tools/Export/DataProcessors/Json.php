@@ -27,23 +27,17 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Export\Processors;
+namespace Espo\Modules\ExportImport\Tools\Export\DataProcessors;
 
 use Espo\Core\ORM\Entity;
-
-use Espo\Core\{
-    Utils\Config,
-    Utils\Metadata,
-    Utils\Json as JsonUtil,
-};
-
-use Espo\Modules\ExportImport\Tools\{
-    Export\Processor,
-    Export\Params,
-    Processor\Data,
-};
-
+use Espo\Core\Utils\Config;
+use Espo\Core\Utils\Metadata;
 use Espo\Entities\Preferences;
+use Espo\Core\Utils\Json as JsonUtil;
+
+use Espo\Modules\ExportImport\Tools\Export\Params;
+use Espo\Modules\ExportImport\Tools\Processor\Data;
+use Espo\Modules\ExportImport\Tools\Export\Processor;
 
 use Psr\Http\Message\StreamInterface;
 use GuzzleHttp\Psr7\Stream;
@@ -54,20 +48,11 @@ use const JSON_PRETTY_PRINT;
 
 class Json implements Processor
 {
-    protected $config;
-    protected $preferences;
-    protected $metadata;
-
     public function __construct(
-        Config $config,
-        Preferences $preferences,
-        Metadata $metadata
-    )
-    {
-        $this->config = $config;
-        $this->preferences = $preferences;
-        $this->metadata = $metadata;
-    }
+        private Config $config,
+        private Preferences $preferences,
+        private Metadata $metadata
+    ) {}
 
     public function loadAdditionalFields(Entity $entity, $fieldList)
     {

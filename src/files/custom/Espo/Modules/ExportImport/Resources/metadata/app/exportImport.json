@@ -15,8 +15,8 @@
         }
     },
 
-    "exportProcessorClassNameMap": {
-        "json": "Espo\\Modules\\ExportImport\\Tools\\Export\\Processors\\Json"
+    "exportDataProcessorClassNameMap": {
+        "json": "Espo\\Modules\\ExportImport\\Tools\\Export\\DataProcessors\\Json"
     },
 
     "exportCollectionClassNameMap": {
@@ -27,8 +27,8 @@
         "Attachment": "Espo\\Modules\\ExportImport\\Tools\\Export\\ProcessHooks\\Attachment"
     },
 
-    "importProcessorClassNameMap": {
-        "json": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processors\\Json"
+    "importDataProcessorClassNameMap": {
+        "json": "Espo\\Modules\\ExportImport\\Tools\\Import\\DataProcessors\\Json"
     },
 
     "importProcessHookClassNameMap": {

@@ -29,24 +29,17 @@
 
 namespace Espo\Modules\ExportImport\Tools\Export;
 
-use Espo\Core\{
-    InjectableFactory,
-    Utils\Metadata,
-};
+use Espo\Core\Utils\Metadata;
+use Espo\Core\InjectableFactory;
 
 use LogicException;
 
 class ProcessorFactory
 {
-    private $injectableFactory;
-
-    private $metadata;
-
-    public function __construct(InjectableFactory $injectableFactory, Metadata $metadata)
-    {
-        $this->injectableFactory = $injectableFactory;
-        $this->metadata = $metadata;
-    }
+    public function __construct(
+        private Metadata $metadata,
+        private InjectableFactory $injectableFactory
+    ) {}
 
     public function create(string $format): Processor
     {
@@ -54,7 +47,9 @@ class ProcessorFactory
             throw new LogicException("Not supported export format '{$format}'.");
         }
 
-        $className = $this->metadata->get(['app', 'exportImport', 'exportProcessorClassNameMap', $format]);
+        $className = $this->metadata->get([
+            'app', 'exportImport', 'exportDataProcessorClassNameMap', $format
+        ]);
 
         if (!$className) {
             throw new LogicException("No implementation for format '{$format}'.");
