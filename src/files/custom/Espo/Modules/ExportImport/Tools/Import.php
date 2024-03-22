@@ -46,9 +46,9 @@ use Espo\Modules\ExportImport\Tools\Customization\Params as CustomizationParams;
 use Espo\Modules\ExportImport\Tools\Customization\Processors\Import as CustomizationImport;
 use Espo\Modules\ExportImport\Tools\Config\Params as ConfigParams;
 use Espo\Modules\ExportImport\Tools\Config\Processors\Import as ConfigImport;
-use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 use Espo\Modules\ExportImport\Tools\Import\Result as EntityResult;
 use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
+use Espo\Modules\ExportImport\Tools\Import\EntityType as EntityTypeHelper;
 
 use Espo\Core\Exceptions\Error;
 
@@ -66,6 +66,7 @@ class Import implements Tool
         private EntityTool $entityTool,
         private FileManager $fileManager,
         private DataManager $dataManager,
+        private EntityTypeHelper $entityTypeHelper,
         private InjectableFactory $injectableFactory
     ) {}
 
@@ -119,89 +120,8 @@ class Import implements Tool
 
     private function getEntityTypeList(Params $params): array
     {
-        if ($params->getEntityTypeList()) {
-            $list = $params->getEntityTypeList();
-        }
-
-        if (!isset($list)) {
-            $list = $this->loadEntityTypeList($params);
-        }
-
-        $list = array_merge($list, $this->getRelatedEntityTypeList($params));
-
-        $list = array_unique($list);
-
-        $list = $this->filterEntityTypeList($params, $list);
-
-        $list = ToolUtils::sortEntityTypeListByType($this->metadata, $list);
-
-        return array_values($list);
-    }
-
-    private function getRelatedEntityTypeList(Params $params): array
-    {
-        if ($params->getSkipRelatedEntities()) {
-            return [];
-        }
-
-        if (!$params->getEntityTypeList()) {
-            return [];
-        }
-
-        $entityTypeList = $params->getEntityTypeList();
-
-        return $this->entityTool->getRelatedEntitiesTypeList(
-            $entityTypeList
-        );
-    }
-
-    private function loadEntityTypeList(Params $params): array
-    {
-        $entityFileList = $this->fileManager->getFileList(
-            $params->getEntitiesPath(),
-            false,
-            '\.json$'
-        );
-
-        $availableEntityTypeList = $this->defs->getEntityTypeList();
-
-        $entityTypeList = [];
-
-        foreach ($entityFileList as $entityType) {
-            $normalizedEntityType = preg_replace('/\.json$/i', '', $entityType);
-
-            if (!in_array($normalizedEntityType, $availableEntityTypeList)) {
-
-                continue;
-            }
-
-            $entityTypeList[] = $normalizedEntityType;
-        }
-
-        return $entityTypeList;
-    }
-
-    private function filterEntityTypeList(Params $params, array $list): array
-    {
-        $filteredList = [];
-
-        $defs = $params->getExportImportDefs();
-
-        foreach ($list as $entityType) {
-            $isImportDisabled = $defs[$entityType]['importDisabled'] ?? false;
-
-            if ($isImportDisabled) {
-                continue;
-            }
-
-            if ($this->entityTool->isCategoryTreeAdditionalTable($entityType)) {
-                continue;
-            }
-
-            $filteredList[] = $entityType;
-        }
-
-        return $filteredList;
+        return $this->entityTypeHelper
+            ->getNormalizedList($params);
     }
 
     private function importData(Params $params, Manifest $manifest): void
