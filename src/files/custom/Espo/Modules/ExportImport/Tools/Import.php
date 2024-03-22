@@ -48,7 +48,7 @@ use Espo\Modules\ExportImport\Tools\Config\Params as ConfigParams;
 use Espo\Modules\ExportImport\Tools\Config\Processors\Import as ConfigImport;
 use Espo\Modules\ExportImport\Tools\Import\Result as EntityResult;
 use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
-use Espo\Modules\ExportImport\Tools\Import\EntityType as EntityTypeHelper;
+use Espo\Modules\ExportImport\Tools\Import\Helpers\EntityType as EntityTypeHelper;
 
 use Espo\Core\Exceptions\Error;
 
