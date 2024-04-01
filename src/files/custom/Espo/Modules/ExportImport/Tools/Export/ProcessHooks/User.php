@@ -27,15 +27,24 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Processor;
+namespace Espo\Modules\ExportImport\Tools\Export\ProcessHooks;
 
-interface Params
+use Espo\ORM\Entity;
+use Espo\Entities\User as UserEntity;
+
+use Espo\Modules\ExportImport\Tools\Processor\Params;
+use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
+use Espo\Modules\ExportImport\Tools\Processor\ProcessHook\UserUtils;
+use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
+
+class User implements ProcessHook
 {
-    public function __construct(string $entityType);
+    public function process(Params $params, Entity $entity, array $row): void
+    {
+        /** @var UserEntity $entity */
 
-    public static function create(string $entityType): self;
-
-    public function getExportImportDefs(): array;
-
-    public function getUserSkipList(): array;
+        if (UserUtils::isSkipUser($params, $entity, $row)) {
+            throw new SkipException;
+        }
+    }
 }

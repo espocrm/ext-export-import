@@ -1,7 +1,8 @@
 {
-    "exportSkipLists" : {
-        "id": [
-            "system"
+    "skipRecordList" : {
+        "type": [
+            "system",
+            "super-admin"
         ]
     },
     "fields": {

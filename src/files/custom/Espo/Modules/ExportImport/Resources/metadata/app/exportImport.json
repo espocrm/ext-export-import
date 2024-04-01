@@ -24,6 +24,7 @@
     },
 
     "exportProcessHookClassNameMap": {
+        "User": "Espo\\Modules\\ExportImport\\Tools\\Export\\ProcessHooks\\User",
         "Attachment": "Espo\\Modules\\ExportImport\\Tools\\Export\\ProcessHooks\\Attachment"
     },
 

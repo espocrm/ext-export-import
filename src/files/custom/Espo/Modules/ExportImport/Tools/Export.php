@@ -220,7 +220,8 @@ class Export implements Tool
             ->withPrettyPrint($params->getPrettyPrint())
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))
             ->withSkipCustomization($params->getSkipCustomization())
-            ->withClearPassword($params->getClearPassword());
+            ->withClearPassword($params->getClearPassword())
+            ->withUserSkipList($params->getUserSkipList());
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);
@@ -327,16 +328,15 @@ class Export implements Tool
 
     private function getSearchParams(Params $params, string $entityType): ?SearchParams
     {
-        $skipLists = $params->getExportImportDefs()[$entityType]['exportSkipLists']
-            ?? null;
+        $skipList = $params->getExportImportDefs()[$entityType]['skipRecordList'] ?? null;
 
-        if (!$skipLists || count($skipLists) == 0) {
+        if (!$skipList || count($skipList) == 0) {
             return null;
         }
 
         $where = [];
 
-        foreach ($skipLists as $fieldName => $list) {
+        foreach ($skipList as $fieldName => $list) {
             if (count($list) == 0) {
 
                 continue;
