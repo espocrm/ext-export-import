@@ -79,6 +79,8 @@ class Params implements IParams
 
     private ?array $userActiveList;
 
+    private ?array $userSkipList;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -247,6 +249,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->clearPassword = $clearPassword;
+
+        return $obj;
+    }
+
+    public function withUserSkipList(array $list): self
+    {
+        $obj = clone $this;
+
+        $obj->userSkipList = $list;
 
         return $obj;
     }
@@ -425,5 +436,13 @@ class Params implements IParams
     public function getClearPassword(): bool
     {
         return $this->clearPassword ?? false;
+    }
+
+    /**
+     * List of skipped users. It can be ID or userName
+     */
+    public function getUserSkipList(): array
+    {
+        return $this->userSkipList ?? [];
     }
 }

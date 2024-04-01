@@ -191,7 +191,8 @@ class Import implements Tool
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))
             ->withSkipCustomization($params->getSkipCustomization())
             ->withReplaceIdMap($params->getReplaceIdMap())
-            ->withClearPassword($params->getClearPassword());
+            ->withClearPassword($params->getClearPassword())
+            ->withUserSkipList($params->getUserSkipList());
 
         $import = $this->injectableFactory->create(EntityImportTool::class);
         $import->setParams($importParams);
