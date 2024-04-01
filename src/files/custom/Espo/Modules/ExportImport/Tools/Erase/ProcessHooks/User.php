@@ -30,77 +30,21 @@
 namespace Espo\Modules\ExportImport\Tools\Erase\ProcessHooks;
 
 use Espo\ORM\Entity;
-use Espo\Core\Utils\Log;
-use Espo\ORM\EntityManager;
 use Espo\Entities\User as UserEntity;
 
 use Espo\Modules\ExportImport\Tools\Processor\Params;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
+use Espo\Modules\ExportImport\Tools\Processor\ProcessHook\UserUtils;
 use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
-
-use Espo\Modules\ExportImport\Tools\Erase\Params as EraseParams;
 
 class User implements ProcessHook
 {
-    public function __construct(
-        private Log $log,
-        private EntityManager $entityManager
-    ) {}
-
     public function process(Params $params, Entity $entity, array $row): void
     {
-        /** @var EraseParams $params */
         /** @var UserEntity $entity */
 
-        if ($entity->isSystem() || $entity->isSuperAdmin()) {
+        if (UserUtils::isSkipUser($params, $entity, $row)) {
             throw new SkipException;
         }
-
-        if ($this->isSkipUser($params, $entity, $row)) {
-            throw new SkipException;
-        }
-    }
-
-    private function isSkipUser(Params $params, Entity $entity, array $row): bool
-    {
-        /** @var EraseParams $params */
-        $userSkipList = $params->getUserSkipList();
-
-        if (empty($userSkipList)) {
-            return false;
-        }
-
-        if ($this->isEqual($params, $entity, $row, 'id')) {
-            return true;
-        }
-
-        if ($this->isEqual($params, $entity, $row, 'userName')) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private function isEqual(
-        Params $params,
-        Entity $entity,
-        array $row,
-        string $fieldName
-    ): bool {
-        $rowValue = $row[$fieldName] ?? null;
-        $entityValue = $entity->get($fieldName) ?? null;
-
-        /** @var EraseParams $params */
-        $userSkipList = $params->getUserSkipList();
-
-        if ($rowValue && in_array($rowValue, $userSkipList)) {
-            return true;
-        }
-
-        if ($entityValue && in_array($entityValue, $userSkipList)) {
-            return true;
-        }
-
-        return false;
     }
 }
