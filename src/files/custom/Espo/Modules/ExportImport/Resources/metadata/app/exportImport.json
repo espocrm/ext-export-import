@@ -55,6 +55,14 @@
         "User\\Password": "Espo\\Modules\\ExportImport\\Tools\\Import\\Placeholder\\Actions\\User\\Password"
     },
 
+    "eraseDataProcessorClassNameMap": {
+        "json": "Espo\\Modules\\ExportImport\\Tools\\Erase\\DataProcessors\\Json"
+    },
+
+    "eraseProcessHookClassNameMap": {
+        "User": "Espo\\Modules\\ExportImport\\Tools\\Erase\\ProcessHooks\\User"
+    },
+
     "configIgnoreList": [
         "crud",
         "version",

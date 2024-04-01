@@ -124,6 +124,8 @@ class Params
 
     private ?array $userActiveList;
 
+    private ?array $userSkipList;
+
     private bool $skipRelatedEntities;
 
     public function __construct(string $format)
@@ -231,6 +233,11 @@ class Params
         $obj->userActiveList = ToolUtils::normalizeList(
             $params['userActiveList'] ?? null,
             $params['default']['userActiveList'] ?? null,
+        );
+
+        $obj->userSkipList = ToolUtils::normalizeList(
+            $params['userSkipList'] ?? null,
+            $params['default']['userSkipList'] ?? null,
         );
 
         $obj->skipRelatedEntities = ToolUtils::normalizeBoolFromArray(
@@ -430,6 +437,15 @@ class Params
         $obj = clone $this;
 
         $obj->userActiveList = $list;
+
+        return $obj;
+    }
+
+    public function withUserSkipList(array $list): self
+    {
+        $obj = clone $this;
+
+        $obj->userSkipList = $list;
 
         return $obj;
     }
@@ -688,6 +704,14 @@ class Params
     public function getUserActiveList(): array
     {
         return $this->userActiveList ?? [];
+    }
+
+    /**
+     * List of skipped users. It can be ID or userName
+     */
+    public function getUserSkipList(): array
+    {
+        return $this->userSkipList ?? [];
     }
 
     /**
