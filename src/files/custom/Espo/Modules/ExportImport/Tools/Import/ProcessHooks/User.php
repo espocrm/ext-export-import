@@ -44,7 +44,7 @@ class User implements ProcessHook
         /** @var UserEntity $entity */
 
         if (UserUtils::isSkipUser($params, $entity, $row)) {
-            throw new SkipException;
+            throw new SkipException('As defined in --user-skip-list');
         }
     }
 }
