@@ -209,13 +209,13 @@ class EntityExport
 
         if ($stream->getSize() > 0) {
             $result = $this->fileManager->putContents(
-                $params->getFilePath(),
+                $params->getFile(),
                 $stream->getContents()
             );
 
             if (!$result) {
                 throw new Error(
-                    "Could not store a file '{$params->getFilePath()}'."
+                    "Could not store a file '{$params->getFile()}'."
                 );
             }
         }

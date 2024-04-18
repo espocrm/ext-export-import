@@ -35,7 +35,9 @@ interface Params
 
     public static function create(string $entityType): self;
 
-    public function getExportImportDefs(): array;
+    public function getEntityType(): string;
 
-    public function getUserSkipList(): array;
+    public function getFile(): string;
+
+    public function getExportImportDefs(): array;
 }

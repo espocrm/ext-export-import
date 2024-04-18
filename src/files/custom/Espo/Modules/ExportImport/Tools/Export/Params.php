@@ -336,20 +336,12 @@ class Params implements IParams
     /**
      * Get file path
      */
-    public function getFilePath(): string
+    public function getFile(): string
     {
         return Util::concatPath(
             $this->entitiesPath,
             $this->getFileName()
         );
-    }
-
-    /**
-     * Get file extension
-     */
-    public function getFileExtension(): array
-    {
-        return $this->fileExtension;
     }
 
     /**
