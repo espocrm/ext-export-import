@@ -34,6 +34,8 @@ use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\ORM\Repository\Option\SaveOption;
 
+use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
+
 use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
@@ -49,6 +51,7 @@ class Entity implements Processor
     public function __construct(
         private Log $log,
         private Metadata $metadata,
+        private EntityTool $entityTool,
         private EntityManager $entityManager
     ) {}
 
@@ -168,6 +171,10 @@ class Entity implements Processor
             }
         }
 
-        return null;
+        if ($this->entityTool->isIdAutoincrement($entityType)) {
+            return null;
+        }
+
+        return $row['id'] ?? null;
     }
 }
