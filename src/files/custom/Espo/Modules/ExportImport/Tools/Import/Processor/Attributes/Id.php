@@ -35,19 +35,27 @@ use Espo\Entities\User as UserEntity;
 
 use Espo\Modules\ExportImport\Tools\Import\Params;
 use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
+use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
 use Espo\Modules\ExportImport\Tools\Import\ProcessorAttribute;
 
 class Id implements ProcessorAttribute
 {
     public function __construct(
         private Log $log,
-        private UserTool $userTool
+        private UserTool $userTool,
+        private EntityTool $entityTool
     ) {}
 
     public function process(Params $params, array &$row, string $attributeName): void
     {
-        if ($params->getEntityType() == UserEntity::ENTITY_TYPE) {
+        $entityType = $params->getEntityType();
+
+        if ($entityType == UserEntity::ENTITY_TYPE) {
             $this->processUser($params, $row, $attributeName);
+        }
+
+        if ($this->entityTool->isIdAutoincrement($entityType)) {
+            unset($row['id']);
         }
     }
 

@@ -193,4 +193,20 @@ class Entity
 
         return array_values($list);
     }
+
+    public function isIdAutoincrement(string $entityType): bool
+    {
+        $isId = $this->defs
+            ->getEntity($entityType)
+            ->hasAttribute('id');
+
+        if (!$isId) {
+            return false;
+        }
+
+        return $this->defs
+            ->getEntity($entityType)
+            ->getAttribute('id')
+            ?->isAutoincrement() ?? false;
+    }
 }

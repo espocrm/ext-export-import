@@ -70,6 +70,8 @@ class Entity implements Processor
         $successCount = 0;
 
         while (($row = $data->readRow()) !== null) {
+            $entity = null;
+
             $preparedRow = $this->prepareData($params, $row);
 
             $id = $this->getEntityId($params, $preparedRow);
@@ -94,12 +96,12 @@ class Entity implements Processor
                 }
             }
 
-            if (isset($entity) && in_array($importType, [ToolParams::TYPE_CREATE])) {
+            if ($entity && in_array($importType, [ToolParams::TYPE_CREATE])) {
 
                 continue;
             }
 
-            if (!isset($entity)) {
+            if (!$entity) {
                 if (in_array($importType, [ToolParams::TYPE_UPDATE])) {
 
                     continue;
