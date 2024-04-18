@@ -27,27 +27,39 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import\DataProcessors;
+namespace Espo\Modules\ExportImport\Core\DataProcessors\Json;
 
-use Espo\Modules\ExportImport\Tools\Import\Params;
-use Espo\Modules\ExportImport\Tools\Import\Result;
+use Espo\Core\Utils\Log;
+
 use Espo\Modules\ExportImport\Tools\Processor\Data;
-use Espo\Modules\ExportImport\Tools\Import\Processor;
+use Espo\Modules\ExportImport\Tools\Processor\Params;
 
-use Espo\Modules\ExportImport\Core\DataProcessors\Json\Import as ImportDataProcessor;
+use JsonMachine\Items;
 
-class Json implements Processor
+class Import
 {
     public function __construct(
-        private ImportDataProcessor $importDataProcessor
+        private Log $log
     ) {}
 
-    public function process(Params $params, Data $data): Result
+    public function process(Params $params, Data $data): void
     {
-        $this->importDataProcessor->process($params, $data);
+        $file = $params->getFile();
 
-        $entityType = $params->getEntityType();
+        if (!file_exists($file)) {
+            $this->log->notice(
+                'DataProcessor[json]: file [' . $file . '] does not exist.'
+            );
 
-        return Result::create($entityType);
+            return;
+        }
+
+        $records = Items::fromFile($file);
+
+        foreach ($records as $record) {
+            $row = get_object_vars($record);
+
+            $data->writeRow($row);
+        }
     }
 }

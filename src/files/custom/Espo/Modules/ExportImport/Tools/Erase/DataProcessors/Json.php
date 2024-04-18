@@ -29,40 +29,24 @@
 
 namespace Espo\Modules\ExportImport\Tools\Erase\DataProcessors;
 
-use Espo\Core\Utils\Log;
-
 use Espo\Modules\ExportImport\Tools\Erase\Params;
 use Espo\Modules\ExportImport\Tools\Erase\Result;
 use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\Erase\Processor;
 
-use JsonMachine\Items;
+use Espo\Modules\ExportImport\Core\DataProcessors\Json\Import as ImportDataProcessor;
 
 class Json implements Processor
 {
     public function __construct(
-        private Log $log
+        private ImportDataProcessor $importDataProcessor
     ) {}
 
     public function process(Params $params, Data $data): Result
     {
+        $this->importDataProcessor->process($params, $data);
+
         $entityType = $params->getEntityType();
-
-        $file = $params->getFile();
-
-        if (!file_exists($file)) {
-            $this->log->notice('Erase: file [' . $file . '] does not exist.');
-
-            return Result::create($entityType);
-        }
-
-        $records = Items::fromFile($file);
-
-        foreach ($records as $record) {
-            $row = get_object_vars($record);
-
-            $data->writeRow($row);
-        }
 
         return Result::create($entityType);
     }
