@@ -32,6 +32,7 @@ namespace Espo\Modules\ExportImport\Tools\Erase\Processor;
 use Espo\Core\Utils\Log;
 use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;
+use Espo\Core\InjectableFactory;
 use Espo\Core\ORM\Repository\Option\SaveOption;
 
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
@@ -52,7 +53,8 @@ class Entity implements Processor
         private Log $log,
         private Metadata $metadata,
         private EntityTool $entityTool,
-        private EntityManager $entityManager
+        private EntityManager $entityManager,
+        private InjectableFactory $injectableFactory
     ) {}
 
     public function process(Params $params, Data $data): Result
@@ -65,7 +67,9 @@ class Entity implements Processor
         $failCount = 0;
         $successCount = 0;
 
-        while (($row = $data->readRow()) !== null) {
+        while (($initRow = $data->readRow()) !== null) {
+            $row = $this->prepareData($params, $initRow);
+
             $id = $this->getEntityId($params, $row);
 
             if (!$id) {
@@ -82,7 +86,7 @@ class Entity implements Processor
 
             if ($processHook) {
                 try {
-                    $processHook->process($params, $entity, $row);
+                    $processHook->process($params, $entity, $initRow);
                 }
                 catch (SkipException $e) {
                     $skipCount++;
@@ -120,6 +124,29 @@ class Entity implements Processor
             ->withSkipCount($skipCount)
             ->withFailCount($failCount)
             ->withSuccessCount($successCount);
+    }
+
+    private function prepareData(Params $params, array $initRow): array
+    {
+        $attributeList = $this->entityManager
+            ->getDefs()
+            ->getEntity($params->getEntityType())
+            ->getAttributeNameList();
+
+        $row = $initRow;
+
+        foreach ($row as $attributeName => $attributeValue) {
+
+            if (!in_array($attributeName, $attributeList)) {
+                unset($row[$attributeName]);
+
+                continue;
+            }
+
+            $this->processAttribute($params, $row, $attributeName);
+        }
+
+        return $row;
     }
 
     private function getEntityId(Params $params, array $row): ?string
@@ -171,10 +198,30 @@ class Entity implements Processor
             }
         }
 
-        if ($this->entityTool->isIdAutoincrement($entityType)) {
-            return null;
+        return $row['id'] ?? null;
+    }
+
+    private function processAttribute(
+        Params $params,
+        array &$row,
+        string $attributeName
+    ): void {
+        $attributeType = $this->entityManager
+            ->getDefs()
+            ->getEntity($params->getEntityType())
+            ->getAttribute($attributeName)
+            ?->getType();
+
+        $className = $this->metadata->get([
+            'app', 'exportImport', 'eraseProcessAttributeClassNameMap', $attributeType
+        ]);
+
+        if (!$className) {
+            return;
         }
 
-        return $row['id'] ?? null;
+        $this->injectableFactory
+            ->create($className)
+            ?->process($params, $row, $attributeName);
     }
 }

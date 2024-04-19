@@ -57,6 +57,8 @@ class Params implements IParams
 
     private ?array $userSkipList;
 
+    private array $idMap = [];
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -144,6 +146,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->isCustomEntity = $isCustomEntity;
+
+        return $obj;
+    }
+
+    public function withIdMap(array $idMap): self
+    {
+        $obj = clone $this;
+
+        $obj->idMap = $idMap;
 
         return $obj;
     }
@@ -237,5 +248,18 @@ class Params implements IParams
     public function isCustomEntity(): bool
     {
         return $this->isCustomEntity;
+    }
+
+    /**
+     * Get a map of entity ids
+     * [
+     *  ENTITY_TYPE => [
+     *     IMPORT_USER_ID => ACTUAL_USER_ID
+     *  ]
+     * ]
+     */
+    public function getIdMap(): array
+    {
+        return $this->idMap;
     }
 }

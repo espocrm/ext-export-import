@@ -37,6 +37,8 @@ use Espo\Core\Exceptions\Error;
 use Espo\Core\InjectableFactory;
 use Espo\Core\Utils\File\Manager as FileManager;
 
+use Espo\Entities\User as UserEntity;
+
 use Espo\Modules\ExportImport\Tools\Params;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
@@ -47,6 +49,7 @@ use Espo\Modules\ExportImport\Tools\Import\Helpers\EntityType as EntityTypeHelpe
 use Espo\Modules\ExportImport\Tools\Erase\Params as EraseParams;
 use Espo\Modules\ExportImport\Tools\Erase\Result as EntityResult;
 use Espo\Modules\ExportImport\Tools\Erase\EntityErase as EntityEraseTool;
+use Espo\Modules\ExportImport\Tools\IdMapping\Tool as IdMappingTool;
 
 use Exception;
 
@@ -63,7 +66,8 @@ class Erase implements Tool
         private FileManager $fileManager,
         private DataManager $dataManager,
         private EntityTypeHelper $entityTypeHelper,
-        private InjectableFactory $injectableFactory
+        private InjectableFactory $injectableFactory,
+        private IdMappingTool $idMappingTool
     ) {}
 
     public function run(Params $params) : void
@@ -128,11 +132,15 @@ class Erase implements Tool
 
         $entityTypeList = $this->getEntityTypeList($params);
 
+        $idMap = $this->idMappingTool->getIdMap($params, [
+            UserEntity::ENTITY_TYPE
+        ]);
+
         foreach ($entityTypeList as $entityType) {
             ProcessorUtils::writeLine($params, "{$entityType}...");
 
             try {
-                $result = $this->eraseEntity($entityType, $params, $manifest);
+                $result = $this->eraseEntity($entityType, $params, $manifest, $idMap);
             } catch (Exception $e) {
                 ProcessorUtils::writeLine(
                     $params, "  Error: " . $e->getMessage()
@@ -157,7 +165,8 @@ class Erase implements Tool
     private function eraseEntity(
         string $entityType,
         Params $params,
-        Manifest $manifest
+        Manifest $manifest,
+        array $idMap
     ): EntityResult {
         $processHookClass = $this->getProcessHookClass($entityType);
 
@@ -170,7 +179,8 @@ class Erase implements Tool
             ->withManifest($manifest)
             ->withProcessHookClass($processHookClass)
             ->withUserSkipList($params->getUserSkipList())
-            ->withIsCustomEntity($this->entityTool->isCustom($entityType));
+            ->withIsCustomEntity($this->entityTool->isCustom($entityType))
+            ->withIdMap($idMap);
 
         $import = $this->injectableFactory->create(EntityEraseTool::class);
         $import->setParams($eraseParams);
