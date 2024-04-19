@@ -37,6 +37,10 @@ interface Params
 
     public function getEntityType(): string;
 
+    public function getPath(): ?string;
+
+    public function getFormat(): ?string;
+
     public function getFile(): string;
 
     public function getExportImportDefs(): array;
