@@ -69,12 +69,12 @@ class Entity implements Processor
         $failCount = 0;
         $successCount = 0;
 
-        while (($row = $data->readRow()) !== null) {
+        while (($initRow = $data->readRow()) !== null) {
             $entity = null;
 
-            $preparedRow = $this->prepareData($params, $row);
+            $row = $this->prepareData($params, $initRow);
 
-            $id = $this->getEntityId($params, $preparedRow);
+            $id = $this->getEntityId($params, $row);
 
             if ($id) {
                 $entity = $this->entityManager->getEntity($entityType, $id);
@@ -110,13 +110,13 @@ class Entity implements Processor
                 $entity = $this->entityManager->getEntity($entityType);
             }
 
-            $entity->set($preparedRow);
+            $entity->set($row);
 
             $processHook = $params->getProcessHookClass();
 
             if ($processHook) {
                 try {
-                    $processHook->process($params, $entity, $row);
+                    $processHook->process($params, $entity, $initRow);
                 }
                 catch (SkipException $e) {
                     $skipCount++;
@@ -160,7 +160,7 @@ class Entity implements Processor
             ->withSuccessCount($successCount);
     }
 
-    private function prepareData(Params $params, array $initRow)
+    private function prepareData(Params $params, array $initRow): array
     {
         $attributeList = $this->entityManager
             ->getDefs()
