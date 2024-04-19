@@ -65,6 +65,14 @@
         "User": "Espo\\Modules\\ExportImport\\Tools\\Erase\\ProcessHooks\\User"
     },
 
+    "idMappingDataProcessorClassNameMap": {
+        "json": "Espo\\Modules\\ExportImport\\Tools\\IdMapping\\DataProcessors\\Json"
+    },
+
+    "idMappingCollectionClassNameMap": {
+        "User": "Espo\\Modules\\ExportImport\\Tools\\IdMapping\\Collections\\User"
+    },
+
     "configIgnoreList": [
         "crud",
         "version",
