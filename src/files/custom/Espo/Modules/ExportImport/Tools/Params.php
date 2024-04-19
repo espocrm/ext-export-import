@@ -114,8 +114,6 @@ class Params
 
     private $configIgnoreList;
 
-    private ?array $replaceIdMap;
-
     private bool $clearPassword;
 
     private bool $skipInternalConfig;
@@ -522,15 +520,6 @@ class Params
         return $obj;
     }
 
-    public function withReplaceIdMap(?array $idMap): self
-    {
-        $obj = clone $this;
-
-        $obj->replaceIdMap = $idMap;
-
-        return $obj;
-    }
-
     public function withClearPassword(bool $clearPassword): self
     {
         $obj = clone $this;
@@ -776,11 +765,6 @@ class Params
     public function getConfigHardList(): array
     {
         return $this->configHardList ?? [];
-    }
-
-    public function getReplaceIdMap(): array
-    {
-        return $this->replaceIdMap ?? [];
     }
 
     /**

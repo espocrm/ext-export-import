@@ -27,14 +27,14 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import;
+namespace Espo\Modules\ExportImport\Tools\IdMapping;
 
 use Espo\Core\Utils\Json as JsonUtil;
 
-use Espo\Modules\ExportImport\Tools\Import\Params;
+use Espo\Modules\ExportImport\Tools\Processor\Params;
 use Espo\Modules\ExportImport\Tools\Core\Relation as RelationTool;
 
-class DataReplacer
+class IdReplacer
 {
     public function __construct(
         private RelationTool $relationTool,
@@ -119,7 +119,11 @@ class DataReplacer
         string $attributeName,
         string $actualId
     ): ?string {
-        $idMap = $params->getReplaceIdMap();
+        if (method_exists($params, 'getIdMap')) {
+            return null;
+        }
+
+        $idMap = $params->getIdMap();
 
         foreach ($idMap as $entityType => $entityIdMap) {
             $newId = $entityIdMap[$actualId] ?? null;

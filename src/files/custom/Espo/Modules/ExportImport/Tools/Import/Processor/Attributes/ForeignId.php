@@ -32,14 +32,14 @@ namespace Espo\Modules\ExportImport\Tools\Import\Processor\Attributes;
 use Espo\ORM\EntityManager;
 
 use Espo\Modules\ExportImport\Tools\Import\Params;
-use Espo\Modules\ExportImport\Tools\Import\DataReplacer;
+use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 use Espo\Modules\ExportImport\Tools\Import\ProcessorAttribute;
 
 class ForeignId implements ProcessorAttribute
 {
     public function __construct(
         private EntityManager $entityManager,
-        private DataReplacer $dataReplacer,
+        private IdReplacer $idReplacer,
     ) {}
 
     public function process(Params $params, array &$row, string $attributeName): void
@@ -56,6 +56,6 @@ class ForeignId implements ProcessorAttribute
             return;
         }
 
-        $this->dataReplacer->processString($params, $row, $attributeName);
+        $this->idReplacer->processString($params, $row, $attributeName);
     }
 }

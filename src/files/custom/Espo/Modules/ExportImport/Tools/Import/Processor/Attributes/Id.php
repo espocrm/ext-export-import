@@ -34,7 +34,7 @@ use Espo\ORM\Type\AttributeType;
 use Espo\Entities\User as UserEntity;
 
 use Espo\Modules\ExportImport\Tools\Import\Params;
-use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
+use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
 use Espo\Modules\ExportImport\Tools\Import\ProcessorAttribute;
 
@@ -42,8 +42,8 @@ class Id implements ProcessorAttribute
 {
     public function __construct(
         private Log $log,
-        private UserTool $userTool,
-        private EntityTool $entityTool
+        private EntityTool $entityTool,
+        private IdReplacer $idReplacer
     ) {}
 
     public function process(Params $params, array &$row, string $attributeName): void
@@ -65,47 +65,6 @@ class Id implements ProcessorAttribute
             return;
         }
 
-        $id = $row['id'] ?? null;
-        $userName = $row['userName'] ?? null;
-
-        if (!$userName) {
-            return;
-        }
-
-        $user = $this->userTool->getByUserName($userName);
-
-        if (!$user) {
-            return;
-        }
-
-        $row[$attributeName] = $user->getId();
-
-        $this->addUserReplaceId($params, $row, $id);
-    }
-
-    private function addUserReplaceId(Params $params, array $row, ?string $id): void
-    {
-        $actualId = $row['id'] ?? null;
-        $userName = $row['userName'] ?? null;
-
-        if (!$id || !$actualId) {
-            return;
-        }
-
-        if ($id == $actualId) {
-            return;
-        }
-
-        $params->addReplaceIdMapItem(
-            UserEntity::ENTITY_TYPE,
-            $id,
-            $actualId
-        );
-
-        $this->log->debug(
-            'Imported User [' . $id . '] is linked ' .
-            'to the User [' . $actualId . '] ' .
-            'identified by the username [' . $userName . '].'
-        );
+        $this->idReplacer->processString($params, $row, $attributeName);
     }
 }

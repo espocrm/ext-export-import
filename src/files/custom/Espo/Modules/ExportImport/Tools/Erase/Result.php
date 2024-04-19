@@ -43,8 +43,6 @@ class Result implements IResult
 
     private ?array $warningList = null;
 
-    private ?array $replaceIdMap = null;
-
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -87,15 +85,6 @@ class Result implements IResult
         $obj = clone $this;
 
         $obj->warningList = $textList;
-
-        return $obj;
-    }
-
-    public function withReplaceIdMap(?array $idMap): self
-    {
-        $obj = clone $this;
-
-        $obj->replaceIdMap = $idMap;
 
         return $obj;
     }

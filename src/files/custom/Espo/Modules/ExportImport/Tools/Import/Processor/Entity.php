@@ -157,8 +157,7 @@ class Entity implements Processor
         return Result::create($entityType)
             ->withSkipCount($skipCount)
             ->withFailCount($failCount)
-            ->withSuccessCount($successCount)
-            ->withReplaceIdMap($params->getReplaceIdMap());
+            ->withSuccessCount($successCount);
     }
 
     private function prepareData(Params $params, array $initRow)

@@ -73,7 +73,7 @@ class Params implements IParams
 
     private bool $skipCustomization = false;
 
-    private array $replaceIdMap = [];
+    private array $idMap = [];
 
     private bool $clearPassword;
 
@@ -235,11 +235,11 @@ class Params implements IParams
         return $obj;
     }
 
-    public function withReplaceIdMap(array $idMap): self
+    public function withIdMap(array $idMap): self
     {
         $obj = clone $this;
 
-        $obj->replaceIdMap = $idMap;
+        $obj->idMap = $idMap;
 
         return $obj;
     }
@@ -260,14 +260,6 @@ class Params implements IParams
         $obj->userSkipList = $list;
 
         return $obj;
-    }
-
-    public function addReplaceIdMapItem(
-        string $entityType,
-        string $fromId,
-        string $toId
-    ): void {
-        $this->replaceIdMap[$entityType][$fromId] = $toId;
     }
 
     /**
@@ -418,16 +410,16 @@ class Params implements IParams
     }
 
     /**
-     * Get a map of users ids
+     * Get a map of entity ids
      * [
      *  ENTITY_TYPE => [
      *     IMPORT_USER_ID => ACTUAL_USER_ID
      *  ]
      * ]
      */
-    public function getReplaceIdMap(): array
+    public function getIdMap(): array
     {
-        return $this->replaceIdMap;
+        return $this->idMap;
     }
 
     /**

@@ -32,14 +32,14 @@ namespace Espo\Modules\ExportImport\Tools\Import\Processor\Attributes;
 use Espo\ORM\EntityManager;
 
 use Espo\Modules\ExportImport\Tools\Import\Params;
-use Espo\Modules\ExportImport\Tools\Import\DataReplacer;
+use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 use Espo\Modules\ExportImport\Tools\Import\ProcessorAttribute;
 
 class JsonObject implements ProcessorAttribute
 {
     public function __construct(
         private EntityManager $entityManager,
-        private DataReplacer $dataReplacer,
+        private IdReplacer $idReplacer,
     ) {}
 
     public function process(Params $params, array &$row, string $attributeName): void
@@ -54,6 +54,6 @@ class JsonObject implements ProcessorAttribute
             return;
         }
 
-        $this->dataReplacer->processObject($params, $row, $attributeName);
+        $this->idReplacer->processObject($params, $row, $attributeName);
     }
 }

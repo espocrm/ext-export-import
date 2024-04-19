@@ -36,6 +36,8 @@ use Espo\Core\Utils\Metadata;
 use Espo\Core\InjectableFactory;
 use Espo\Core\Utils\File\Manager as FileManager;
 
+use Espo\Entities\User as UserEntity;
+
 use Espo\Modules\ExportImport\Tools\Params;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
@@ -49,6 +51,7 @@ use Espo\Modules\ExportImport\Tools\Config\Processors\Import as ConfigImport;
 use Espo\Modules\ExportImport\Tools\Import\Result as EntityResult;
 use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
 use Espo\Modules\ExportImport\Tools\Import\Helpers\EntityType as EntityTypeHelper;
+use Espo\Modules\ExportImport\Tools\IdMapping\Tool as IdMappingTool;
 
 use Espo\Core\Exceptions\Error;
 
@@ -66,6 +69,7 @@ class Import implements Tool
         private EntityTool $entityTool,
         private FileManager $fileManager,
         private DataManager $dataManager,
+        private IdMappingTool $idMappingTool,
         private EntityTypeHelper $entityTypeHelper,
         private InjectableFactory $injectableFactory
     ) {}
@@ -134,11 +138,15 @@ class Import implements Tool
 
         $entityTypeList = $this->getEntityTypeList($params);
 
+        $idMap = $this->idMappingTool->getIdMap($params, [
+            UserEntity::ENTITY_TYPE
+        ]);
+
         foreach ($entityTypeList as $entityType) {
             ProcessorUtils::writeLine($params, "{$entityType}...");
 
             try {
-                $result = $this->importEntity($entityType, $params, $manifest);
+                $result = $this->importEntity($entityType, $params, $manifest, $idMap);
             } catch (Exception $e) {
                 ProcessorUtils::writeLine(
                     $params, "  Error: " . $e->getMessage()
@@ -149,12 +157,6 @@ class Import implements Tool
                 );
 
                 continue;
-            }
-
-            if ($result->hasReplaceIdMap()) {
-                $params = $params->withReplaceIdMap(
-                    $result->getReplaceIdMap()
-                );
             }
 
             if ($result->getWarningList()) {
@@ -169,7 +171,8 @@ class Import implements Tool
     private function importEntity(
         string $entityType,
         Params $params,
-        Manifest $manifest
+        Manifest $manifest,
+        array $idMap
     ): EntityResult {
         $processHookClass = $this->getProcessHookClass($entityType);
 
@@ -190,9 +193,9 @@ class Import implements Tool
             ->withUserPassword($params->getUserPassword())
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))
             ->withSkipCustomization($params->getSkipCustomization())
-            ->withReplaceIdMap($params->getReplaceIdMap())
             ->withClearPassword($params->getClearPassword())
-            ->withUserSkipList($params->getUserSkipList());
+            ->withUserSkipList($params->getUserSkipList())
+            ->withIdMap($idMap);
 
         $import = $this->injectableFactory->create(EntityImportTool::class);
         $import->setParams($importParams);
