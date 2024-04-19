@@ -70,7 +70,7 @@
     },
 
     "idMappingCollectionClassNameMap": {
-        "User": "Espo\\Modules\\ExportImport\\Tools\\IdMapping\\Collections\\User"
+        "User": "Espo\\Modules\\ExportImport\\Tools\\IdMapping\\Processor\\Collections\\User"
     },
 
     "configIgnoreList": [

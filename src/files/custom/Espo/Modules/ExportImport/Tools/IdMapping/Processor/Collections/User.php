@@ -57,7 +57,7 @@ class User implements CollectionProcessor
                 continue;
             }
 
-            $idMap = array_merge($idMap, $rowIdMap);
+            $idMap = $this->arrayMerge($idMap, $rowIdMap);
         }
 
         return $idMap;
@@ -69,19 +69,19 @@ class User implements CollectionProcessor
         $userName = $row['userName'] ?? null;
 
         if (!$id || !$userName) {
-            return;
+            return null;
         }
 
         $user = $this->userTool->getByUserName($userName);
 
         if (!$user) {
-            return;
+            return null;
         }
 
         $actualId = $user->getId();
 
         if ($id === $actualId) {
-            return;
+            return null;
         }
 
         $this->log->debug(
@@ -93,5 +93,14 @@ class User implements CollectionProcessor
         return [
             $id => $actualId
         ];
+    }
+
+    private function arrayMerge(array $array1, array $array2): array
+    {
+        foreach ($array2 as $key => $value) {
+            $array1[$key] = $value;
+        }
+
+        return $array1;
     }
 }
