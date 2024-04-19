@@ -119,7 +119,7 @@ class IdReplacer
         string $attributeName,
         string $actualId
     ): ?string {
-        if (method_exists($params, 'getIdMap')) {
+        if (!method_exists($params, 'getIdMap')) {
             return null;
         }
 
