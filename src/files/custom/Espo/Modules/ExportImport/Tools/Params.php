@@ -78,7 +78,9 @@ class Params
 
     private $exportImportDefs;
 
-    private $entityTypeList = null;
+    private ?array $entityTypeList;
+
+    private ?array $entityTypeSkipList;
 
     private $path = null;
 
@@ -176,6 +178,11 @@ class Params
         $obj->entityTypeList = ToolUtils::normalizeList(
             $params['entityList'] ?? null,
             $params['default']['entityList'] ?? null,
+        );
+
+        $obj->entityTypeSkipList = ToolUtils::normalizeList(
+            $params['entitySkipList'] ?? null,
+            $params['default']['entitySkipList'] ?? null,
         );
 
         $obj->configIgnoreList = ToolUtils::normalizeList(
@@ -317,6 +324,17 @@ class Params
 
         $obj->entityTypeList = ToolUtils::normalizeList(
             $entityTypeList
+        );
+
+        return $obj;
+    }
+
+    public function withEntityTypeSkipList($list): self
+    {
+        $obj = clone $this;
+
+        $obj->entityTypeSkipList = ToolUtils::normalizeList(
+            $list
         );
 
         return $obj;
@@ -560,7 +578,15 @@ class Params
      */
     public function getEntityTypeList(): ?array
     {
-        return $this->entityTypeList;
+        return $this->entityTypeList ?? null;
+    }
+
+    /**
+     * Get a skip list of entity type
+     */
+    public function getEntityTypeSkipList(): ?array
+    {
+        return $this->entityTypeSkipList ?? null;
     }
 
     /**

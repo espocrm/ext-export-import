@@ -140,11 +140,16 @@ class Export implements Tool
         $filteredList = [];
 
         $defs = $params->getExportImportDefs();
+        $skipList = $params->getEntityTypeSkipList() ?? [];
 
         foreach ($list as $entityType) {
             $isExportDisabled = $defs[$entityType]['exportDisabled'] ?? false;
 
             if ($isExportDisabled) {
+                continue;
+            }
+
+            if (in_array($entityType, $skipList)) {
                 continue;
             }
 

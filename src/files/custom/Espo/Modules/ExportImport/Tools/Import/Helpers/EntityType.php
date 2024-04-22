@@ -117,11 +117,16 @@ class EntityType
         $filteredList = [];
 
         $defs = $params->getExportImportDefs();
+        $skipList = $params->getEntityTypeSkipList() ?? [];
 
         foreach ($list as $entityType) {
             $isImportDisabled = $defs[$entityType][self::OPTION_IMPORT_DISABLED] ?? false;
 
             if ($isImportDisabled) {
+                continue;
+            }
+
+            if (in_array($entityType, $skipList)) {
                 continue;
             }
 
