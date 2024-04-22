@@ -77,7 +77,7 @@ class Entity implements Processor
             $id = $this->getEntityId($params, $row);
 
             if ($id) {
-                $entity = $this->entityManager->getEntity($entityType, $id);
+                $entity = $this->entityManager->getEntityById($entityType, $id);
 
                 if (!$entity) {
                     $query = $this->entityManager
@@ -225,7 +225,7 @@ class Entity implements Processor
             $record = $this->entityManager
                 ->getRDBRepository($entityType)
                 ->where($whereClause)
-                ->findOne();
+                ->findOne(['withDeleted' => true]);
 
             if ($record) {
                 return $record->getId();
