@@ -76,7 +76,7 @@ class Entity implements Processor
                 continue;
             }
 
-            $entity = $this->entityManager->getEntity($entityType, $id);
+            $entity = $this->entityManager->getEntityById($entityType, $id);
 
             if (!$entity) {
                 continue;
@@ -155,7 +155,7 @@ class Entity implements Processor
 
         $entityType = $params->getEntityType();
 
-        if (ToolUtils::isScopeEntity($this->metadata, $entityType)) {
+        if ($id && ToolUtils::isScopeEntity($this->metadata, $entityType)) {
             return $id;
         }
 

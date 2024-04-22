@@ -189,7 +189,7 @@ class Entity implements Processor
 
         $entityType = $params->getEntityType();
 
-        if (ToolUtils::isScopeEntity($this->metadata, $entityType)) {
+        if ($id && ToolUtils::isScopeEntity($this->metadata, $entityType)) {
             return $id;
         }
 
