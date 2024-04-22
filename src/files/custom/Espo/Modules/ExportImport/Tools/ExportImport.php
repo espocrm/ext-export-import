@@ -29,33 +29,23 @@
 
 namespace Espo\Modules\ExportImport\Tools;
 
-use Espo\Core\{
-    Utils\Log,
-    Console\IO,
-    Utils\Metadata,
-    InjectableFactory,
-    Exceptions\Error,
-};
+use Espo\Core\Utils\Log;
+use Espo\Core\Console\IO;
+use Espo\Core\Utils\Metadata;
+use Espo\Core\Exceptions\Error;
+use Espo\Core\InjectableFactory;
 
 use Espo\Modules\ExportImport\Tools\Params;
+use Espo\Modules\ExportImport\Tools\Core\System as SystemUtil;
 
 class ExportImport
 {
-    private Log $log;
-
-    private Metadata $metadata;
-
-    private InjectableFactory $injectableFactory;
-
     public function __construct(
-        Log $log,
-        Metadata $metadata,
-        InjectableFactory $injectableFactory
-    ) {
-        $this->log = $log;
-        $this->metadata = $metadata;
-        $this->injectableFactory = $injectableFactory;
-    }
+        private Log $log,
+        private Metadata $metadata,
+        private SystemUtil $systemUtil,
+        private InjectableFactory $injectableFactory
+    ) {}
 
     public function runExport(array $extraParams = [], ?IO $io = null) : void
     {
@@ -89,8 +79,7 @@ class ExportImport
         string $action,
         array $extraParams = [],
         ?IO $io = null
-    ): void
-    {
+    ): void {
         $className = $this->getClass($action);
 
         $tool = $this->injectableFactory->create($className);
@@ -98,6 +87,13 @@ class ExportImport
         $params = $this->createParams(array_merge($extraParams, [
             'action' => $action
         ]), $io);
+
+        if ($this->systemUtil->isEspoRootDirectory($params->getPath())) {
+            throw new Error(
+                'The path "' . $params->getPath() . '" cannot be ' .
+                'the EspoCRM directory itself.'
+            );
+        }
 
         $tool->run($params);
     }
