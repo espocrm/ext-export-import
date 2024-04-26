@@ -43,6 +43,7 @@
         "password": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\Password",
         "datetime": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\Datetime",
         "foreignId": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\ForeignId",
+        "jsonArray": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\JsonArray",
         "jsonObject": "Espo\\Modules\\ExportImport\\Tools\\Import\\Processor\\Attributes\\JsonObject"
     },
 

@@ -33,6 +33,9 @@ use Espo\Core\Utils\Json as JsonUtil;
 
 use Espo\Modules\ExportImport\Tools\Processor\Params;
 use Espo\Modules\ExportImport\Tools\Core\Relation as RelationTool;
+use Espo\Modules\ExportImport\Tools\Import\Params as ImportParams;
+
+use Exception;
 
 class IdReplacer
 {
@@ -64,7 +67,7 @@ class IdReplacer
         $row[$attributeName] = $newId;
     }
 
-    public function processObject(
+    public function processJsonObject(
         Params $params,
         array &$row,
         string $attributeName
@@ -75,43 +78,71 @@ class IdReplacer
             return;
         }
 
-        $isEncode = false;
+        $isDecode = false;
 
-        if (is_string($data)) {
-            $isEncode = true;
+        if (!is_string($data)) {
+            $isDecode = true;
+
+            try {
+                $data = JsonUtil::encode($data);
+            }
+            catch (Exception $e) {
+                return;
+            }
+        }
+
+        $isChanged = $this->replaceString($params, $data);
+
+        if (!$isChanged) {
+            return;
+        }
+
+        if (!$this->isJsonValid($data)) {
+            return;
+        }
+
+        if ($isDecode) {
             $data = JsonUtil::decode($data);
         }
 
-        if (!is_object($data)) {
+        $row[$attributeName] = $data;
+    }
+
+    public function processText(
+        Params $params,
+        array &$row,
+        string $attributeName
+    ): void {
+        $data = $row[$attributeName] ?? null;
+
+        if (!$data || !is_string($data)) {
             return;
         }
 
-        $isSave = false;
+        $isChanged = $this->replaceString($params, $data);
 
-        foreach ($data as &$actualId) {
-            if (!is_string($actualId)) {
-                continue;
-            }
-
-            $newId = $this->getNewReplaceId($params, $attributeName, $actualId);
-
-            if (!$newId) {
-                continue;
-            }
-
-            $isSave = true;
-            $actualId = $newId;
-        }
-
-        if (!$isSave) {
+        if (!$isChanged) {
             return;
-        }
-
-        if ($isEncode) {
-            $data = JsonUtil::encode($data);
         }
 
         $row[$attributeName] = $data;
+    }
+
+    private function replaceString(
+        Params $params,
+        string &$value
+    ): bool {
+        $isSave = false;
+
+        $changedValue = $this->replaceAllOccurrences($params, $value, ['"', "'"], $isSave);
+
+        if (!$isSave) {
+            return false;
+        }
+
+        $value = $changedValue;
+
+        return true;
     }
 
     private function getNewReplaceId(
@@ -123,6 +154,7 @@ class IdReplacer
             return null;
         }
 
+        /** @var ImportParams $params */
         $idMap = $params->getIdMap();
 
         foreach ($idMap as $entityType => $entityIdMap) {
@@ -147,5 +179,56 @@ class IdReplacer
         }
 
         return null;
+    }
+
+    /**
+     * Find and replace all occurrences
+     */
+    private function replaceAllOccurrences(
+        Params $params,
+        string $value,
+        array $delimiterList = [''],
+        bool &$isChanged = false
+    ): string {
+        if (!method_exists($params, 'getIdMap')) {
+            return $value;
+        }
+
+        /** @var ImportParams $params */
+        $idMap = $params->getIdMap();
+
+        foreach ($idMap as $entityType => $entityIdMap) {
+            foreach ($entityIdMap as $fromId => $toId) {
+                foreach ($delimiterList as $delimiter) {
+                    $count = 0;
+
+                    $value = preg_replace(
+                        '/' . $delimiter . $fromId . $delimiter . '/',
+                        $delimiter . $toId . $delimiter,
+                        $value,
+                        -1,
+                        $count
+                    );
+
+                    if ($count > 0) {
+                        $isChanged = true;
+                    }
+                }
+            }
+        }
+
+        return $value;
+    }
+
+    private function isJsonValid(string $data): bool
+    {
+        try {
+            JsonUtil::decode($data);
+        }
+        catch (Exception $e) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -29,31 +29,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Processor\Attributes;
 
-use Espo\ORM\EntityManager;
-
-use Espo\Modules\ExportImport\Tools\Import\Params;
-use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
-use Espo\Modules\ExportImport\Tools\Import\ProcessorAttribute;
-
-class JsonObject implements ProcessorAttribute
+class JsonArray extends JsonObject
 {
-    public function __construct(
-        private EntityManager $entityManager,
-        private IdReplacer $idReplacer,
-    ) {}
 
-    public function process(Params $params, array &$row, string $attributeName): void
-    {
-        if (!array_key_exists($attributeName, $row)) {
-            return;
-        }
-
-        $value = $row[$attributeName];
-
-        if (empty($value)) {
-            return;
-        }
-
-        $this->idReplacer->processJsonObject($params, $row, $attributeName);
-    }
 }
