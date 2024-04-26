@@ -39,7 +39,7 @@ class ForeignId implements ProcessorAttribute
 {
     public function __construct(
         private EntityManager $entityManager,
-        private IdReplacer $idReplacer,
+        private IdReplacer $idReplacer
     ) {}
 
     public function process(Params $params, array &$row, string $attributeName): void
