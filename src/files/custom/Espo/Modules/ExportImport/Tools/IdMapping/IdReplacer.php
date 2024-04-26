@@ -134,7 +134,9 @@ class IdReplacer
     ): bool {
         $isSave = false;
 
-        $changedValue = $this->replaceAllOccurrences($params, $value, ['"', "'"], $isSave);
+        $changedValue = $this->replaceAllOccurrences(
+            $params, $value, ["'", '"', '\\\\"'], $isSave
+        );
 
         if (!$isSave) {
             return false;
@@ -203,7 +205,7 @@ class IdReplacer
                     $count = 0;
 
                     $value = preg_replace(
-                        '/' . $delimiter . $fromId . $delimiter . '/',
+                        '#' . $delimiter . $fromId . $delimiter . '#',
                         $delimiter . $toId . $delimiter,
                         $value,
                         -1,
