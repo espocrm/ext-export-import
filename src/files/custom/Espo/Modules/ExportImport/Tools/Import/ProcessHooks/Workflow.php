@@ -55,16 +55,12 @@ class Workflow implements ProcessHook
             return;
         }
 
-        $row = [
-            'conditionsFormula' => $value
-        ];
+        $changedValue = $this->idReplacer->getReplacedString($params, $value);
 
-        $this->idReplacer->processText($params, $row, 'conditionsFormula');
-
-        if ($row['conditionsFormula'] === $value) {
+        if ($changedValue === $value) {
             return;
         }
 
-        $entity->set('conditionsFormula', $row['conditionsFormula']);
+        $entity->set('conditionsFormula', $changedValue);
     }
 }

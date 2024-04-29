@@ -128,6 +128,19 @@ class IdReplacer
         $row[$attributeName] = $data;
     }
 
+    public function getReplacedString(
+        Params $params,
+        ?string $data
+    ): string {
+        if (!$data || !is_string($data)) {
+            return $data;
+        }
+
+        $this->replaceString($params, $data);
+
+        return $data;
+    }
+
     private function replaceString(
         Params $params,
         string &$value
