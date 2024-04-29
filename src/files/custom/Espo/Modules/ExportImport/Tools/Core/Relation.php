@@ -51,6 +51,10 @@ class Relation
         string $attributeName,
         string $foreignEntityType
     ): bool {
+        if ($entityType == $foreignEntityType) {
+            return true;
+        }
+
         if ($this->isMiddleRelationEntity($entityType)) {
             return $this->isManyManyHasForeignEntity(
                 $entityType,
