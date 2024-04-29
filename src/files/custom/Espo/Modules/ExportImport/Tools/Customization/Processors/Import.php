@@ -39,12 +39,17 @@ use Espo\Modules\ExportImport\Tools\Customization\Service;
 use Espo\Modules\ExportImport\Tools\Customization\Processor;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 
+use Espo\Modules\ExportImport\Tools\Import\Params as ImportParams;
+
+use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
+
 class Import implements Processor
 {
     public function __construct(
         private Log $log,
         private Service $service,
-        private FileManager $fileManager
+        private FileManager $fileManager,
+        private IdReplacer $idReplacer
     ) {}
 
     public function process(Params $params): void
@@ -55,6 +60,11 @@ class Import implements Processor
 
         foreach ($fileList as $file) {
             $sourceFile = Util::concatPath($src, $file);
+
+            if (ToolUtils::isPatternMatched($file, Params::FORMULA_FILE_LIST)) {
+                $this->copyFormula($params, $sourceFile, $file);
+                continue;
+            }
 
             if (ToolUtils::isPatternMatched($file, Params::GLOBAL_FILE_LIST)) {
                 $this->copyMerged($sourceFile, $file);
@@ -92,5 +102,34 @@ class Import implements Processor
         $data = Json::decode($content, true);
 
         return $this->fileManager->mergeJsonContents($destFile, $data);
+    }
+
+    private function copyFormula(Params $params, string $srcFile, string $destFile): bool
+    {
+        $this->log->debug(
+            "ExportImport [Customization.Import]: " .
+            "CopyFormula {$srcFile} > {$destFile}"
+        );
+
+        $content = $this->fileManager->getContents($srcFile);
+
+        $content = $this->getReplacedString($params, $srcFile, $content);
+
+        $data = Json::decode($content, true);
+
+        return $this->fileManager->mergeJsonContents($destFile, $data);
+    }
+
+    private function getReplacedString(
+        Params $params,
+        string $file,
+        string $content
+    ): string {
+        $entityType = ToolUtils::getEntityTypeByMetadataFile($file, 'Import');
+
+        $importParams = ImportParams::create($entityType)
+            ->withIdMap($params->getIdMap());
+
+        return $this->idReplacer->getReplacedString($importParams, $content);
     }
 }

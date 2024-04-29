@@ -53,6 +53,10 @@ class Params
         'custom/Espo/Custom/Resources/routes.json',
     ];
 
+    public const FORMULA_FILE_LIST = [
+        'custom/Espo/Custom/Resources/metadata/formula/*.json',
+    ];
+
     /**
      * A file list of a single entity
      * This is NOT a REGEX
@@ -80,6 +84,8 @@ class Params
     private array $entityTypeList;
 
     private bool $isEntityTypeListSpecified;
+
+    private array $idMap = [];
 
     public static function create(): self
     {
@@ -127,6 +133,15 @@ class Params
         $obj = clone $this;
 
         $obj->isEntityTypeListSpecified = $value;
+
+        return $obj;
+    }
+
+    public function withIdMap(array $idMap): self
+    {
+        $obj = clone $this;
+
+        $obj->idMap = $idMap;
 
         return $obj;
     }
@@ -230,5 +245,18 @@ class Params
         $list = array_unique($list);
 
         return array_values($list);
+    }
+
+    /**
+     * Get a map of entity ids
+     * [
+     *  ENTITY_TYPE => [
+     *     IMPORT_ID => ACTUAL_ID
+     *  ]
+     * ]
+     */
+    public function getIdMap(): array
+    {
+        return $this->idMap;
     }
 }

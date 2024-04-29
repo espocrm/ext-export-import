@@ -299,4 +299,15 @@ class Utils
 
         return $list;
     }
+
+    public static function getEntityTypeByMetadataFile(
+        string $file,
+        ?string $default = null
+    ): ?string {
+        if (!preg_match('/\/([^\/]+)\.json$/', $file, $matches)) {
+            return $default;
+        }
+
+        return $matches[1] ?? $default;
+    }
 }

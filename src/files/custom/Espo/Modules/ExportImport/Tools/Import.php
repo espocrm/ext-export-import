@@ -128,6 +128,13 @@ class Import implements Tool
             ->getNormalizedList($params);
     }
 
+    private function getIdMap($params): array
+    {
+        return $this->idMappingTool->getIdMap($params, [
+            UserEntity::ENTITY_TYPE
+        ]);
+    }
+
     private function importData(Params $params, Manifest $manifest): void
     {
         if ($params->getSkipData()) {
@@ -138,9 +145,7 @@ class Import implements Tool
 
         $entityTypeList = $this->getEntityTypeList($params);
 
-        $idMap = $this->idMappingTool->getIdMap($params, [
-            UserEntity::ENTITY_TYPE
-        ]);
+        $idMap = $this->getIdMap($params);
 
         foreach ($entityTypeList as $entityType) {
             ProcessorUtils::writeLine($params, "{$entityType}...");
@@ -228,6 +233,7 @@ class Import implements Tool
 
         $entityTypeList = $this->getEntityTypeList($params);
         $isListSpecified = $params->getEntityTypeList() ? true : false;
+        $idMap = $this->getIdMap($params);
 
         if ($params->getAllCustomization()) {
             $isListSpecified = false;
@@ -238,7 +244,8 @@ class Import implements Tool
             ->withManifest($manifest)
             ->withEntityTypeList($entityTypeList)
             ->withIsEntityTypeListSpecified($isListSpecified)
-            ->withExportImportDefs($params->getExportImportDefs());
+            ->withExportImportDefs($params->getExportImportDefs())
+            ->withIdMap($idMap);
 
         if (!file_exists($customizationParams->getCustomizationPath())) {
             return;
