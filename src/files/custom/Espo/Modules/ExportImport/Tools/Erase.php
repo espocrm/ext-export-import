@@ -51,6 +51,9 @@ use Espo\Modules\ExportImport\Tools\Erase\Result as EntityResult;
 use Espo\Modules\ExportImport\Tools\Erase\EntityErase as EntityEraseTool;
 use Espo\Modules\ExportImport\Tools\IdMapping\Tool as IdMappingTool;
 
+use Espo\Modules\ExportImport\Tools\Customization\Params as CustomizationParams;
+use Espo\Modules\ExportImport\Tools\Customization\Processors\Erase as CustomizationErase;
+
 use Exception;
 
 class Erase implements Tool
@@ -198,7 +201,35 @@ class Erase implements Tool
             return;
         }
 
-        //todo: implement
+        $entityTypeList = $this->getEntityTypeList($params);
+        $isListSpecified = $params->getEntityTypeList() ? true : false;
+
+        if ($params->getAllCustomization()) {
+            $isListSpecified = false;
+        }
+
+        $customizationParams = CustomizationParams::create()
+            ->withPath($params->getPath())
+            ->withManifest($manifest)
+            ->withEntityTypeList($entityTypeList)
+            ->withIsEntityTypeListSpecified($isListSpecified)
+            ->withExportImportDefs($params->getExportImportDefs());
+
+        if (!file_exists($customizationParams->getCustomizationPath())) {
+            return;
+        }
+
+        ProcessorUtils::write($params, "Customization...");
+
+        $customization = $this->injectableFactory->create(
+            CustomizationErase::class
+        );
+
+        $customization->process($customizationParams);
+
+        $this->dataManager->rebuild();
+
+        ProcessorUtils::writeLine($params, " done");
     }
 
     private function getProcessHookClass(string $entityType): ?ProcessHook
