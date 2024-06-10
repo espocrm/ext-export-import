@@ -109,9 +109,15 @@ class ManifestWriter
         return $obj;
     }
 
+    private function getGeneratedId(): string
+    {
+        return uniqid('ei', true);
+    }
+
     protected function getSaveData(): array
     {
         return [
+            'id' => $this->getGeneratedId(),
             'applicationName' => $this->applicationName,
             'version' => $this->version,
             'exportTime' => $this->exportTime->format('Y-m-d H:i:s'),
