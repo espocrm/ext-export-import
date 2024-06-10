@@ -90,6 +90,11 @@ class Manifest
         return $this->data;
     }
 
+    public function getId(): string
+    {
+        return $this->get('id');
+    }
+
     public function getApplicationName(): string
     {
         return $this->get('applicationName');
