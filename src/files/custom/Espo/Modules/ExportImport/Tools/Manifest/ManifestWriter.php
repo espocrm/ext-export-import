@@ -29,11 +29,11 @@
 
 namespace Espo\Modules\ExportImport\Tools\Manifest;
 
-use Espo\{
-    Core\Utils\Config,
-    Modules\ExportImport\Tools\Params,
-    Core\Utils\File\Manager as FileManager,
-};
+use Espo\Core\Utils\Util;
+use Espo\Core\Utils\Config;
+use Espo\Core\Utils\File\Manager as FileManager;
+
+use Espo\Modules\ExportImport\Tools\Params;
 
 use DateTime;
 
@@ -111,7 +111,7 @@ class ManifestWriter
 
     private function getGeneratedId(): string
     {
-        return uniqid('ei', true);
+        return 'EI' . Util::generateId();
     }
 
     protected function getSaveData(): array
