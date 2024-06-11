@@ -29,11 +29,10 @@
 
 namespace Espo\Modules\ExportImport\Tools;
 
-use Espo\{
-    Core\Utils\Json,
-    Modules\ExportImport\Tools\Params,
-    Core\Utils\File\Manager as FileManager,
-};
+use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Util;
+use Espo\Modules\ExportImport\Tools\Params;
+use Espo\Core\Utils\File\Manager as FileManager;
 
 use DateTime;
 use DateTimeZone;
@@ -41,21 +40,14 @@ use RuntimeException;
 
 class Manifest
 {
-    private $fileManager;
-
-    private $params;
-
     private $manifestFile;
 
     private $data;
 
     public function __construct(
-        FileManager $fileManager,
-        Params $params
+        private FileManager $fileManager,
+        private Params $params
     ) {
-        $this->fileManager = $fileManager;
-        $this->params = $params;
-
         $this->loadData();
     }
 
@@ -92,7 +84,7 @@ class Manifest
 
     public function getId(): string
     {
-        return $this->get('id');
+        return $this->get('id') ?? Util::generateId();
     }
 
     public function getApplicationName(): string
