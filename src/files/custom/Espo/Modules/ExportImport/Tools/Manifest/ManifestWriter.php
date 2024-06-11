@@ -39,35 +39,29 @@ use DateTime;
 
 class ManifestWriter
 {
-    private $config;
-
-    private $fileManager;
-
-    private $params;
-
     private $manifestFile;
 
-    private $applicationName;
+    private string $id;
 
-    private $version;
+    private ?string $applicationName;
 
-    private $exportTime;
+    private string $version;
+
+    private DateTime $exportTime;
 
     public function __construct(
-        Config $config,
-        FileManager $fileManager,
-        Params $params
+        private Config $config,
+        private FileManager $fileManager,
+        private Params $params
     ) {
-        $this->config = $config;
-        $this->fileManager = $fileManager;
-        $this->params = $params;
-
         $this->loadData();
     }
 
     protected function loadData(): void
     {
         $this->manifestFile = $this->params->getManifestFile();
+
+        $this->id = $this->getGeneratedId();
         $this->applicationName = $this->config->get('applicationName');
         $this->version = $this->config->get('version');
         $this->exportTime = $this->params->getExportTime();
@@ -78,6 +72,15 @@ class ManifestWriter
         $obj = clone $this;
 
         $obj->manifestFile = $manifestFile;
+
+        return $obj;
+    }
+
+    public function setId(string $id): self
+    {
+        $obj = clone $this;
+
+        $obj->id = $id;
 
         return $obj;
     }
@@ -117,7 +120,7 @@ class ManifestWriter
     protected function getSaveData(): array
     {
         return [
-            'id' => $this->getGeneratedId(),
+            'id' => $this->id,
             'applicationName' => $this->applicationName,
             'version' => $this->version,
             'exportTime' => $this->exportTime->format('Y-m-d H:i:s'),
