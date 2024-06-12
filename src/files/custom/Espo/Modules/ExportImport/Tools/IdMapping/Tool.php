@@ -76,7 +76,7 @@ class Tool
 
         foreach ($entityTypeList as $entityType) {
             try {
-                $map = $this->getEntityIdMap($params, $entityType);
+                $map = $this->getEntityIdMap($params, $entityType, $idMap);
             } catch (Exception $e) {
                 $this->log->warning(
                     'ExportImport [IdMapping][' . $entityType . ']: ' . $e->getMessage()
@@ -91,13 +91,17 @@ class Tool
         return $idMap;
     }
 
-    private function getEntityIdMap(Params $params, string $entityType): array
-    {
+    private function getEntityIdMap(
+        Params $params,
+        string $entityType,
+        array $actualIdMap
+    ): array {
         $idMappingParams = IdMappingParams::create($entityType)
             ->withFormat($params->getFormat())
             ->withPath($params->getPath())
             ->withEntitiesPath($params->getEntitiesPath())
-            ->withExportImportDefs($params->getExportImportDefs());
+            ->withExportImportDefs($params->getExportImportDefs())
+            ->withActualIdMap($actualIdMap);
 
         return $this->injectableFactory
             ->create(EntityProcessor::class)

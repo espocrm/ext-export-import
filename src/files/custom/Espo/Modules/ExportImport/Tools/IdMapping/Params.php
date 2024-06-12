@@ -45,6 +45,8 @@ class Params implements IParams
 
     private $entitiesPath;
 
+    private ?array $actualIdMap;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -87,6 +89,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->entitiesPath = $entitiesPath;
+
+        return $obj;
+    }
+
+    public function withActualIdMap(array $idMap): self
+    {
+        $obj = clone $this;
+
+        $obj->actualIdMap = $idMap;
 
         return $obj;
     }
@@ -140,5 +151,13 @@ class Params implements IParams
     public function getEntitiesPath(): string
     {
         return $this->entitiesPath;
+    }
+
+    /**
+     * Get actual (existing) ID map
+     */
+    public function getActualIdMap(): array
+    {
+        return $this->actualIdMap ?? [];
     }
 }
