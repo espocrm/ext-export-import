@@ -17,6 +17,12 @@
         "Subscription": [
             "userId"
         ],
+        "StarSubscription": [
+            "userId"
+        ],
+        "StreamSubscription": [
+            "userId"
+        ],
         "Note": [
             "data"
         ]
