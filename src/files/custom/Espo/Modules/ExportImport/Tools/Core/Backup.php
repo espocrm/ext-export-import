@@ -44,6 +44,11 @@ class Backup
         private FileManager $fileManager
     ) {}
 
+    public function getFilePath(string $file, string $exportId): string
+    {
+        return Util::concatPath(self::BACKUP_PATH . '/' . $exportId, $file);
+    }
+
     public function clear(string $exportId): bool
     {
         $path = Util::concatPath(self::BACKUP_PATH, $exportId);
@@ -52,7 +57,18 @@ class Backup
             return true;
         }
 
-        return $this->fileManager->removeInDir($path);
+        return $this->fileManager->removeInDir($path, true);
+    }
+
+    public function hasFile(string $file, string $exportId): bool
+    {
+        $backupFile = $this->getFilePath($file, $exportId);
+
+        if (file_exists($backupFile)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function backupFile(
@@ -64,7 +80,7 @@ class Backup
             return true;
         }
 
-        $destFile = Util::concatPath(self::BACKUP_PATH . '/' . $exportId, $srcFile);
+        $destFile = $this->getFilePath($srcFile, $exportId);
 
         $dest = pathinfo($destFile, PATHINFO_DIRNAME);
 
@@ -83,7 +99,7 @@ class Backup
 
     public function restoreFile(string $destFile, string $exportId): bool
     {
-        $srcFile = Util::concatPath(self::BACKUP_PATH . '/' . $exportId, $destFile);
+        $srcFile = $this->getFilePath($destFile, $exportId);
 
         if (!file_exists($srcFile)) {
             return true;
