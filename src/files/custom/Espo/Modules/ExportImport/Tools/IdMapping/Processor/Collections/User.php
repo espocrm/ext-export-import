@@ -35,6 +35,7 @@ use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\IdMapping\Params;
 use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
 
+use Espo\Modules\ExportImport\Tools\IdMapping\Util;
 use Espo\Modules\ExportImport\Tools\IdMapping\CollectionProcessor;
 
 class User implements CollectionProcessor
@@ -57,7 +58,7 @@ class User implements CollectionProcessor
                 continue;
             }
 
-            $idMap = $this->arrayMerge($idMap, $rowIdMap);
+            $idMap = Util::arrayMerge($idMap, $rowIdMap);
         }
 
         return $idMap;
@@ -93,14 +94,5 @@ class User implements CollectionProcessor
         return [
             $id => $actualId
         ];
-    }
-
-    private function arrayMerge(array $array1, array $array2): array
-    {
-        foreach ($array2 as $key => $value) {
-            $array1[$key] = $value;
-        }
-
-        return $array1;
     }
 }
