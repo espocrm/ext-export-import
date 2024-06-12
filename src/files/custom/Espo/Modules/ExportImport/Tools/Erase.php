@@ -38,6 +38,7 @@ use Espo\Core\InjectableFactory;
 use Espo\Core\Utils\File\Manager as FileManager;
 
 use Espo\Entities\User as UserEntity;
+use Espo\Entities\Preferences as PreferencesEntity;
 
 use Espo\Modules\ExportImport\Tools\Params;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
@@ -136,7 +137,8 @@ class Erase implements Tool
         $entityTypeList = $this->getEntityTypeList($params);
 
         $idMap = $this->idMappingTool->getIdMap($params, [
-            UserEntity::ENTITY_TYPE
+            UserEntity::ENTITY_TYPE,
+            PreferencesEntity::ENTITY_TYPE,
         ]);
 
         foreach ($entityTypeList as $entityType) {

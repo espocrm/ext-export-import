@@ -27,55 +27,55 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Import\Processor\Attributes;
+namespace Espo\Modules\ExportImport\Tools\IdMapping\Processor\Collections;
 
-use Espo\Core\Utils\Log;
-use Espo\ORM\Type\AttributeType;
+use Espo\Entities\User as UserEntity;
 
-use Espo\Modules\ExportImport\Tools\Import\Params;
-use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
-use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
-use Espo\Modules\ExportImport\Tools\Import\ProcessorAttribute;
+use Espo\Modules\ExportImport\Tools\Processor\Data;
+use Espo\Modules\ExportImport\Tools\IdMapping\Params;
 
-class Id implements ProcessorAttribute
+use Espo\Modules\ExportImport\Tools\IdMapping\Util;
+use Espo\Modules\ExportImport\Tools\IdMapping\CollectionProcessor;
+
+class Preferences implements CollectionProcessor
 {
-    public function __construct(
-        private Log $log,
-        private EntityTool $entityTool,
-        private IdReplacer $idReplacer
-    ) {}
-
-    public function process(Params $params, array &$row, string $attributeName): void
+    public function process(Params $params, Data $data): array
     {
-        $entityType = $params->getEntityType();
+        $data->rewind();
 
-        $this->processIdReplacement($params, $row, $attributeName);
+        $idMap = [];
 
-        if ($this->entityTool->isIdAutoincrement($entityType)) {
-            unset($row['id']);
+        while (($row = $data->readRow()) !== null) {
+            $rowIdMap = $this->getRowIdMap($params, $row);
+
+            if (!$rowIdMap) {
+                continue;
+            }
+
+            $idMap = Util::arrayMerge($idMap, $rowIdMap);
         }
+
+        return $idMap;
     }
 
-    private function processIdReplacement(Params $params, array &$row, string $attributeName)
+    private function getRowIdMap(Params $params, array $row): ?array
     {
-        if ($attributeName != AttributeType::ID) {
-            return;
+        $id = $row['id'] ?? null;
+
+        if (!$id) {
+            return null;
         }
 
-        $idMap = $params->getIdMap();
+        $userIdMap = $params->getActualIdMap()[UserEntity::ENTITY_TYPE] ?? [];
 
-        if (empty($idMap)) {
-            return;
+        $newId = $userIdMap[$id] ?? null;
+
+        if (!$newId) {
+            return null;
         }
 
-        $entityType = $params->getEntityType();
-
-        $entityTypeList = array_keys($idMap);
-
-        if (!in_array($entityType, $entityTypeList)) {
-            return;
-        }
-
-        $this->idReplacer->processString($params, $row, $attributeName);
+        return [
+            $id => $newId
+        ];
     }
 }
