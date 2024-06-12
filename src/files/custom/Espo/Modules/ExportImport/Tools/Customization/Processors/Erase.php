@@ -40,6 +40,8 @@ use Espo\Modules\ExportImport\Tools\Customization\Processor;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 
 use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
+use Espo\Modules\ExportImport\Tools\Core\Backup as BackupTool;
+
 use Exception;
 
 class Erase implements Processor
@@ -50,12 +52,14 @@ class Erase implements Processor
         private Log $log,
         private Service $service,
         private FileManager $fileManager,
-        private IdReplacer $idReplacer
+        private IdReplacer $idReplacer,
+        private BackupTool $backupTool
     ) {}
 
     public function process(Params $params): void
     {
         $src = $params->getCustomizationPath();
+        $exportId = $params->getManifest()->getId();
 
         $fileList = $this->service->getCopyFileList($params, $src);
 
@@ -65,15 +69,21 @@ class Erase implements Processor
             $fileExtension = pathinfo($file, PATHINFO_EXTENSION);
 
             if ($fileExtension != self::FILE_JSON) {
+                if ($this->backupTool->hasFile($file, $exportId)) {
+                    $this->backupTool->restoreFile($file, $exportId);
+
+                    continue;
+                }
+
                 $this->removeFile($file);
 
                 continue;
             }
 
-            $this->clearContent($sourceFile, $file);
+            $this->clearContent($params, $sourceFile, $file);
         }
     }
-    private function clearContent(string $srcFile, string $destFile): bool
+    private function clearContent(Params $params, string $srcFile, string $destFile): bool
     {
         $this->log->debug(
             "ExportImport [Customization.Erase]: " .
@@ -87,13 +97,22 @@ class Erase implements Processor
         $srcData = $this->getFileData($srcFile);
         $destData = $this->getFileData($destFile);
 
-        $diffData = ToolUtils::arrayDiffAssocRecursive($destData, $srcData);
+        $exportId = $params->getManifest()->getId();
 
-        if (empty($diffData)) {
+        $data = ToolUtils::arrayDiffAssocRecursive($destData, $srcData);
+
+        if ($this->backupTool->hasFile($destFile, $exportId)) {
+            $backupFile = $this->backupTool->getFilePath($destFile, $exportId);
+            $backupData = $this->getFileData($backupFile);
+
+            $data = Util::merge($backupData, $data);
+        }
+
+        if (empty($data)) {
             return $this->removeFile($destFile);
         }
 
-        $stringData = Json::encode($diffData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $stringData = Json::encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         if (!is_string($stringData)) {
             $this->log->warning(
