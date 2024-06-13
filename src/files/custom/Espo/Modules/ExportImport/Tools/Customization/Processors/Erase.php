@@ -40,7 +40,8 @@ use Espo\Modules\ExportImport\Tools\Customization\Processor;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 
 use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
-use Espo\Modules\ExportImport\Tools\Core\Backup as BackupTool;
+use Espo\Modules\ExportImport\Tools\Backup\Params as RestoreParams;
+use Espo\Modules\ExportImport\Tools\Backup\Processors\Restore as RestoreTool;
 
 use Exception;
 
@@ -53,13 +54,15 @@ class Erase implements Processor
         private Service $service,
         private FileManager $fileManager,
         private IdReplacer $idReplacer,
-        private BackupTool $backupTool
+        private RestoreTool $restoreTool
     ) {}
 
     public function process(Params $params): void
     {
         $src = $params->getCustomizationPath();
-        $exportId = $params->getManifest()->getId();
+
+        $restoreParams = RestoreParams::create()
+            ->withManifest($params->getManifest());
 
         $fileList = $this->service->getCopyFileList($params, $src);
 
@@ -69,8 +72,8 @@ class Erase implements Processor
             $fileExtension = pathinfo($file, PATHINFO_EXTENSION);
 
             if ($fileExtension != self::FILE_JSON) {
-                if ($this->backupTool->hasFile($file, $exportId)) {
-                    $this->backupTool->restoreFile($file, $exportId);
+                if ($this->restoreTool->hasFile($restoreParams, $file)) {
+                    $this->restoreTool->processFile($restoreParams, $file);
 
                     continue;
                 }
@@ -97,12 +100,13 @@ class Erase implements Processor
         $srcData = $this->getFileData($srcFile);
         $destData = $this->getFileData($destFile);
 
-        $exportId = $params->getManifest()->getId();
-
         $data = ToolUtils::arrayDiffAssocRecursive($destData, $srcData);
 
-        if ($this->backupTool->hasFile($destFile, $exportId)) {
-            $backupFile = $this->backupTool->getFilePath($destFile, $exportId);
+        $restoreParams = RestoreParams::create()
+            ->withManifest($params->getManifest());
+
+        if ($this->restoreTool->hasFile($restoreParams, $destFile)) {
+            $backupFile = $restoreParams->getFilePath($destFile);
             $backupData = $this->getFileData($backupFile);
 
             $data = Util::merge($backupData, $data);

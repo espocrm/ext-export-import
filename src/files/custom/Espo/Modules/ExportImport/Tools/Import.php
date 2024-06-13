@@ -54,6 +54,9 @@ use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
 use Espo\Modules\ExportImport\Tools\Import\Helpers\EntityType as EntityTypeHelper;
 use Espo\Modules\ExportImport\Tools\IdMapping\Tool as IdMappingTool;
 
+use Espo\Modules\ExportImport\Tools\Backup\Params as BackupParams;
+use Espo\Modules\ExportImport\Tools\Backup\Processors\Backup as BackupTool;
+
 use Espo\Core\Exceptions\Error;
 
 use Exception;
@@ -72,7 +75,8 @@ class Import implements Tool
         private DataManager $dataManager,
         private IdMappingTool $idMappingTool,
         private EntityTypeHelper $entityTypeHelper,
-        private InjectableFactory $injectableFactory
+        private InjectableFactory $injectableFactory,
+        private BackupTool $backupTool
     ) {}
 
     public function run(Params $params) : void
@@ -112,6 +116,8 @@ class Import implements Tool
             'params' => $params,
         ]);
 
+        $this->runBackup($params, $manifest);
+
         $this->importConfig($params, $manifest);
 
         $this->importCustomization($params, $manifest);
@@ -135,6 +141,18 @@ class Import implements Tool
             UserEntity::ENTITY_TYPE,
             PreferencesEntity::ENTITY_TYPE,
         ]);
+    }
+
+    private function runBackup(Params $params, Manifest $manifest): void
+    {
+        $backupParams = BackupParams::create()
+            ->withManifest($manifest)
+            ->withSkipData($params->getSkipData())
+            ->withSkipCustomization($params->getSkipCustomization())
+            ->withSkipConfig($params->getSkipConfig())
+            ->withSkipInternalConfig($params->getSkipInternalConfig());
+
+        $this->backupTool->process($backupParams);
     }
 
     private function importData(Params $params, Manifest $manifest): void

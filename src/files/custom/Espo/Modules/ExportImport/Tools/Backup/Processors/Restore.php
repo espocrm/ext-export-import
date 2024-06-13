@@ -27,92 +27,67 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Core;
+namespace Espo\Modules\ExportImport\Tools\Backup\Processors;
 
-use Espo\Core\Utils\Util;
-use Espo\Core\Utils\Config as Config;
 use Espo\Core\Utils\File\Manager as FileManager;
+
+use Espo\Modules\ExportImport\Tools\Backup\Params;
+use Espo\Modules\ExportImport\Tools\Backup\Processor;
+
+use Espo\Modules\ExportImport\Tools\ExportImport as ExportImportTool;
 
 use Exception;
 
-class Backup
+class Restore implements Processor
 {
-    public const BACKUP_PATH = 'data/.backup/export-import';
-
     public function __construct(
-        private Config $config,
-        private FileManager $fileManager
+        private FileManager $fileManager,
+        private ExportImportTool $exportImportTool
     ) {}
 
-    public function getFilePath(string $file, string $exportId): string
+    public function process(Params $params): void
     {
-        return Util::concatPath(self::BACKUP_PATH . '/' . $exportId, $file);
+        $this->exportImportTool->runImport([
+            'path' => $params->getRootPath(),
+            'entityList' => $params->getConfigEntityTypeList(),
+            'skipData' => $params->getSkipData(),
+            'skipConfig' => $params->getSkipConfig(),
+            'skipInternalConfig' => $params->getSkipInternalConfig(),
+            'skipCustomization' => $params->getSkipCustomization(),
+            'skipRelatedEntities' => true,
+            'allCustomization' => true,
+        ]);
     }
 
-    public function clear(string $exportId): bool
-    {
-        $path = Util::concatPath(self::BACKUP_PATH, $exportId);
+    public function processFile(
+        Params $params,
+        string $destFile,
+        string $type = Params::TYPE_CUSTOMIZATION
+    ): void {
+        $srcFile = $params->getFilePath($destFile, $type);
 
-        if (!file_exists($path)) {
-            return true;
+        if (!file_exists($srcFile)) {
+            return;
         }
 
-        return $this->fileManager->removeInDir($path, true);
+        $dest = pathinfo($destFile, PATHINFO_DIRNAME);
+
+        try {
+            $this->fileManager->copy($srcFile, $dest, false, null, true);
+        } catch (Exception $e) {}
     }
 
-    public function hasFile(string $file, string $exportId): bool
-    {
-        $backupFile = $this->getFilePath($file, $exportId);
+    public function hasFile(
+        Params $params,
+        string $file,
+        string $type = Params::TYPE_CUSTOMIZATION
+    ): bool {
+        $backupFile = $params->getFilePath($file, $type);
 
         if (file_exists($backupFile)) {
             return true;
         }
 
         return false;
-    }
-
-    public function backupFile(
-        string $srcFile,
-        string $exportId,
-        bool $skipIfExists = false
-    ): bool {
-        if (!file_exists($srcFile)) {
-            return true;
-        }
-
-        $destFile = $this->getFilePath($srcFile, $exportId);
-
-        $dest = pathinfo($destFile, PATHINFO_DIRNAME);
-
-        if ($skipIfExists && file_exists($destFile)) {
-            return true;
-        }
-
-        try {
-            $this->fileManager->copy($srcFile, $dest, false, null, true);
-        } catch (Exception $e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function restoreFile(string $destFile, string $exportId): bool
-    {
-        $srcFile = $this->getFilePath($destFile, $exportId);
-
-        if (!file_exists($srcFile)) {
-            return true;
-        }
-
-        $dest = pathinfo($destFile, PATHINFO_DIRNAME);
-
-        try {
-            $this->fileManager->copy($srcFile, $dest, false, null, true);
-        } catch (Exception $e) {
-            return false;
-        }
-
-        return true;
     }
 }

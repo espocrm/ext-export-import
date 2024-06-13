@@ -42,7 +42,6 @@ use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 use Espo\Modules\ExportImport\Tools\Import\Params as ImportParams;
 
 use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
-use Espo\Modules\ExportImport\Tools\Core\Backup as BackupTool;
 
 class Import implements Processor
 {
@@ -50,23 +49,17 @@ class Import implements Processor
         private Log $log,
         private Service $service,
         private FileManager $fileManager,
-        private IdReplacer $idReplacer,
-        private BackupTool $backupTool
+        private IdReplacer $idReplacer
     ) {}
 
     public function process(Params $params): void
     {
         $src = $params->getCustomizationPath();
-        $exportId = $params->getManifest()->getId();
-
-        $this->backupTool->clear($exportId);
 
         $fileList = $this->service->getCopyFileList($params, $src);
 
         foreach ($fileList as $file) {
             $sourceFile = Util::concatPath($src, $file);
-
-            $this->backupTool->backupFile($file, $exportId);
 
             if (ToolUtils::isPatternMatched($file, Params::FORMULA_FILE_LIST)) {
                 $this->copyFormula($params, $sourceFile, $file);
