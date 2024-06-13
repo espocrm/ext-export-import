@@ -64,7 +64,8 @@
     },
 
     "eraseProcessHookClassNameMap": {
-        "User": "Espo\\Modules\\ExportImport\\Tools\\Erase\\ProcessHooks\\User"
+        "User": "Espo\\Modules\\ExportImport\\Tools\\Erase\\ProcessHooks\\User",
+        "Preferences": "Espo\\Modules\\ExportImport\\Tools\\Erase\\ProcessHooks\\Preferences"
     },
 
     "eraseProcessAttributeClassNameMap": {

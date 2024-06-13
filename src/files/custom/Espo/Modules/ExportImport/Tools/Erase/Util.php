@@ -53,7 +53,11 @@ class Util
         try {
             $data = $associative
                 ? Json::decode($content, true)
-                : get_object_vars(Json::decode($content));
+                : Json::decode($content);
+
+            if (!$associative && is_object($data)) {
+                $data = get_object_vars($data);
+            }
         }
         catch (Exception $e) {}
 
@@ -93,5 +97,35 @@ class Util
         }
 
         return $result;
+    }
+
+    /**
+     * Get row data by ID
+     */
+    public static function getRowById(string $id, ?array $data): ?array
+    {
+        if (!$data) {
+            return null;
+        }
+
+        foreach ($data as $row) {
+            if (is_object($row)) {
+                $row = get_object_vars($row);
+            }
+
+            $rowId = $row['id'] ?? null;
+
+            if (!$rowId) {
+                continue;
+            }
+
+            if ($id !== $rowId) {
+                continue;
+            }
+
+            return $row;
+        }
+
+        return null;
     }
 }
