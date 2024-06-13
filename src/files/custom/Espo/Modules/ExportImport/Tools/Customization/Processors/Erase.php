@@ -37,7 +37,6 @@ use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\ExportImport\Tools\Customization\Params;
 use Espo\Modules\ExportImport\Tools\Customization\Service;
 use Espo\Modules\ExportImport\Tools\Customization\Processor;
-use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 
 use Espo\Modules\ExportImport\Tools\Erase\Params as EraseParams;
 
@@ -45,7 +44,7 @@ use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 use Espo\Modules\ExportImport\Tools\Backup\Params as RestoreParams;
 use Espo\Modules\ExportImport\Tools\Backup\Processors\Restore as RestoreTool;
 
-use Exception;
+use Espo\Modules\ExportImport\Tools\Erase\Util as EraseUtil;
 
 class Erase implements Processor
 {
@@ -97,17 +96,17 @@ class Erase implements Processor
             return true;
         }
 
-        $srcData = $this->getFileData($srcFile);
-        $destData = $this->getFileData($destFile);
+        $srcData = EraseUtil::getFileData($srcFile, true);
+        $destData = EraseUtil::getFileData($destFile, true);
 
-        $data = ToolUtils::arrayDiffAssocRecursive($destData, $srcData);
+        $data = EraseUtil::arrayDiffAssocRecursive($destData, $srcData);
 
         $restoreParams = RestoreParams::create()
             ->withManifest($params->getManifest());
 
         if ($this->restoreTool->hasFile($restoreParams, $destFile)) {
             $backupFile = $restoreParams->getFilePath($destFile);
-            $backupData = $this->getFileData($backupFile);
+            $backupData = EraseUtil::getFileData($backupFile, true);
 
             $data = Util::merge($backupData, $data);
         }
@@ -142,21 +141,5 @@ class Erase implements Processor
         }
 
         return $this->fileManager->remove($file, null, true);
-    }
-
-    private function getFileData(string $file): ?array
-    {
-        if (!file_exists($file)) {
-            return null;
-        }
-
-        $content = $this->fileManager->getContents($file);
-
-        try {
-            return Json::decode($content, true);
-        }
-        catch (Exception $e) {}
-
-        return null;
     }
 }

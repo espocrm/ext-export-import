@@ -40,6 +40,8 @@ use Espo\Modules\ExportImport\Tools\Config\Processor;
 use Espo\Modules\ExportImport\Tools\Backup\Params as RestoreParams;
 use Espo\Modules\ExportImport\Tools\Backup\Processors\Restore as RestoreTool;
 
+use Espo\Modules\ExportImport\Tools\Erase\Util as EraseUtil;
+
 use Exception;
 
 class Erase implements Processor
@@ -85,8 +87,8 @@ class Erase implements Processor
             return;
         }
 
-        $eraseData = $this->getFileData($eraseFile);
-        $backupData = $this->getFileData($backupFile);
+        $eraseData = EraseUtil::getFileData($eraseFile);
+        $backupData = EraseUtil::getFileData($backupFile);
 
         if (!$eraseData || !$backupData) {
             return;
@@ -108,28 +110,6 @@ class Erase implements Processor
             ->withManifest($params->getManifest());
 
         return $restoreParams->getFilePath($file, $restoreParams::TYPE_CONFIG);
-    }
-
-    private function getFileData(string $file): ?array
-    {
-        if (!file_exists($file)) {
-            return null;
-        }
-
-        $content = $this->fileManager->getContents($file);
-
-        try {
-            $data = get_object_vars(
-                Json::decode($content)
-            );
-        }
-        catch (Exception $e) {}
-
-        if (empty($data) || !is_array($data)) {
-            return null;
-        }
-
-        return $data;
     }
 
     private function getChangedData(array $eraseData, array $backupData): ?array

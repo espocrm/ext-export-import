@@ -310,27 +310,4 @@ class Utils
 
         return $matches[1] ?? $default;
     }
-
-    public static function arrayDiffAssocRecursive(array $array1, array $array2): array
-    {
-        $result = [];
-
-        foreach ($array1 as $key => $value) {
-            if (is_array($value)) {
-                if (!isset($array2[$key]) || !is_array($array2[$key])) {
-                    $result[$key] = $value;
-                } else {
-                    $newDiff = self::arrayDiffAssocRecursive($value, $array2[$key]);
-
-                    if (!empty($newDiff)) {
-                        $result[$key] = $newDiff;
-                    }
-                }
-            } else if (!array_key_exists($key, $array2) || $array2[$key] !== $value) {
-                $result[$key] = $value;
-            }
-        }
-
-        return $result;
-    }
 }
