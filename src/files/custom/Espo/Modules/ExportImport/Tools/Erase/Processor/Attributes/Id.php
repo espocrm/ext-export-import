@@ -50,18 +50,30 @@ class Id implements ProcessorAttribute
     {
         $entityType = $params->getEntityType();
 
-        if ($entityType == UserEntity::ENTITY_TYPE) {
-            $this->processUser($params, $row, $attributeName);
-        }
+        $this->processIdReplacement($params, $row, $attributeName);
 
         if ($this->entityTool->isIdAutoincrement($entityType)) {
             unset($row['id']);
         }
     }
 
-    private function processUser(Params $params, array &$row, string $attributeName)
+    private function processIdReplacement(Params $params, array &$row, string $attributeName)
     {
         if ($attributeName != AttributeType::ID) {
+            return;
+        }
+
+        $idMap = $params->getIdMap();
+
+        if (empty($idMap)) {
+            return;
+        }
+
+        $entityType = $params->getEntityType();
+
+        $entityTypeList = array_keys($idMap);
+
+        if (!in_array($entityType, $entityTypeList)) {
             return;
         }
 
