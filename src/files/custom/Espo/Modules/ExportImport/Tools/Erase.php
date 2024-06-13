@@ -111,9 +111,9 @@ class Erase implements Tool
             'params' => $params,
         ]);
 
-        $this->eraseCustomization($params, $manifest);
+        $this->processCustomization($params, $manifest);
 
-        $this->eraseData($params, $manifest);
+        $this->processData($params, $manifest);
 
         ProcessorUtils::writeList($params, $this->warningList, "Warnings:");
 
@@ -126,7 +126,7 @@ class Erase implements Tool
             ->getNormalizedList($params);
     }
 
-    private function eraseData(Params $params, Manifest $manifest): void
+    private function processData(Params $params, Manifest $manifest): void
     {
         if ($params->getSkipData()) {
             return;
@@ -197,7 +197,7 @@ class Erase implements Tool
         return $result;
     }
 
-    private function eraseCustomization(Params $params, Manifest $manifest): void
+    private function processCustomization(Params $params, Manifest $manifest): void
     {
         if ($params->getSkipCustomization()) {
             return;
