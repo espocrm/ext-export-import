@@ -39,6 +39,8 @@ use Espo\Modules\ExportImport\Tools\Customization\Service;
 use Espo\Modules\ExportImport\Tools\Customization\Processor;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 
+use Espo\Modules\ExportImport\Tools\Erase\Params as EraseParams;
+
 use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 use Espo\Modules\ExportImport\Tools\Backup\Params as RestoreParams;
 use Espo\Modules\ExportImport\Tools\Backup\Processors\Restore as RestoreTool;
@@ -47,8 +49,6 @@ use Exception;
 
 class Erase implements Processor
 {
-    private const FILE_JSON = 'json';
-
     public function __construct(
         private Log $log,
         private Service $service,
@@ -71,7 +71,7 @@ class Erase implements Processor
 
             $fileExtension = pathinfo($file, PATHINFO_EXTENSION);
 
-            if ($fileExtension != self::FILE_JSON) {
+            if ($fileExtension != EraseParams::FILE_JSON) {
                 if ($this->restoreTool->hasFile($restoreParams, $file)) {
                     $this->restoreTool->processFile($restoreParams, $file);
 

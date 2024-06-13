@@ -37,6 +37,8 @@ use Espo\Modules\ExportImport\Tools\Processor\Params as IParams;
 
 class Params implements IParams
 {
+    public const FILE_JSON = 'json';
+
     private $entityType;
 
     private $path = null;
