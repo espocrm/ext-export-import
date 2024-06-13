@@ -52,6 +52,9 @@ use Espo\Modules\ExportImport\Tools\Erase\Result as EntityResult;
 use Espo\Modules\ExportImport\Tools\Erase\EntityErase as EntityEraseTool;
 use Espo\Modules\ExportImport\Tools\IdMapping\Tool as IdMappingTool;
 
+use Espo\Modules\ExportImport\Tools\Config\Params as ConfigParams;
+use Espo\Modules\ExportImport\Tools\Config\Processors\Erase as ConfigErase;
+
 use Espo\Modules\ExportImport\Tools\Customization\Params as CustomizationParams;
 use Espo\Modules\ExportImport\Tools\Customization\Processors\Erase as CustomizationErase;
 
@@ -110,6 +113,8 @@ class Erase implements Tool
         $manifest = $this->injectableFactory->createWith(Manifest::class, [
             'params' => $params,
         ]);
+
+        $this->processConfig($params, $manifest);
 
         $this->processCustomization($params, $manifest);
 
@@ -230,6 +235,41 @@ class Erase implements Tool
         $customization->process($customizationParams);
 
         $this->dataManager->rebuild();
+
+        ProcessorUtils::writeLine($params, " done");
+    }
+
+    private function processConfig(Params $params, Manifest $manifest): void
+    {
+        if ($params->getSkipConfig()) {
+            return;
+        }
+
+        $entityTypeList = $this->getEntityTypeList($params);
+
+        $configParams = ConfigParams::create()
+            ->withPath($params->getPath())
+            ->withManifest($manifest)
+            ->withEntityTypeList($entityTypeList)
+            ->withExportImportDefs($params->getExportImportDefs())
+            ->withConfigIgnoreList($params->getConfigIgnoreList())
+            ->withClearPassword($params->getClearPassword())
+            ->withSkipInternalConfig($params->getSkipInternalConfig())
+            ->withConfigHardList($params->getConfigHardList());
+
+        if (!file_exists($configParams->getConfigPath())) {
+            return;
+        }
+
+        ProcessorUtils::write($params, "Configuration...");
+
+        $configProcessor = $this->injectableFactory->create(
+            ConfigErase::class
+        );
+
+        $configProcessor->process($configParams);
+
+        $this->dataManager->clearCache();
 
         ProcessorUtils::writeLine($params, " done");
     }

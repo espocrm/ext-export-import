@@ -29,6 +29,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Config\Processors;
 
+use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Config\ConfigWriter;
 use Espo\Core\Utils\File\Manager as FileManager;
@@ -36,12 +37,18 @@ use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\ExportImport\Tools\Config\Params;
 use Espo\Modules\ExportImport\Tools\Config\Processor;
 
+use Espo\Modules\ExportImport\Tools\Backup\Params as RestoreParams;
+use Espo\Modules\ExportImport\Tools\Backup\Processors\Restore as RestoreTool;
+
+use Exception;
+
 class Erase implements Processor
 {
     public function __construct(
         private Config $config,
         private ConfigWriter $configWriter,
         private FileManager $fileManager,
+        private RestoreTool $restoreTool
     ) {}
 
     public function process(Params $params): void
@@ -53,25 +60,9 @@ class Erase implements Processor
     private function processConfig(Params $params): void
     {
         $file = $params->getConfigFile();
+        $backupFile = $this->getBackupFile($params, Params::CONFIG_FILE);
 
-        if (!file_exists($file)) {
-            return;
-        }
-
-        $contents = $this->fileManager->getContents($file);
-
-        $configData = get_object_vars(
-            json_decode($contents)
-        );
-
-        if (empty($configData)) {
-            return;
-        }
-
-        $configData = $this->applyClearPassword($params, $configData);
-
-        $this->configWriter->setMultiple($configData);
-        $this->configWriter->save();
+        $this->processData($file, $backupFile);
     }
 
     private function processInternalConfig(Params $params): void
@@ -81,35 +72,93 @@ class Erase implements Processor
         }
 
         $file = $params->getInternalConfigFile();
+        $backupFile = $this->getBackupFile($params, Params::INTERNAL_CONFIG_FILE);
 
-        if (!file_exists($file)) {
+        $this->processData($file, $backupFile);
+    }
+
+    private function processData(
+        string $eraseFile,
+        string $backupFile
+    ): void {
+        if (!file_exists($eraseFile) || !file_exists($backupFile)) {
             return;
         }
 
-        $contents = $this->fileManager->getContents($file);
+        $eraseData = $this->getFileData($eraseFile);
+        $backupData = $this->getFileData($backupFile);
 
-        $configData = get_object_vars(
-            json_decode($contents)
-        );
-
-        if (empty($configData)) {
+        if (!$eraseData || !$backupData) {
             return;
         }
 
-        $configData = $this->applyClearPassword($params, $configData);
+        $data = $this->getChangedData($eraseData, $backupData);
 
-        $this->configWriter->setMultiple($configData);
+        if (!$data) {
+            return;
+        }
+
+        $this->configWriter->setMultiple($data);
         $this->configWriter->save();
     }
 
-    private function applyClearPassword(Params $params, array $configData): array
+    private function getBackupFile(Params $params, string $file): string
     {
-        if (!$params->getClearPassword()) {
-            return $configData;
+        $restoreParams = RestoreParams::create()
+            ->withManifest($params->getManifest());
+
+        return $restoreParams->getFilePath($file, $restoreParams::TYPE_CONFIG);
+    }
+
+    private function getFileData(string $file): ?array
+    {
+        if (!file_exists($file)) {
+            return null;
         }
 
-        $ignoreList = Params::PASSWORD_PARAM_LIST;
+        $content = $this->fileManager->getContents($file);
 
-        return array_diff_key($configData, array_flip($ignoreList));
+        try {
+            $data = get_object_vars(
+                Json::decode($content)
+            );
+        }
+        catch (Exception $e) {}
+
+        if (empty($data) || !is_array($data)) {
+            return null;
+        }
+
+        return $data;
+    }
+
+    private function getChangedData(array $eraseData, array $backupData): ?array
+    {
+        $list = [];
+
+        foreach ($eraseData as $key => $eraseValue) {
+            if (!array_key_exists($key, $backupData)) {
+                continue;
+            }
+
+            $actualValue = $this->config->get($key);
+            $backupValue = $backupData[$key];
+
+            if ($actualValue !== $eraseValue) {
+                continue;
+            }
+
+            if ($actualValue === $backupValue) {
+                continue;
+            }
+
+            $list[$key] = $backupValue;
+        }
+
+        if (empty($list)) {
+            return null;
+        }
+
+        return $list;
     }
 }
