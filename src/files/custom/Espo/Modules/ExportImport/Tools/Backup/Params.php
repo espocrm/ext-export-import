@@ -40,7 +40,7 @@ class Params
 {
     public const BACKUP_PATH = 'data/.backup/export-import';
 
-    public const CONFIG_ENTITY_TYPE_LIST = [
+    public const ENTITY_TYPE_LIST = [
         PreferencesEntity::ENTITY_TYPE,
     ];
 
@@ -146,9 +146,9 @@ class Params
     /**
      * Get an entity type list
      */
-    public function getConfigEntityTypeList(): array
+    public function getEntityTypeList(): array
     {
-        return self::CONFIG_ENTITY_TYPE_LIST;
+        return self::ENTITY_TYPE_LIST;
     }
 
     public function getSkipData(): bool

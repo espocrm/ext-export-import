@@ -49,7 +49,7 @@ class Backup implements Processor
     {
         $this->exportImportTool->runExport([
             'path' => $params->getRootPath(),
-            'entityList' => $params->getConfigEntityTypeList(),
+            'entityList' => $params->getEntityTypeList(),
             'skipData' => $params->getSkipData(),
             'skipConfig' => $params->getSkipConfig(),
             'skipInternalConfig' => $params->getSkipInternalConfig(),

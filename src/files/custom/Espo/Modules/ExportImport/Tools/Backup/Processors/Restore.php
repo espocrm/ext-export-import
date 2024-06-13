@@ -49,7 +49,7 @@ class Restore implements Processor
     {
         $this->exportImportTool->runImport([
             'path' => $params->getRootPath(),
-            'entityList' => $params->getConfigEntityTypeList(),
+            'entityList' => $params->getEntityTypeList(),
             'skipData' => $params->getSkipData(),
             'skipConfig' => $params->getSkipConfig(),
             'skipInternalConfig' => $params->getSkipInternalConfig(),
