@@ -29,6 +29,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Config\Processors;
 
+use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Config\ConfigWriter;
 use Espo\Core\Utils\File\Manager as FileManager;
@@ -54,24 +55,7 @@ class Import implements Processor
     {
         $file = $params->getConfigFile();
 
-        if (!file_exists($file)) {
-            return;
-        }
-
-        $contents = $this->fileManager->getContents($file);
-
-        $configData = get_object_vars(
-            json_decode($contents)
-        );
-
-        if (empty($configData)) {
-            return;
-        }
-
-        $configData = $this->applyClearPassword($params, $configData);
-
-        $this->configWriter->setMultiple($configData);
-        $this->configWriter->save();
+        $this->processData($params, $file);
     }
 
     private function processInternalConfig(Params $params): void
@@ -82,24 +66,7 @@ class Import implements Processor
 
         $file = $params->getInternalConfigFile();
 
-        if (!file_exists($file)) {
-            return;
-        }
-
-        $contents = $this->fileManager->getContents($file);
-
-        $configData = get_object_vars(
-            json_decode($contents)
-        );
-
-        if (empty($configData)) {
-            return;
-        }
-
-        $configData = $this->applyClearPassword($params, $configData);
-
-        $this->configWriter->setMultiple($configData);
-        $this->configWriter->save();
+        $this->processData($params, $file);
     }
 
     private function applyClearPassword(Params $params, array $configData): array
@@ -111,5 +78,27 @@ class Import implements Processor
         $ignoreList = Params::PASSWORD_PARAM_LIST;
 
         return array_diff_key($configData, array_flip($ignoreList));
+    }
+
+    private function processData(Params $params, string $file): void
+    {
+        if (!file_exists($file)) {
+            return;
+        }
+
+        $contents = $this->fileManager->getContents($file);
+
+        $data = get_object_vars(
+            Json::decode($contents)
+        );
+
+        if (empty($data)) {
+            return;
+        }
+
+        $data = $this->applyClearPassword($params, $data);
+
+        $this->configWriter->setMultiple($data);
+        $this->configWriter->save();
     }
 }
