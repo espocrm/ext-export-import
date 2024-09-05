@@ -75,7 +75,7 @@ class Params implements IParams
 
     private array $idMap = [];
 
-    private bool $clearPassword;
+    private bool $skipPassword;
 
     private ?array $userActiveList;
 
@@ -244,11 +244,11 @@ class Params implements IParams
         return $obj;
     }
 
-    public function withClearPassword(bool $clearPassword): self
+    public function withSkipPassword(bool $skipPassword): self
     {
         $obj = clone $this;
 
-        $obj->clearPassword = $clearPassword;
+        $obj->skipPassword = $skipPassword;
 
         return $obj;
     }
@@ -423,11 +423,11 @@ class Params implements IParams
     }
 
     /**
-     * Get clearPassword option
+     * Get skipPassword option
      */
-    public function getClearPassword(): bool
+    public function getSkipPassword(): bool
     {
-        return $this->clearPassword ?? false;
+        return $this->skipPassword ?? false;
     }
 
     /**

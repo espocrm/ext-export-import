@@ -273,7 +273,7 @@ class EntityExport
                 return null;
 
             case Entity::PASSWORD:
-                if ($params->getClearPassword()) {
+                if ($params->getSkipPassword()) {
                     return null;
                 }
                 break;

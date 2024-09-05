@@ -116,7 +116,7 @@ class Params
 
     private $configIgnoreList;
 
-    private bool $clearPassword;
+    private bool $skipPassword;
 
     private bool $skipInternalConfig;
 
@@ -160,7 +160,7 @@ class Params
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
         $obj->userPassword = $params['userPassword'] ?? null;
         $obj->currency = $params['currency'] ?? null;
-        $obj->clearPassword = $params['clearPassword'] ?? false;
+        $obj->skipPassword = $params['skipPassword'] ?? false;
         $obj->skipInternalConfig = $params['skipInternalConfig'] ?? false;
         $obj->userActive = $obj->normalizeUserActive($params);
 
@@ -538,11 +538,11 @@ class Params
         return $obj;
     }
 
-    public function withClearPassword(bool $clearPassword): self
+    public function withSkipPassword(bool $skipPassword): self
     {
         $obj = clone $this;
 
-        $obj->clearPassword = $clearPassword;
+        $obj->skipPassword = $skipPassword;
 
         return $obj;
     }
@@ -794,11 +794,11 @@ class Params
     }
 
     /**
-     * Get clearPassword option
+     * Get skipPassword option
      */
-    public function getClearPassword(): bool
+    public function getSkipPassword(): bool
     {
-        return $this->clearPassword ?? false;
+        return $this->skipPassword ?? false;
     }
 
     /**

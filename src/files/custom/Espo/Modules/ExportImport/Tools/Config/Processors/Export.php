@@ -60,7 +60,7 @@ class Export implements Processor
             $ignoreList = array_merge($ignoreList, $config->get('superAdminItems'));
         }
 
-        if ($params->getClearPassword()) {
+        if ($params->getSkipPassword()) {
             $ignoreList = array_merge($ignoreList, Params::PASSWORD_PARAM_LIST);
         }
 
@@ -95,7 +95,7 @@ class Export implements Processor
             }
 
             if (
-                $params->getClearPassword() &&
+                $params->getSkipPassword() &&
                 in_array($param, Params::PASSWORD_PARAM_LIST)
             ) {
                 continue;

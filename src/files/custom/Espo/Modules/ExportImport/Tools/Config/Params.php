@@ -66,7 +66,7 @@ class Params
 
     private bool $skipInternalConfig;
 
-    private bool $clearPassword;
+    private bool $skipPassword;
 
     private ?array $configHardList;
 
@@ -168,11 +168,11 @@ class Params
         );
     }
 
-    public function withClearPassword(bool $clearPassword): self
+    public function withSkipPassword(bool $skipPassword): self
     {
         $obj = clone $this;
 
-        $obj->clearPassword = $clearPassword;
+        $obj->skipPassword = $skipPassword;
 
         return $obj;
     }
@@ -221,11 +221,11 @@ class Params
     }
 
     /**
-     * Get clearPassword option
+     * Get skipPassword option
      */
-    public function getClearPassword(): bool
+    public function getSkipPassword(): bool
     {
-        return $this->clearPassword ?? false;
+        return $this->skipPassword ?? false;
     }
 
     /**

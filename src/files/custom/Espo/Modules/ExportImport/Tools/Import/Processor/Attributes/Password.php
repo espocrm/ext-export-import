@@ -36,10 +36,10 @@ class Password implements ProcessorAttribute
 {
     public function process(Params $params, array &$row, string $attributeName): void
     {
-        if (!$params->getClearPassword()) {
+        if (!$params->getSkipPassword()) {
             return;
         }
 
-        $row[$attributeName] = null;
+        unset($row[$attributeName]);
     }
 }

@@ -225,7 +225,7 @@ class Export implements Tool
             ->withPrettyPrint($params->getPrettyPrint())
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))
             ->withSkipCustomization($params->getSkipCustomization())
-            ->withClearPassword($params->getClearPassword())
+            ->withSkipPassword($params->getSkipPassword())
             ->withUserSkipList($params->getUserSkipList());
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
@@ -318,7 +318,7 @@ class Export implements Tool
             ->withEntityTypeList($entityTypeList)
             ->withExportImportDefs($params->getExportImportDefs())
             ->withConfigIgnoreList($params->getConfigIgnoreList())
-            ->withClearPassword($params->getClearPassword())
+            ->withSkipPassword($params->getSkipPassword())
             ->withSkipInternalConfig($params->getSkipInternalConfig())
             ->withConfigHardList($params->getConfigHardList());
 

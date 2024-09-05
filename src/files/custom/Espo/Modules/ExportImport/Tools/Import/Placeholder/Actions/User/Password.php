@@ -29,18 +29,31 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\User;
 
+use Espo\Entities\User;
+use Espo\ORM\EntityManager;
 use Espo\Core\Utils\PasswordHash;
 
 use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Action;
 use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Params;
+use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
 
 class Password implements Action
 {
     public function __construct(
-        private PasswordHash $passwordHash
+        private PasswordHash $passwordHash,
+        private EntityManager $entityManager
     ) {}
 
     public function normalize(Params $params, $actualValue)
+    {
+        if ($params->getSkipPassword()) {
+            return $this->processSkipPassword($params, $actualValue);
+        }
+
+        return $this->processPassword($params, $actualValue);
+    }
+
+    private function processPassword(Params $params, $actualValue): string
     {
         $password = $params->getUserPassword();
 
@@ -53,6 +66,28 @@ class Password implements Action
             return $actualValue;
         }
 
+        return $this->normalizePassword($password);
+    }
+
+    private function processSkipPassword(Params $params, $actualValue): string
+    {
+        $id = $params->getRecordData()['id'] ?? null;
+
+        if (!$id) {
+            return $this->normalizePassword(null);
+        }
+
+        $user = $this->entityManager->getEntityById(User::ENTITY_TYPE, $id);
+
+        if (!$user) {
+            return $this->normalizePassword(null);
+        }
+
+        throw new SkipException();
+    }
+
+    private function normalizePassword(?string $password): string
+    {
         if (!$password) {
             $password = uniqid('', true);
         }

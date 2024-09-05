@@ -53,6 +53,8 @@ class Params
 
     private $userPassword = null;
 
+    private bool $skipPassword;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -131,6 +133,15 @@ class Params
         $obj = clone $this;
 
         $obj->userPassword = $userPassword;
+
+        return $obj;
+    }
+
+    public function withSkipPassword(bool $skipPassword): self
+    {
+        $obj = clone $this;
+
+        $obj->skipPassword = $skipPassword;
 
         return $obj;
     }
@@ -222,5 +233,13 @@ class Params
     public function getUserPassword(): ?string
     {
         return $this->userPassword;
+    }
+
+    /**
+     * Get skipPassword option
+     */
+    public function getSkipPassword(): bool
+    {
+        return $this->skipPassword ?? false;
     }
 }

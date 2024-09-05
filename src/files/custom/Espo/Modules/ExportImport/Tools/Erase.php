@@ -253,7 +253,7 @@ class Erase implements Tool
             ->withEntityTypeList($entityTypeList)
             ->withExportImportDefs($params->getExportImportDefs())
             ->withConfigIgnoreList($params->getConfigIgnoreList())
-            ->withClearPassword($params->getClearPassword())
+            ->withSkipPassword($params->getSkipPassword())
             ->withSkipInternalConfig($params->getSkipInternalConfig())
             ->withConfigHardList($params->getConfigHardList());
 

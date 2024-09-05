@@ -129,7 +129,7 @@
 
     "updateCurrency": false,
     "updateCreatedAt": false,
-    "clearPassword": false,
+    "skipPassword": false,
 
     "skipData": false,
     "skipConfig": false,

@@ -29,30 +29,30 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder;
 
-use Espo\Core\{
-    Di,
-};
-
-use Espo\Modules\ExportImport\Tools\Import\{
-    Params,
-    Placeholder\Factory as PlaceholderFactory,
-    Placeholder\Actions\Params as ActionParams
-};
-
 use Exception;
+use Espo\Core\Utils\Metadata;
+use Espo\Core\Utils\Log;
 
-class Handler implements
+use Espo\Modules\ExportImport\Tools\Import\Params;
+use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Factory as PlaceholderFactory;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Params as ActionParams;
 
-    Di\LogAware,
-    Di\MetadataAware
+class Handler
 {
-    use Di\LogSetter;
-    use Di\MetadataSetter;
+    private Log $log;
+
+    private Metadata $metadata;
 
     protected $placeholderFactory;
 
-    public function __construct(PlaceholderFactory $placeholderFactory)
-    {
+    public function __construct(
+        Log $log,
+        Metadata $metadata,
+        PlaceholderFactory $placeholderFactory
+    ) {
+        $this->log = $log;
+        $this->metadata = $metadata;
         $this->placeholderFactory = $placeholderFactory;
     }
 
@@ -60,54 +60,54 @@ class Handler implements
     {
         $entityType = $params->getEntityType();
 
+        $defs = $params->getExportImportDefs()[$entityType]['fields'] ?? null;
+
+        if (!$defs) {
+            return $row;
+        }
+
         $processedRow = $row;
 
-        $placeholderData =
-            $params->getExportImportDefs()[$entityType]['fields'] ?? null;
+        foreach ($defs as $fieldName => $fieldDefs) {
+            $className = $fieldDefs['placeholderAction'] ?? null;
 
-        if ($placeholderData) {
-
-            foreach ($placeholderData as $fieldName => $placeholderFieldDefs) {
-                $placeholderActionClassName =
-                    $placeholderFieldDefs['placeholderAction'] ?? null;
-
-                $fieldDefs = $this->metadata->get([
-                    'entityDefs', $entityType, 'fields', $fieldName
-                ], []);
-
-                if (!$placeholderActionClassName) {
-
-                    continue;
-                }
-
-                $placeholderAction = $this->placeholderFactory->get(
-                    $placeholderActionClassName
-                );
-
-                $params = ActionParams::create($entityType)
-                    ->withFieldName($fieldName)
-                    ->withRecordData($row)
-                    ->withFieldDefs($fieldDefs)
-                    ->withExportImportDefs($params->getExportImportDefs())
-                    ->withManifest($params->getManifest())
-                    ->withUserActive($params->getUserActive())
-                    ->withUserActiveList($params->getUserActiveList())
-                    ->withUserPassword($params->getUserPassword());
-
-                try {
-                    $processedRow[$fieldName] = $placeholderAction->normalize(
-                        $params, $params->getFieldValue()
-                    );
-                }
-                catch (Exception $e) {
-                    $this->log->warning(
-                        "ExportImport [Import][Placeholder]: " .
-                        "Error getting a value for the field {$entityType}.{$fieldName}," .
-                        " error: " . $e->getMessage()
-                    );
-                }
+            if (!$className) {
+                continue;
             }
 
+            $action = $this->placeholderFactory->get($className);
+
+            $metadataFieldDefs = $this->metadata->get([
+                'entityDefs', $entityType, 'fields', $fieldName
+            ], []);
+
+            $params = ActionParams::create($entityType)
+                ->withFieldName($fieldName)
+                ->withRecordData($row)
+                ->withFieldDefs($metadataFieldDefs)
+                ->withExportImportDefs($params->getExportImportDefs())
+                ->withManifest($params->getManifest())
+                ->withUserActive($params->getUserActive())
+                ->withUserActiveList($params->getUserActiveList())
+                ->withUserPassword($params->getUserPassword())
+                ->withSkipPassword($params->getSkipPassword());
+
+            try {
+                $processedRow[$fieldName] = $action->normalize(
+                    $params,
+                    $params->getFieldValue()
+                );
+            }
+            catch (SkipException $e) {
+                continue;
+            }
+            catch (Exception $e) {
+                $this->log->warning(
+                    "ExportImport [Import][Placeholder]: " .
+                    "Error getting a value for the field {$entityType}.{$fieldName}," .
+                    " error: " . $e->getMessage()
+                );
+            }
         }
 
         return $processedRow;

@@ -69,9 +69,9 @@ class Import implements Processor
         $this->processData($params, $file);
     }
 
-    private function applyClearPassword(Params $params, array $configData): array
+    private function applySkipPassword(Params $params, array $configData): array
     {
-        if (!$params->getClearPassword()) {
+        if (!$params->getSkipPassword()) {
             return $configData;
         }
 
@@ -96,7 +96,7 @@ class Import implements Processor
             return;
         }
 
-        $data = $this->applyClearPassword($params, $data);
+        $data = $this->applySkipPassword($params, $data);
 
         $this->configWriter->setMultiple($data);
         $this->configWriter->save();
