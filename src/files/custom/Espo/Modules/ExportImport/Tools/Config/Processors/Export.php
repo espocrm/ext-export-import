@@ -32,6 +32,7 @@ namespace Espo\Modules\ExportImport\Tools\Config\Processors;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\File\Manager as FileManager;
 
+use Espo\Modules\ExportImport\Tools\Config\Util;
 use Espo\Modules\ExportImport\Tools\Config\Params;
 use Espo\Modules\ExportImport\Tools\Config\Processor;
 
@@ -39,7 +40,8 @@ class Export implements Processor
 {
     public function __construct(
         private Config $config,
-        private FileManager $fileManager
+        private FileManager $fileManager,
+        private Util $util
     ) {}
 
     public function process(Params $params): void
@@ -50,26 +52,10 @@ class Export implements Processor
 
     private function processConfig(Params $params): void
     {
-        $config = $this->config;
-
-        $ignoreList = $params->getConfigIgnoreList();
-
-        if ($params->getSkipInternalConfig()) {
-            $ignoreList = array_merge($ignoreList, $config->get('systemItems'));
-            $ignoreList = array_merge($ignoreList, $config->get('adminItems'));
-            $ignoreList = array_merge($ignoreList, $config->get('superAdminItems'));
-        }
-
-        if ($params->getSkipPassword()) {
-            $ignoreList = array_merge($ignoreList, Params::PASSWORD_PARAM_LIST);
-        }
-
-        $ignoreList = $this->applyHardList($params, $ignoreList);
-
-        $configData = $config->getAllNonInternalData();
+        $configData = $this->config->getAllNonInternalData();
         $configData = get_object_vars($configData);
 
-        $configData = array_diff_key($configData, array_flip($ignoreList));
+        $configData = $this->util->applyIgnoreList($params, $configData);
 
         $this->fileManager->putJsonContents(
             $params->getConfigFile(),
@@ -83,21 +69,12 @@ class Export implements Processor
             return;
         }
 
-        $ignoreList = $params->getConfigIgnoreList();
-
-        $ignoreList = $this->applyHardList($params, $ignoreList);
+        $ignoreList = $this->util->getAllIgnoreList($params);
 
         $data = [];
 
         foreach ($this->getInternalParamList() as $param) {
             if (in_array($param, $ignoreList)) {
-                continue;
-            }
-
-            if (
-                $params->getSkipPassword() &&
-                in_array($param, Params::PASSWORD_PARAM_LIST)
-            ) {
                 continue;
             }
 
@@ -122,24 +99,5 @@ class Export implements Processor
             $this->fileManager->getPhpContents($internalConfigPath) : [];
 
         return array_keys($internalData);
-    }
-
-    private function applyHardList($params, array $ignoreList): array
-    {
-        $hardList = $params->getConfigHardList();
-
-        if (empty($hardList)) {
-            return $ignoreList;
-        }
-
-        foreach ($ignoreList as $key => $value) {
-            if (!in_array($value, $hardList)) {
-                continue;
-            }
-
-            unset($ignoreList[$key]);
-        }
-
-        return array_values($ignoreList);
     }
 }

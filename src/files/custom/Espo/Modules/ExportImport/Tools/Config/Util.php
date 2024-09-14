@@ -27,69 +27,60 @@
  * these Appropriate Legal Notices must retain the display of the "EspoCRM" word.
  ************************************************************************/
 
-namespace Espo\Modules\ExportImport\Tools\Config\Processors;
+namespace Espo\Modules\ExportImport\Tools\Config;
 
-use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Config;
-use Espo\Core\Utils\Config\ConfigWriter;
-use Espo\Core\Utils\File\Manager as FileManager;
 
-use Espo\Modules\ExportImport\Tools\Config\Util;
 use Espo\Modules\ExportImport\Tools\Config\Params;
-use Espo\Modules\ExportImport\Tools\Config\Processor;
 
-class Import implements Processor
+class Util
 {
     public function __construct(
-        private Config $config,
-        private ConfigWriter $configWriter,
-        private FileManager $fileManager,
-        private Util $util
+        private Config $config
     ) {}
 
-    public function process(Params $params): void
+    public function applyIgnoreList(Params $params, array $data): array
     {
-        $this->processConfig($params);
-        $this->processInternalConfig($params);
+        $ignoreList = $this->getAllIgnoreList($params);
+
+        return array_diff_key($data, array_flip($ignoreList));
     }
 
-    private function processConfig(Params $params): void
+    public function getAllIgnoreList(Params $params): array
     {
-        $file = $params->getConfigFile();
+        $ignoreList = $params->getConfigIgnoreList();
 
-        $this->processData($params, $file);
-    }
-
-    private function processInternalConfig(Params $params): void
-    {
         if ($params->getSkipInternalConfig()) {
-            return;
+            $ignoreList = array_merge($ignoreList, $this->config->get('systemItems'));
+            $ignoreList = array_merge($ignoreList, $this->config->get('adminItems'));
+            $ignoreList = array_merge($ignoreList, $this->config->get('superAdminItems'));
         }
 
-        $file = $params->getInternalConfigFile();
+        if ($params->getSkipPassword()) {
+            $ignoreList = array_merge($ignoreList, Params::PASSWORD_PARAM_LIST);
+        }
 
-        $this->processData($params, $file);
+        $ignoreList = $this->applyHardList($params, $ignoreList);
+
+        return $ignoreList;
     }
 
-    private function processData(Params $params, string $file): void
+    private function applyHardList($params, array $ignoreList): array
     {
-        if (!file_exists($file)) {
-            return;
+        $hardList = $params->getConfigHardList();
+
+        if (empty($hardList)) {
+            return $ignoreList;
         }
 
-        $contents = $this->fileManager->getContents($file);
+        foreach ($ignoreList as $key => $value) {
+            if (!in_array($value, $hardList)) {
+                continue;
+            }
 
-        $data = get_object_vars(
-            Json::decode($contents)
-        );
-
-        if (empty($data)) {
-            return;
+            unset($ignoreList[$key]);
         }
 
-        $data = $this->util->applyIgnoreList($params, $data);
-
-        $this->configWriter->setMultiple($data);
-        $this->configWriter->save();
+        return array_values($ignoreList);
     }
 }

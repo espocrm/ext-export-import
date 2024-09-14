@@ -29,20 +29,16 @@
 
 namespace Espo\Modules\ExportImport\Tools\Config\Processors;
 
-use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Config\ConfigWriter;
 use Espo\Core\Utils\File\Manager as FileManager;
 
+use Espo\Modules\ExportImport\Tools\Config\Util;
 use Espo\Modules\ExportImport\Tools\Config\Params;
 use Espo\Modules\ExportImport\Tools\Config\Processor;
-
+use Espo\Modules\ExportImport\Tools\Erase\Util as EraseUtil;
 use Espo\Modules\ExportImport\Tools\Backup\Params as RestoreParams;
 use Espo\Modules\ExportImport\Tools\Backup\Processors\Restore as RestoreTool;
-
-use Espo\Modules\ExportImport\Tools\Erase\Util as EraseUtil;
-
-use Exception;
 
 class Erase implements Processor
 {
@@ -50,7 +46,8 @@ class Erase implements Processor
         private Config $config,
         private ConfigWriter $configWriter,
         private FileManager $fileManager,
-        private RestoreTool $restoreTool
+        private RestoreTool $restoreTool,
+        private Util $util
     ) {}
 
     public function process(Params $params): void
@@ -64,7 +61,7 @@ class Erase implements Processor
         $file = $params->getConfigFile();
         $backupFile = $this->getBackupFile($params, Params::CONFIG_FILE);
 
-        $this->processData($file, $backupFile);
+        $this->processData($params, $file, $backupFile);
     }
 
     private function processInternalConfig(Params $params): void
@@ -76,10 +73,11 @@ class Erase implements Processor
         $file = $params->getInternalConfigFile();
         $backupFile = $this->getBackupFile($params, Params::INTERNAL_CONFIG_FILE);
 
-        $this->processData($file, $backupFile);
+        $this->processData($params, $file, $backupFile);
     }
 
     private function processData(
+        Params $params,
         string $eraseFile,
         string $backupFile
     ): void {
@@ -99,6 +97,8 @@ class Erase implements Processor
         if (!$data) {
             return;
         }
+
+        $data = $this->util->applyIgnoreList($params, $data);
 
         $this->configWriter->setMultiple($data);
         $this->configWriter->save();
