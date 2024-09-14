@@ -91,7 +91,7 @@ class Entity implements Processor
                 catch (SkipException $e) {
                     $skipCount++;
 
-                    $this->log->warning(
+                    $this->log->debug(
                         'ExportImport [Erase] [Skip]: ' . $e->getMessage()
                     );
 
