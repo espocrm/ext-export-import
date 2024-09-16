@@ -69,8 +69,8 @@ class Params
         'custom/Espo/Custom/Hooks/{NORMALIZED_ENTITY_TYPE}/*.php',
         'custom/Espo/Custom/Repositories/{NORMALIZED_ENTITY_TYPE}.php',
         'custom/Espo/Custom/SelectManagers/{NORMALIZED_ENTITY_TYPE}.php',
-        'custom/Espo/Custom/Resources/layouts/{NORMALIZED_ENTITY_TYPE}/*.json',
-        'custom/Espo/Custom/Resources/i18n/*/{NORMALIZED_ENTITY_TYPE}.json',
+        'custom/Espo/Custom/Resources/layouts/{ENTITY_TYPE}/*.json',
+        'custom/Espo/Custom/Resources/i18n/*/{ENTITY_TYPE}.json',
         'custom/Espo/Custom/Resources/i18n/*/Global.json',
         'custom/Espo/Custom/Resources/routes.json',
     ];
