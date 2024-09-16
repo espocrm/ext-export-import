@@ -60,11 +60,11 @@ class Params
 
     public const PATH_CONFIG = 'Config';
 
-    public const TYPE_CREATE = 'create';
+    public const IMPORT_TYPE_CREATE = 'create';
 
-    public const TYPE_CREATE_AND_UPDATE = 'createAndUpdate';
+    public const IMPORT_TYPE_CREATE_AND_UPDATE = 'createAndUpdate';
 
-    public const TYPE_UPDATE = 'update';
+    public const IMPORT_TYPE_UPDATE = 'update';
 
     public const DEFAULT_STORAGE = 'EspoUploadDir';
 
@@ -128,6 +128,12 @@ class Params
 
     private bool $skipRelatedEntities;
 
+    private ?array $entityImportTypeCreate;
+
+    private ?array $entityImportTypeUpdate;
+
+    private ?array $entityImportTypeCreateAndUpdate;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -156,7 +162,7 @@ class Params
         $obj->action = $action;
         $obj->path = $params['path'] ?? null;
         $obj->manifestFile = $params['manifestFile'] ?? null;
-        $obj->importType = $params['importType'] ?? self::TYPE_CREATE_AND_UPDATE;
+        $obj->importType = $params['importType'] ?? self::IMPORT_TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
         $obj->userPassword = $params['userPassword'] ?? null;
         $obj->currency = $params['currency'] ?? null;
@@ -167,9 +173,9 @@ class Params
         if (!in_array(
             $obj->importType,
             [
-                self::TYPE_CREATE,
-                self::TYPE_CREATE_AND_UPDATE,
-                self::TYPE_UPDATE,
+                self::IMPORT_TYPE_CREATE,
+                self::IMPORT_TYPE_CREATE_AND_UPDATE,
+                self::IMPORT_TYPE_UPDATE,
             ]
         )) {
             throw new RuntimeException('Incorrect "importType" option.');
@@ -247,6 +253,21 @@ class Params
 
         $obj->skipRelatedEntities = ToolUtils::normalizeBoolFromArray(
             $params, 'skipRelatedEntities'
+        );
+
+        $obj->entityImportTypeCreate = ToolUtils::normalizeList(
+            $params['entityImportTypeCreate'] ?? null,
+            $params['default']['entityImportTypeCreate'] ?? null,
+        );
+
+        $obj->entityImportTypeUpdate = ToolUtils::normalizeList(
+            $params['entityImportTypeUpdate'] ?? null,
+            $params['default']['entityImportTypeUpdate'] ?? null,
+        );
+
+        $obj->entityImportTypeCreateAndUpdate = ToolUtils::normalizeList(
+            $params['entityImportTypeCreateAndUpdate'] ?? null,
+            $params['default']['entityImportTypeCreateAndUpdate'] ?? null,
         );
 
         return $obj;
@@ -565,6 +586,33 @@ class Params
         return $obj;
     }
 
+    public function withEntityImportTypeCreate(array $list): self
+    {
+        $obj = clone $this;
+
+        $obj->entityImportTypeCreate = $list;
+
+        return $obj;
+    }
+
+    public function withEntityImportTypeUpdate(array $list): self
+    {
+        $obj = clone $this;
+
+        $obj->entityImportTypeUpdate = $list;
+
+        return $obj;
+    }
+
+    public function withEntityImportTypeCreateAndUpdate(array $list): self
+    {
+        $obj = clone $this;
+
+        $obj->entityImportTypeCreateAndUpdate = $list;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -815,5 +863,20 @@ class Params
     public function getSkipRelatedEntities(): bool
     {
         return $this->skipRelatedEntities ?? false;
+    }
+
+    public function getEntityImportTypeCreate(): ?array
+    {
+        return $this->entityImportTypeCreate;
+    }
+
+    public function getEntityImportTypeUpdate(): ?array
+    {
+        return $this->entityImportTypeUpdate;
+    }
+
+    public function getEntityImportTypeCreateAndUpdate(): ?array
+    {
+        return $this->entityImportTypeCreateAndUpdate;
     }
 }

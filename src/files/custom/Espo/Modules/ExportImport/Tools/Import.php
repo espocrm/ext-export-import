@@ -29,37 +29,38 @@
 
 namespace Espo\Modules\ExportImport\Tools;
 
+use Exception;
 use Espo\ORM\Defs;
 use Espo\Core\Utils\Log;
 use Espo\Core\DataManager;
 use Espo\Core\Utils\Metadata;
-use Espo\Core\InjectableFactory;
-use Espo\Core\Utils\File\Manager as FileManager;
-
-use Espo\Entities\User as UserEntity;
-use Espo\Entities\Preferences as PreferencesEntity;
-
-use Espo\Modules\ExportImport\Tools\Params;
-use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
-use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
-use Espo\Modules\ExportImport\Tools\Import\Params as ImportParams;
-use Espo\Modules\ExportImport\Tools\Import\EntityImport as EntityImportTool;
-use Espo\Modules\ExportImport\Tools\Processor\Utils as ProcessorUtils;
-use Espo\Modules\ExportImport\Tools\Customization\Params as CustomizationParams;
-use Espo\Modules\ExportImport\Tools\Customization\Processors\Import as CustomizationImport;
-use Espo\Modules\ExportImport\Tools\Config\Params as ConfigParams;
-use Espo\Modules\ExportImport\Tools\Config\Processors\Import as ConfigImport;
-use Espo\Modules\ExportImport\Tools\Import\Result as EntityResult;
-use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
-use Espo\Modules\ExportImport\Tools\Import\Helpers\EntityType as EntityTypeHelper;
-use Espo\Modules\ExportImport\Tools\IdMapping\Tool as IdMappingTool;
-
-use Espo\Modules\ExportImport\Tools\Backup\Params as BackupParams;
-use Espo\Modules\ExportImport\Tools\Backup\Processors\Backup as BackupTool;
-
 use Espo\Core\Exceptions\Error;
 
-use Exception;
+use Espo\Core\InjectableFactory;
+use Espo\Entities\User as UserEntity;
+
+use Espo\Modules\ExportImport\Tools\Params;
+use Espo\Core\Utils\File\Manager as FileManager;
+use Espo\Entities\Preferences as PreferencesEntity;
+use Espo\Modules\ExportImport\Tools\Processor\ImportType;
+use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
+use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
+use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
+use Espo\Modules\ExportImport\Tools\Backup\Params as BackupParams;
+use Espo\Modules\ExportImport\Tools\Config\Params as ConfigParams;
+use Espo\Modules\ExportImport\Tools\Import\Params as ImportParams;
+use Espo\Modules\ExportImport\Tools\Import\Result as EntityResult;
+use Espo\Modules\ExportImport\Tools\IdMapping\Tool as IdMappingTool;
+use Espo\Modules\ExportImport\Tools\Processor\Utils as ProcessorUtils;
+use Espo\Modules\ExportImport\Tools\Backup\Processors\Backup as BackupTool;
+
+use Espo\Modules\ExportImport\Tools\Import\EntityImport as EntityImportTool;
+use Espo\Modules\ExportImport\Tools\Config\Processors\Import as ConfigImport;
+
+use Espo\Modules\ExportImport\Tools\Customization\Params as CustomizationParams;
+
+use Espo\Modules\ExportImport\Tools\Import\Helpers\EntityType as EntityTypeHelper;
+use Espo\Modules\ExportImport\Tools\Customization\Processors\Import as CustomizationImport;
 
 class Import implements Tool
 {
@@ -76,7 +77,8 @@ class Import implements Tool
         private IdMappingTool $idMappingTool,
         private EntityTypeHelper $entityTypeHelper,
         private InjectableFactory $injectableFactory,
-        private BackupTool $backupTool
+        private BackupTool $backupTool,
+        private ImportType $importType
     ) {}
 
     public function run(Params $params) : void
@@ -200,6 +202,7 @@ class Import implements Tool
         array $idMap
     ): EntityResult {
         $processHookClass = $this->getProcessHookClass($entityType);
+        $importType = $this->importType->getForEntity($params, $entityType);
 
         $importParams = ImportParams::create($entityType)
             ->withFormat($params->getFormat())
@@ -208,7 +211,7 @@ class Import implements Tool
             ->withFilesPath($params->getFilesPath())
             ->withExportImportDefs($params->getExportImportDefs())
             ->withManifest($manifest)
-            ->withImportType($params->getImportType())
+            ->withImportType($importType)
             ->withCurrency($params->getCurrency())
             ->withUpdateCurrency($params->getUpdateCurrency())
             ->withProcessHookClass($processHookClass)

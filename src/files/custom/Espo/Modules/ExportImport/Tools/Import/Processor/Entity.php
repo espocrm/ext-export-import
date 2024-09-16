@@ -96,13 +96,13 @@ class Entity implements Processor
                 }
             }
 
-            if ($entity && in_array($importType, [ToolParams::TYPE_CREATE])) {
+            if ($entity && in_array($importType, [ToolParams::IMPORT_TYPE_CREATE])) {
 
                 continue;
             }
 
             if (!$entity) {
-                if (in_array($importType, [ToolParams::TYPE_UPDATE])) {
+                if (in_array($importType, [ToolParams::IMPORT_TYPE_UPDATE])) {
 
                     continue;
                 }
