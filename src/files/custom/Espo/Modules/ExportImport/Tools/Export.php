@@ -226,7 +226,8 @@ class Export implements Tool
             ->withIsCustomEntity($this->entityTool->isCustom($entityType))
             ->withSkipCustomization($params->getSkipCustomization())
             ->withSkipPassword($params->getSkipPassword())
-            ->withUserSkipList($params->getUserSkipList());
+            ->withUserSkipList($params->getUserSkipList())
+            ->withAllAttributes($params->getAllAttributes());
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);

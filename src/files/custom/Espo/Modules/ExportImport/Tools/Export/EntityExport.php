@@ -56,55 +56,21 @@ use RuntimeException;
 
 class EntityExport
 {
-    /**
-     * @var Params
-     */
-    private $params;
+    private Params $params;
 
-    /**
-     * @var Collection
-     */
-    private $collection = null;
-
-    private $processorFactory;
-
-    private $selectBuilderFactory;
-
-    private $serviceContainer;
-
-    private $acl;
-
-    private $entityManager;
-
-    private $metadata;
-
-    private $fileManager;
-
-    private $listLoadProcessor;
-
-    private $fieldUtil;
+    private ?Collection $collection = null;
 
     public function __construct(
-        ProcessorFactory $processorFactory,
-        SelectBuilderFactory $selectBuilderFactor,
-        ServiceContainer $serviceContainer,
-        Acl $acl,
-        EntityManager $entityManager,
-        Metadata $metadata,
-        FileManager $fileManager,
-        ListLoadProcessor $listLoadProcessor,
-        FieldUtil $fieldUtil
-    ) {
-        $this->processorFactory = $processorFactory;
-        $this->selectBuilderFactory = $selectBuilderFactor;
-        $this->serviceContainer = $serviceContainer;
-        $this->acl = $acl;
-        $this->entityManager = $entityManager;
-        $this->metadata = $metadata;
-        $this->fileManager = $fileManager;
-        $this->listLoadProcessor = $listLoadProcessor;
-        $this->fieldUtil = $fieldUtil;
-    }
+        private ProcessorFactory $processorFactory,
+        private SelectBuilderFactory $selectBuilderFactory,
+        private ServiceContainer $serviceContainer,
+        private Acl $acl,
+        private EntityManager $entityManager,
+        private Metadata $metadata,
+        private FileManager $fileManager,
+        private ListLoadProcessor $listLoadProcessor,
+        private FieldUtil $fieldUtil
+    ) {}
 
     public function setParams(Params $params): self
     {
@@ -176,7 +142,7 @@ class EntityExport
             foreach ($attributeList as $attribute) {
                 $value = $this->getAttributeFromEntity($params, $entity, $attribute);
 
-                if ($this->skipValue($entity, $attribute, $value)) {
+                if ($this->skipValue($params, $entity, $attribute, $value)) {
 
                     continue;
                 }
@@ -300,7 +266,7 @@ class EntityExport
         }
 
         if (!is_string($foreign)) {
-            return self::VARCHAR;
+            return Entity::VARCHAR;
         }
 
         if (!$entityDefs->getRelation($relation)->hasForeignEntityType()) {
@@ -492,8 +458,12 @@ class EntityExport
         return array_values($fieldList);
     }
 
-    protected function skipValue(Entity $entity, string $attribute, $value)
-    {
+    protected function skipValue(
+        Params $params,
+        Entity $entity,
+        string $attribute,
+        $value
+    ): bool {
         $type = $entity->getAttributeType($attribute);
 
         switch ($type) {
@@ -502,7 +472,7 @@ class EntityExport
             case Entity::TEXT:
             case Entity::VARCHAR:
             case Entity::FOREIGN_ID:
-                if ($value === null) {
+                if (!$params->getAllAttributes() && $value === null) {
                     return true;
                 }
                 break;
