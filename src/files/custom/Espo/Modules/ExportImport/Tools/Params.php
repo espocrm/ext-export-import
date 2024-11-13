@@ -29,18 +29,12 @@
 
 namespace Espo\Modules\ExportImport\Tools;
 
-use Espo\Core\{
-    Console\IO,
-    Utils\Util,
-};
-
-use Espo\Modules\ExportImport\Tools\{
-    Processor\Utils as ToolUtils,
-};
-
 use DateTime;
 use DateTimeZone;
 use RuntimeException;
+use Espo\Core\Console\IO;
+use Espo\Core\Utils\Util;
+use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 
 class Params
 {
@@ -133,6 +127,8 @@ class Params
     private ?array $entityImportTypeUpdate;
 
     private ?array $entityImportTypeCreateAndUpdate;
+
+    private bool $allAttributes;
 
     public function __construct(string $format)
     {
@@ -268,6 +264,10 @@ class Params
         $obj->entityImportTypeCreateAndUpdate = ToolUtils::normalizeList(
             $params['entityImportTypeCreateAndUpdate'] ?? null,
             $params['default']['entityImportTypeCreateAndUpdate'] ?? null,
+        );
+
+        $obj->allAttributes = ToolUtils::normalizeBoolFromArray(
+            $params, 'allAttributes'
         );
 
         return $obj;
@@ -613,6 +613,15 @@ class Params
         return $obj;
     }
 
+    public function withAllAttributes(bool $value): self
+    {
+        $obj = clone $this;
+
+        $obj->allAttributes = $value;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -878,5 +887,10 @@ class Params
     public function getEntityImportTypeCreateAndUpdate(): ?array
     {
         return $this->entityImportTypeCreateAndUpdate;
+    }
+
+    public function getAllAttributes(): bool
+    {
+        return $this->allAttributes;
     }
 }

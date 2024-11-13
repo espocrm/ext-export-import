@@ -29,16 +29,11 @@
 
 namespace Espo\Modules\ExportImport\Tools\Export;
 
-use Espo\Core\{
-    Select\SearchParams,
-    Utils\Util,
-};
-
-use Espo\Modules\ExportImport\Tools\{
-    Processor\ProcessHook,
-    Processor\Params as IParams,
-    Export\Processor\Collection as CollectionClass,
-};
+use Espo\Core\Utils\Util;
+use Espo\Core\Select\SearchParams;
+use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
+use Espo\Modules\ExportImport\Tools\Processor\Params as IParams;
+use Espo\Modules\ExportImport\Tools\Export\Processor\Collection as CollectionClass;
 
 class Params implements IParams
 {
@@ -77,6 +72,8 @@ class Params implements IParams
     private bool $skipPassword;
 
     private ?array $userSkipList;
+
+    private bool $allAttributes;
 
     public function __construct(string $entityType)
     {
@@ -237,6 +234,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->userSkipList = $list;
+
+        return $obj;
+    }
+
+    public function withAllAttributes(bool $value): self
+    {
+        $obj = clone $this;
+
+        $obj->allAttributes = $value;
 
         return $obj;
     }
@@ -406,5 +412,10 @@ class Params implements IParams
     public function getUserSkipList(): array
     {
         return $this->userSkipList ?? [];
+    }
+
+    public function getAllAttributes(): bool
+    {
+        return $this->allAttributes;
     }
 }
