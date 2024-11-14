@@ -29,23 +29,21 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Processor;
 
+use Exception;
 use Espo\Core\Utils\Log;
 use Espo\Core\Utils\Config;
 use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\InjectableFactory;
 use Espo\Core\ORM\Repository\Option\SaveOption;
-
-use Espo\Modules\ExportImport\Tools\Import\Result;
-use Espo\Modules\ExportImport\Tools\Import\Processor;
-use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\Import\Params;
+use Espo\Modules\ExportImport\Tools\Import\Result;
+use Espo\Modules\ExportImport\Tools\Processor\Data;
+use Espo\Modules\ExportImport\Tools\Import\Processor;
 use Espo\Modules\ExportImport\Tools\Params as ToolParams;
-use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
-use Espo\Modules\ExportImport\Tools\Import\Placeholder\Handler as PlaceholderHandler;
+use Espo\Modules\ExportImport\Tools\Import\Helpers\Id as IdHelper;
 use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
-
-use Exception;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Handler as PlaceholderHandler;
 
 class Entity implements Processor
 {
@@ -55,7 +53,8 @@ class Entity implements Processor
         private Metadata $metadata,
         private EntityManager $entityManager,
         private InjectableFactory $injectableFactory,
-        private PlaceholderHandler $placeholderHandler
+        private PlaceholderHandler $placeholderHandler,
+        private IdHelper $idHelper
     ) {}
 
     public function process(Params $params, Data $data): Result
@@ -74,7 +73,7 @@ class Entity implements Processor
 
             $row = $this->prepareData($params, $initRow);
 
-            $id = $this->getEntityId($params, $row);
+            $id = $this->idHelper->getEntityId($params, $row);
 
             if ($id) {
                 $entity = $this->entityManager->getEntityById($entityType, $id);
@@ -181,58 +180,6 @@ class Entity implements Processor
         }
 
         return $this->placeholderHandler->process($params, $row);
-    }
-
-    private function getEntityId(Params $params, array $row): ?string
-    {
-        $id = $row['id'] ?? null;
-
-        $entityType = $params->getEntityType();
-
-        if ($id && ToolUtils::isScopeEntity($this->metadata, $entityType)) {
-            return $id;
-        }
-
-        return $this->getRelationId($params, $row);
-    }
-
-    private function getRelationId(Params $params, array $row): ?string
-    {
-        $entityType = $params->getEntityType();
-
-        $entityDefs = $this->entityManager
-            ->getDefs()
-            ->getEntity($entityType);
-
-        $whereClause = [];
-
-        foreach ($entityDefs->getAttributeList() as $attribute) {
-            $name = $attribute->getName();
-            $type = $attribute->getType();
-
-            switch ($type) {
-                case 'foreignId':
-                    $value = $row[$name] ?? null;
-
-                    if ($value) {
-                        $whereClause[$name] = $value;
-                    }
-                    break;
-            }
-        }
-
-        if (!empty($whereClause)) {
-            $record = $this->entityManager
-                ->getRDBRepository($entityType)
-                ->where($whereClause)
-                ->findOne(['withDeleted' => true]);
-
-            if ($record) {
-                return $record->getId();
-            }
-        }
-
-        return $row['id'] ?? null;
     }
 
     private function processAttribute(

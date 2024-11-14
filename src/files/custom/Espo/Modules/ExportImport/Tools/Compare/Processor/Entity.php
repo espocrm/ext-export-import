@@ -38,7 +38,7 @@ use Espo\Modules\ExportImport\Tools\Compare\Result;
 use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\Compare\Processor;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
-use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
+use Espo\Modules\ExportImport\Tools\Import\Helpers\Id as IdHelper;
 use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
 
 class Entity implements Processor
@@ -48,7 +48,8 @@ class Entity implements Processor
         private Metadata $metadata,
         private EntityTool $entityTool,
         private EntityManager $entityManager,
-        private InjectableFactory $injectableFactory
+        private InjectableFactory $injectableFactory,
+        private IdHelper $idHelper
     ) {}
 
     public function process(Params $params, Data $data): Result
@@ -64,7 +65,7 @@ class Entity implements Processor
         while (($initRow = $data->readRow()) !== null) {
             $row = $this->prepareData($params, $initRow);
 
-            $id = $this->getEntityId($params, $row);
+            $id = $this->idHelper->getEntityId($params, $row);
 
             if (!$id) {
                 continue;
@@ -123,58 +124,6 @@ class Entity implements Processor
         }
 
         return $row;
-    }
-
-    private function getEntityId(Params $params, array $row): ?string
-    {
-        $id = $row['id'] ?? null;
-
-        $entityType = $params->getEntityType();
-
-        if ($id && ToolUtils::isScopeEntity($this->metadata, $entityType)) {
-            return $id;
-        }
-
-        return $this->getRelationId($params, $row);
-    }
-
-    private function getRelationId(Params $params, array $row): ?string
-    {
-        $entityType = $params->getEntityType();
-
-        $entityDefs = $this->entityManager
-            ->getDefs()
-            ->getEntity($entityType);
-
-        $whereClause = [];
-
-        foreach ($entityDefs->getAttributeList() as $attribute) {
-            $name = $attribute->getName();
-            $type = $attribute->getType();
-
-            switch ($type) {
-                case 'foreignId':
-                    $value = $row[$name] ?? null;
-
-                    if ($value) {
-                        $whereClause[$name] = $value;
-                    }
-                    break;
-            }
-        }
-
-        if (!empty($whereClause)) {
-            $record = $this->entityManager
-                ->getRDBRepository($entityType)
-                ->where($whereClause)
-                ->findOne();
-
-            if ($record) {
-                return $record->getId();
-            }
-        }
-
-        return $row['id'] ?? null;
     }
 
     private function processAttribute(
