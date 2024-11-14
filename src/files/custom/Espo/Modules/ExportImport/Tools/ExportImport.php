@@ -62,6 +62,11 @@ class ExportImport
         $this->runTool(Params::ACTION_ERASE, $extraParams, $io);
     }
 
+    public function runCompare(array $extraParams = [], ?IO $io = null) : void
+    {
+        $this->runTool(Params::ACTION_COMPARE, $extraParams, $io);
+    }
+
     protected function getClass($name): string
     {
         $className = $this->metadata->get([

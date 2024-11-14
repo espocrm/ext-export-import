@@ -44,6 +44,8 @@ class Params
 
     public const ACTION_ERASE = 'erase';
 
+    public const ACTION_COMPARE = 'compare';
+
     public const APPEND = '__APPEND__';
 
     public const PATH_ENTITIES = 'Entities';

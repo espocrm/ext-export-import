@@ -2,7 +2,8 @@
     "toolClassNameMap": {
         "Export": "Espo\\Modules\\ExportImport\\Tools\\Export",
         "Import": "Espo\\Modules\\ExportImport\\Tools\\Import",
-        "Erase": "Espo\\Modules\\ExportImport\\Tools\\Erase"
+        "Erase": "Espo\\Modules\\ExportImport\\Tools\\Erase",
+        "Compare": "Espo\\Modules\\ExportImport\\Tools\\Compare"
     },
 
     "formatList": [
@@ -71,6 +72,14 @@
     "eraseProcessAttributeClassNameMap": {
         "id": "Espo\\Modules\\ExportImport\\Tools\\Erase\\Processor\\Attributes\\Id",
         "foreignId": "Espo\\Modules\\ExportImport\\Tools\\Erase\\Processor\\Attributes\\ForeignId"
+    },
+
+    "compareDataProcessorClassNameMap": {
+        "json": "Espo\\Modules\\ExportImport\\Tools\\Compare\\DataProcessors\\Json"
+    },
+
+    "compareProcessHookClassNameMap": {
+        "User": "Espo\\Modules\\ExportImport\\Tools\\Compare\\ProcessHooks\\User"
     },
 
     "idMappingDataProcessorClassNameMap": {
