@@ -29,6 +29,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Helpers;
 
+use Espo\ORM\Entity;
 use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;
 use Espo\ORM\Query\SelectBuilder;
@@ -101,5 +102,19 @@ class Id
         }
 
         return $row['id'] ?? null;
+    }
+
+    public function getDeletedEntityById(string $entityType, string $id): ?Entity
+    {
+        $query = SelectBuilder::create()
+            ->from($entityType)
+            ->withDeleted()
+            ->build();
+
+        return $this->entityManager
+            ->getRDBRepository($entityType)
+            ->clone($query)
+            ->where(['id' => $id])
+            ->findOne();
     }
 }
