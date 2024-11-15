@@ -65,6 +65,8 @@ class Entity implements Processor
         $successCount = 0;
 
         while (($initRow = $data->readRow()) !== null) {
+            $entity = null;
+
             $row = $this->prepareData($params, $initRow);
 
             $id = $this->idHelper->getEntityId($params, $row);
