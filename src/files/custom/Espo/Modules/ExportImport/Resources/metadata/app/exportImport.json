@@ -82,6 +82,11 @@
         "User": "Espo\\Modules\\ExportImport\\Tools\\Compare\\ProcessHooks\\User"
     },
 
+    "compareProcessAttributeClassNameMap": {
+        "id": "Espo\\Modules\\ExportImport\\Tools\\Compare\\Processor\\Attributes\\Id",
+        "foreignId": "Espo\\Modules\\ExportImport\\Tools\\Compare\\Processor\\Attributes\\ForeignId"
+    },
+
     "idMappingDataProcessorClassNameMap": {
         "json": "Espo\\Modules\\ExportImport\\Tools\\IdMapping\\DataProcessors\\Json"
     },
