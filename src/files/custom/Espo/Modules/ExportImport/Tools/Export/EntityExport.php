@@ -30,29 +30,27 @@
 
 namespace Espo\Modules\ExportImport\Tools\Export;
 
-use Espo\ORM\Entity;
-use Espo\ORM\Collection;
-use Espo\ORM\EntityManager;
-
 use Espo\Core\Acl;
+use Espo\ORM\Entity;
+use RuntimeException;
 use Espo\Core\Acl\Table;
+use Espo\ORM\Collection;
 use Espo\Core\Utils\Json;
+use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\FieldUtil;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Select\SearchParams;
-use Espo\Core\Select\SelectBuilderFactory;
 use Espo\Core\Record\ServiceContainer;
-use Espo\Core\Utils\File\Manager as FileManager;
+use Espo\Core\Select\SelectBuilderFactory;
 use Espo\Core\FieldProcessing\ListLoadProcessor;
-use Espo\Core\FieldProcessing\Loader\Params as LoaderParams;
-
+use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\ExportImport\Tools\Export\Params;
+use Espo\Core\FieldProcessing\Loader\Params as LoaderParams;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 use Espo\Modules\ExportImport\Tools\Processor\Data as ProcessorData;
 use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
-
-use RuntimeException;
+use Espo\Modules\ExportImport\Tools\Export\Util;
 
 class EntityExport
 {
@@ -61,6 +59,7 @@ class EntityExport
     private ?Collection $collection = null;
 
     public function __construct(
+        private Util $util,
         private ProcessorFactory $processorFactory,
         private SelectBuilderFactory $selectBuilderFactory,
         private ServiceContainer $serviceContainer,
@@ -140,7 +139,7 @@ class EntityExport
             $row = [];
 
             foreach ($attributeList as $attribute) {
-                $value = $this->getAttributeFromEntity($params, $entity, $attribute);
+                $value = $this->util->getAttributeValue($params, $entity, $attribute);
 
                 if ($this->skipValue($params, $entity, $attribute, $value)) {
 
@@ -192,144 +191,6 @@ class EntityExport
             ->withStoragePath($params->getPath())
             ->withSuccessCount($successCount)
             ->withWarningList($warningList ?? null);
-    }
-
-    protected function getAttributeFromEntity(
-        Params $params,
-        Entity $entity,
-        string $attribute
-    ) {
-        $methodName = 'getAttribute' . ucfirst($attribute) . 'FromEntity';
-
-        if (method_exists($this, $methodName)) {
-            return $this->$methodName($entity);
-        }
-
-        $type = $entity->getAttributeType($attribute);
-
-        if ($type === Entity::FOREIGN) {
-            $type = $this->getForeignAttributeType($entity, $attribute) ?? $type;
-        }
-
-        switch ($type) {
-            case Entity::JSON_OBJECT:
-                if ($entity->getAttributeParam($attribute, 'isLinkMultipleNameMap')) {
-                    break;
-                }
-
-                $value = $entity->get($attribute);
-
-                if (!empty($value)) {
-                    return Json::encode($value, \JSON_UNESCAPED_UNICODE);
-                }
-
-                return null;
-
-            case Entity::JSON_ARRAY:
-                if ($entity->getAttributeParam($attribute, 'isLinkMultipleIdList')) {
-                    break;
-                }
-
-                $value = $entity->get($attribute);
-
-                if (is_array($value)) {
-                    return Json::encode($value, \JSON_UNESCAPED_UNICODE);
-                }
-
-                return null;
-
-            case Entity::PASSWORD:
-                if ($params->getSkipPassword()) {
-                    return null;
-                }
-                break;
-        }
-
-        return $entity->get($attribute);
-    }
-
-    private function getForeignAttributeType(Entity $entity, string $attribute): ?string
-    {
-        $defs = $this->entityManager->getDefs();
-
-        $entityDefs = $defs->getEntity($entity->getEntityType());
-
-        $relation = $entity->getAttributeParam($attribute, 'relation');
-        $foreign = $entity->getAttributeParam($attribute, 'foreign');
-
-        if (!$relation) {
-            return null;
-        }
-
-        if (!$foreign) {
-            return null;
-        }
-
-        if (!is_string($foreign)) {
-            return Entity::VARCHAR;
-        }
-
-        if (!$entityDefs->getRelation($relation)->hasForeignEntityType()) {
-            return null;
-        }
-
-        $entityType = $entityDefs->getRelation($relation)->getForeignEntityType();
-
-        if (!$defs->hasEntity($entityType)) {
-            return null;
-        }
-
-        $foreignEntityDefs = $defs->getEntity($entityType);
-
-        if (!$foreignEntityDefs->hasAttribute($foreign)) {
-            return null;
-        }
-
-        return $foreignEntityDefs->getAttribute($foreign)->getType();
-    }
-
-    protected function checkAttributeIsAllowedForExport(
-        Entity $entity,
-        string $attribute,
-        bool $exportAllFields = false
-    ): bool {
-        if (!$exportAllFields) {
-            return true;
-        }
-
-        if ($entity->getAttributeParam($attribute, 'isLinkMultipleIdList')) {
-            return false;
-        }
-
-        if ($entity->getAttributeParam($attribute, 'isLinkMultipleNameMap')) {
-            return false;
-        }
-
-        if ($entity->getAttributeParam($attribute, 'isLinkStub')) {
-            return false;
-        }
-
-        $type = $entity->getAttributeParam($attribute, 'type');
-
-        switch ($type) {
-            case 'foreign':
-                return false;
-                break;
-        }
-
-        if ($entity->getAttributeParam($attribute, 'notStorable')) {
-            $fieldType = $entity->getAttributeParam($attribute, 'fieldType') ?? $type;
-
-            switch ($fieldType) {
-                case 'jsonArray':
-                case 'jsonObject':
-                case 'linkParent':
-                    return false;
-                    break;
-            }
-        }
-
-        return true;
     }
 
     private function getCollection(Params $params): Collection
@@ -401,7 +262,7 @@ class EntityExport
                 continue;
             }
 
-            if (!$this->checkAttributeIsAllowedForExport($seed, $attribute, $params->allFields())) {
+            if (!$this->util->isAttributeAllowedForExport($seed, $attribute, $params->allFields())) {
                 continue;
             }
 
