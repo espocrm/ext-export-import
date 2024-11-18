@@ -41,6 +41,8 @@ class Result implements IResult
 
     private int $modifiedCount = 0;
 
+    private int $deletedCount = 0;
+
     private int $skipCount = 0;
 
     private string $resultPath;
@@ -71,6 +73,15 @@ class Result implements IResult
         $obj = clone $this;
 
         $obj->modifiedCount = $count;
+
+        return $obj;
+    }
+
+    public function withDeletedCount(int $count): self
+    {
+        $obj = clone $this;
+
+        $obj->deletedCount = $count;
 
         return $obj;
     }
@@ -154,6 +165,14 @@ class Result implements IResult
     public function getModifiedCount(): int
     {
         return $this->modifiedCount;
+    }
+
+    /**
+     * Get deleted record count
+     */
+    public function getDeletedCount(): int
+    {
+        return $this->deletedCount;
     }
 
     /**

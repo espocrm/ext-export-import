@@ -67,11 +67,18 @@ class Entity implements Processor
         $skipCount = 0;
         $createdCount = 0;
         $modifiedCount = 0;
+        $deletedCount = 0;
 
         $data->rewind();
 
         while (($initRow = $data->readRow()) !== null) {
             $totalCount++;
+
+            if (!$params->isUpdatedType() && !$params->isDeletedType()) {
+                $skipCount++;
+
+                continue;
+            }
 
             $entity = null;
 
@@ -124,30 +131,29 @@ class Entity implements Processor
                 continue;
             }
 
-            if (!$fromDate) {
-                $modifiedCount++;
-
-                $this->saveEntityData($params, $id, $diffData);
-
-                continue;
-            }
-
             if (
-                $this->util->isModified($entity, $fromDate) ||
-                $this->util->isModifiedInStream($entity, $fromDate) ||
-                $this->util->isModifiedInActionHistory($entity, $fromDate) ||
-                $this->util->isModifiedInWorkflowLog($entity, $fromDate)
+                $fromDate &&
+                (
+                    $this->util->isModified($entity, $fromDate) ||
+                    $this->util->isModifiedInStream($entity, $fromDate) ||
+                    $this->util->isModifiedInActionHistory($entity, $fromDate) ||
+                    $this->util->isModifiedInWorkflowLog($entity, $fromDate)
+                )
             ) {
                 $skipCount++;
 
-                $this->saveInfoData($params, $id, $row, $actualData, $diffData);
+                $this->saveInfoData($params, $id, $diffData, $actualData);
 
                 continue;
             }
 
-            $modifiedCount++;
+            if ($this->util->isDeleted($entity)) {
+                $deletedCount++;
+            } else {
+                $modifiedCount++;
+            }
 
-            $this->saveEntityData($params, $id, $diffData);
+            $this->saveEntityData($params, $id, $diffData, $actualData);
         }
 
         if ($fromDate && $params->isCreatedType()) {
@@ -160,7 +166,7 @@ class Entity implements Processor
 
                     $data = $this->exportUtil->getEntityData($params, $entity);
 
-                    $this->saveEntityData($params, $entity->getId(), $data);
+                    $this->saveEntityData($params, $entity->getId(), $data, []);
                 }
             }
         }
@@ -169,7 +175,8 @@ class Entity implements Processor
             ->withTotalCount($totalCount)
             ->withSkipCount($skipCount)
             ->withCreatedCount($createdCount)
-            ->withModifiedCount($modifiedCount);
+            ->withModifiedCount($modifiedCount)
+            ->withDeletedCount($deletedCount);
     }
 
     private function prepareData(Params $params, array $initRow): array
@@ -283,17 +290,20 @@ class Entity implements Processor
         return new DateTime($modifiedAt);
     }
 
-    private function saveEntityData(Params $params, string $id, array $diffData): void
-    {
+    private function saveEntityData(
+        Params $params,
+        string $id,
+        array $diffData,
+        array $actualData
+    ): void {
         // TODO: implement
     }
 
     private function saveInfoData(
         Params $params,
         string $id,
-        array $prevData,
-        array $actualData,
-        array $diffData
+        array $diffData,
+        array $actualData
     ): void {
         // TODO: implement
     }

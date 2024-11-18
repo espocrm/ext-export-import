@@ -235,4 +235,13 @@ class Util
 
         return true;
     }
+
+    public function isDeleted(Entity $entity): bool
+    {
+        if (!$entity->hasAttribute('deleted')) {
+            return false;
+        }
+
+        return $entity->get('deleted');
+    }
 }
