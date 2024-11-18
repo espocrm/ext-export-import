@@ -134,6 +134,10 @@ class Result implements IResult
             $message .= ", modified: " . $this->modifiedCount;
         }
 
+        if ($this->deletedCount) {
+            $message .= ", deleted: " . $this->deletedCount;
+        }
+
         if ($this->skipCount) {
             $message .= ", skipped: " . $this->skipCount;
         }
