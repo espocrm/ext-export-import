@@ -88,6 +88,8 @@ class Params
 
     private $path = null;
 
+    private ?string $resultPath;
+
     private $prettyPrint = false;
 
     private $manifestFile = null;
@@ -142,6 +144,26 @@ class Params
 
     private string $compareType;
 
+    /**
+     * Skip checking modifiedAt to find modified records
+     */
+    private bool $skipModifiedAt;
+
+    /**
+     * Skip checking stream messages to find modified records
+     */
+    private bool $skipStream;
+
+    /**
+     * Skip checking action history to find modified records
+     */
+    private bool $skipActionHistory;
+
+    /**
+     * Skip checking workflow log to find modified records
+     */
+    private bool $skipWorkflowLog;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -169,6 +191,7 @@ class Params
 
         $obj->action = $action;
         $obj->path = $params['path'] ?? null;
+        $obj->resultPath = $params['resultPath'] ?? null;
         $obj->manifestFile = $params['manifestFile'] ?? null;
         $obj->importType = $params['importType'] ?? self::IMPORT_TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
@@ -297,6 +320,22 @@ class Params
         }
 
         $obj->compareType = $compareType ?? self::COMPARE_TYPE_ALL;
+
+        $obj->skipModifiedAt = ToolUtils::normalizeBoolFromArray(
+            $params, 'skipModifiedAt'
+        );
+
+        $obj->skipStream = ToolUtils::normalizeBoolFromArray(
+            $params, 'skipStream'
+        );
+
+        $obj->skipActionHistory = ToolUtils::normalizeBoolFromArray(
+            $params, 'skipActionHistory'
+        );
+
+        $obj->skipWorkflowLog = ToolUtils::normalizeBoolFromArray(
+            $params, 'skipWorkflowLog'
+        );
 
         return $obj;
     }
@@ -714,6 +753,11 @@ class Params
         return $this->path;
     }
 
+    public function getResultPath(): ?string
+    {
+        return $this->resultPath ?? null;
+    }
+
     /**
      * Get skipData option
      */
@@ -949,5 +993,25 @@ class Params
     public function getCompareType(): string
     {
         return $this->compareType ?? self::COMPARE_TYPE_ALL;
+    }
+
+    public function getSkipModifiedAt(): bool
+    {
+        return $this->skipModifiedAt;
+    }
+
+    public function getSkipStream(): bool
+    {
+        return $this->skipStream;
+    }
+
+    public function getSkipActionHistory(): bool
+    {
+        return $this->skipActionHistory;
+    }
+
+    public function getSkipWorkflowLog(): bool
+    {
+        return $this->skipWorkflowLog;
     }
 }

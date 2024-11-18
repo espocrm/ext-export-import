@@ -68,6 +68,14 @@ class Params implements IParams
 
     private string $compareType;
 
+    private bool $skipModifiedAt;
+
+    private bool $skipStream;
+
+    private bool $skipActionHistory;
+
+    private bool $skipWorkflowLog;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -191,6 +199,42 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->fromDate = $fromDate;
+
+        return $obj;
+    }
+
+    public function withSkipModifiedAt(bool $skipModifiedAt): self
+    {
+        $obj = clone $this;
+
+        $obj->skipModifiedAt = $skipModifiedAt;
+
+        return $obj;
+    }
+
+    public function withSkipStream(bool $skipStream): self
+    {
+        $obj = clone $this;
+
+        $obj->skipStream = $skipStream;
+
+        return $obj;
+    }
+
+    public function withSkipActionHistory(bool $skipActionHistory): self
+    {
+        $obj = clone $this;
+
+        $obj->skipActionHistory = $skipActionHistory;
+
+        return $obj;
+    }
+
+    public function withSkipWorkflowLog(bool $skipWorkflowLog): self
+    {
+        $obj = clone $this;
+
+        $obj->skipWorkflowLog = $skipWorkflowLog;
 
         return $obj;
     }
@@ -374,5 +418,37 @@ class Params implements IParams
         }
 
         return false;
+    }
+
+    /**
+     * Is skip the modifiedAt attribute
+     */
+    public function getSkipModifiedAt(): bool
+    {
+        return $this->skipModifiedAt ?? false;
+    }
+
+    /**
+     * Is skip the modification message in stream
+     */
+    public function getSkipStream(): bool
+    {
+        return $this->skipStream ?? false;
+    }
+
+    /**
+     * Is skip the action history
+     */
+    public function getSkipActionHistory(): bool
+    {
+        return $this->skipActionHistory ?? false;
+    }
+
+    /**
+     * Is skip the workflow log
+     */
+    public function getSkipWorkflowLog(): bool
+    {
+        return $this->skipWorkflowLog ?? false;
     }
 }
