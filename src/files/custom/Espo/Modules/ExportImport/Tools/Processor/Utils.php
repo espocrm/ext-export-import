@@ -29,16 +29,13 @@
 
 namespace Espo\Modules\ExportImport\Tools\Processor;
 
-use Espo\{
-    Core\Utils\Util,
-    Core\Utils\Metadata,
-    Entities\User,
-};
-
-use Espo\Modules\ExportImport\Tools\{
-    Processor\Params,
-    Params as ToolParams,
-};
+use DateTime;
+use DateTimeZone;
+use Espo\Entities\User;
+use Espo\Core\Utils\Util;
+use Espo\Core\Utils\Metadata;
+use Espo\Modules\ExportImport\Tools\Processor\Params;
+use Espo\Modules\ExportImport\Tools\Params as ToolParams;
 
 class Utils
 {
@@ -221,6 +218,46 @@ class Utils
         return $value;
     }
 
+    /**
+     * Filter a list for a given entity type
+     * Ex.: ["name", "Account.description", "Contact.email"] for Account will be ["name", "description"]
+     */
+    public static function getListForEntity(
+        string $entityType,
+        ?array $allList
+    ): array {
+        if (!$allList) {
+            return [];
+        }
+
+        $list = [];
+
+        foreach ($allList as $item) {
+            if (strpos($item, '.') === false) {
+                $list[] = $item;
+
+                continue;
+            }
+
+            $slices = explode('.', $item);
+
+            $sliceEntityType = isset($slices[0]) ? trim($slices[0]) : null;
+            $sliceItem = isset($slices[1]) ? trim($slices[1]) : null;
+
+            if (!$sliceEntityType || !$sliceItem) {
+                continue;
+            }
+
+            if ($sliceEntityType != $entityType) {
+                continue;
+            }
+
+            $list[] = $sliceItem;
+        }
+
+        return $list;
+    }
+
     public static function normalizeBoolFromArray(
         array $data,
         string $optionName,
@@ -236,6 +273,26 @@ class Utils
         }
 
         return filter_var($data[$optionName], FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Normalize date
+     */
+    public static function normalizeDateTime(
+        $value,
+        $default = null,
+    ): ?DateTime {
+        if (!$value) {
+            return $default;
+        }
+
+        $date = new DateTime($value, new DateTimeZone('UTC'));
+
+        if (!$date) {
+            return $default;
+        }
+
+        return $date;
     }
 
     /**
