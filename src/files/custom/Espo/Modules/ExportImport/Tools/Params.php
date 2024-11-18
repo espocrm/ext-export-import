@@ -74,6 +74,10 @@ class Params
 
     public const COMPARE_TYPE_ALL = 'all';
 
+    public const LOG_LEVEL_INFO = 'info';
+
+    public const LOG_LEVEL_DEBUG = 'debug';
+
     private string $action;
 
     private $format = null;
@@ -164,6 +168,8 @@ class Params
      */
     private bool $skipWorkflowLog;
 
+    private ?string $logLevel = null;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -200,6 +206,7 @@ class Params
         $obj->skipPassword = $params['skipPassword'] ?? false;
         $obj->skipInternalConfig = $params['skipInternalConfig'] ?? false;
         $obj->userActive = $obj->normalizeUserActive($params);
+        $obj->logLevel = $obj->normalizeLogLevel($params);
 
         if (!in_array(
             $obj->importType,
@@ -392,6 +399,23 @@ class Params
 
         if ($isDeactivate) {
             return false;
+        }
+
+        return null;
+    }
+
+    private function normalizeLogLevel(array $params): ?string
+    {
+        $info = $params['info'] ?? null;
+
+        if ($info) {
+            return self::LOG_LEVEL_INFO;
+        }
+
+        $debug = $params['debug'] ?? null;
+
+        if ($debug) {
+            return self::LOG_LEVEL_DEBUG;
         }
 
         return null;
@@ -713,6 +737,15 @@ class Params
         return $obj;
     }
 
+    public function withLogLevel(?string $logLevel): self
+    {
+        $obj = clone $this;
+
+        $obj->logLevel = $logLevel;
+
+        return $obj;
+    }
+
     /**
      * Get exportImport defs
      */
@@ -1013,5 +1046,10 @@ class Params
     public function getSkipWorkflowLog(): bool
     {
         return $this->skipWorkflowLog;
+    }
+
+    public function getLogLevel(): ?string
+    {
+        return $this->logLevel;
     }
 }
