@@ -136,18 +136,7 @@ class EntityExport
                 $processor->loadAdditionalFields($entity, $fieldList);
             }
 
-            $row = [];
-
-            foreach ($attributeList as $attribute) {
-                $value = $this->util->getAttributeValue($params, $entity, $attribute);
-
-                if ($this->skipValue($params, $entity, $attribute, $value)) {
-
-                    continue;
-                }
-
-                $row[$attribute] = $value;
-            }
+            $row = $this->util->getEntityData($params, $entity, $attributeList);
 
             $processHook = $params->getProcessHookClass();
 
@@ -317,28 +306,5 @@ class EntityExport
         }
 
         return array_values($fieldList);
-    }
-
-    protected function skipValue(
-        Params $params,
-        Entity $entity,
-        string $attribute,
-        $value
-    ): bool {
-        $type = $entity->getAttributeType($attribute);
-
-        switch ($type) {
-
-            case Entity::BOOL:
-            case Entity::TEXT:
-            case Entity::VARCHAR:
-            case Entity::FOREIGN_ID:
-                if (!$params->getAllAttributes() && $value === null) {
-                    return true;
-                }
-                break;
-        }
-
-        return false;
     }
 }

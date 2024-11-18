@@ -34,6 +34,7 @@ use Espo\ORM\BaseEntity;
 use Espo\Core\Utils\Json;
 use Espo\ORM\EntityManager;
 use Espo\Modules\ExportImport\Tools\Processor\Params;
+use Espo\Modules\ExportImport\Tools\Export\Params as ExportParams;
 
 class Util
 {
@@ -41,7 +42,27 @@ class Util
         private EntityManager $entityManager
     ) {}
 
-    protected function getAttributeValue(
+    public function getEntityData(
+        Params $params,
+        Entity $entity,
+        array $attributeList
+    ) {
+        $data = [];
+
+        foreach ($attributeList as $attribute) {
+            $value = $this->getAttributeValue($params, $entity, $attribute);
+
+            if ($this->isSkipValue($params, $entity, $attribute, $value)) {
+                continue;
+            }
+
+            $data[$attribute] = $value;
+        }
+
+        return $data;
+    }
+
+    public function getAttributeValue(
         Params $params,
         Entity $entity,
         string $attributeName
@@ -95,6 +116,30 @@ class Util
         }
 
         return $entity->get($attributeName);
+    }
+
+    private function isSkipValue(
+        Params $params,
+        Entity $entity,
+        string $attribute,
+        $value
+    ): bool {
+        /** @var ExportParams $params */
+
+        $type = $entity->getAttributeType($attribute);
+
+        switch ($type) {
+            case Entity::BOOL:
+            case Entity::TEXT:
+            case Entity::VARCHAR:
+            case Entity::FOREIGN_ID:
+                if (!$params->getAllAttributes() && $value === null) {
+                    return true;
+                }
+                break;
+        }
+
+        return false;
     }
 
     private function getForeignAttributeType(Entity $entity, string $attribute): ?string
