@@ -134,10 +134,10 @@ class Entity implements Processor
             if (
                 $fromDate &&
                 (
-                    $this->util->isModified($entity, $fromDate) ||
-                    $this->util->isModifiedInStream($entity, $fromDate) ||
-                    $this->util->isModifiedInActionHistory($entity, $fromDate) ||
-                    $this->util->isModifiedInWorkflowLog($entity, $fromDate)
+                    $this->util->isModified($params, $entity, $fromDate) ||
+                    $this->util->isModifiedInStream($params, $entity, $fromDate) ||
+                    $this->util->isModifiedInActionHistory($params, $entity, $fromDate) ||
+                    $this->util->isModifiedInWorkflowLog($params, $entity, $fromDate)
                 )
             ) {
                 $skipCount++;

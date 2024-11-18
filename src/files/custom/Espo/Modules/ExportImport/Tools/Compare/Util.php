@@ -132,8 +132,15 @@ class Util
     /**
      * Check if entity was modified by modifiedAt attribute
      */
-    public function isModified(Entity $entity, DateTime $fromDate): bool
-    {
+    public function isModified(
+        Params $params,
+        Entity $entity,
+        DateTime $fromDate
+    ): bool {
+        if ($params->getSkipModifiedAt()) {
+            return false;
+        }
+
         if (!$entity->hasAttribute('modifiedAt')) {
             return false;
         }
@@ -156,8 +163,15 @@ class Util
     /**
      * Check if an entity has a modified note in stream
      */
-    public function isModifiedInStream(Entity $entity, DateTime $fromDate): bool
-    {
+    public function isModifiedInStream(
+        Params $params,
+        Entity $entity,
+        DateTime $fromDate
+    ): bool {
+        if ($params->getSkipStream()) {
+            return false;
+        }
+
         $last = $this->entityManager
             ->getRDBRepository(Note::ENTITY_TYPE)
             ->where([
@@ -183,8 +197,15 @@ class Util
     /**
      * Check if an entity was modified in action history
      */
-    public function isModifiedInActionHistory(Entity $entity, DateTime $fromDate): bool
-    {
+    public function isModifiedInActionHistory(
+        Params $params,
+        Entity $entity,
+        DateTime $fromDate
+    ): bool {
+        if ($params->getSkipActionHistory()) {
+            return false;
+        }
+
         $last = $this->entityManager
             ->getRDBRepository(ActionHistoryRecord::ENTITY_TYPE)
             ->where([
@@ -210,8 +231,15 @@ class Util
     /**
      * Check if an entity was modified in a workflow log
      */
-    public function isModifiedInWorkflowLog(Entity $entity, DateTime $fromDate): bool
-    {
+    public function isModifiedInWorkflowLog(
+        Params $params,
+        Entity $entity,
+        DateTime $fromDate
+    ): bool {
+        if ($params->getSkipWorkflowLog()) {
+            return false;
+        }
+
         $entityDefs = $this->entityManager->getDefs();
 
         if (!$entityDefs->hasEntity(self::ENTITY_WORKFLOW_LOG)) {
