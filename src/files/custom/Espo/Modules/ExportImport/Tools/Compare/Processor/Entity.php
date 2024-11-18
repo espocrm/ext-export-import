@@ -29,15 +29,18 @@
 
 namespace Espo\Modules\ExportImport\Tools\Compare\Processor;
 
+use DateTime;
 use Espo\Core\Utils\Log;
 use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\InjectableFactory;
+use Espo\Modules\ExportImport\Tools\Compare\Util;
 use Espo\Modules\ExportImport\Tools\Compare\Params;
 use Espo\Modules\ExportImport\Tools\Compare\Result;
 use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\Compare\Processor;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
+use Espo\Modules\ExportImport\Tools\Export\Util as ExportUtil;
 use Espo\Modules\ExportImport\Tools\Import\Helpers\Id as IdHelper;
 use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
 
@@ -45,35 +48,52 @@ class Entity implements Processor
 {
     public function __construct(
         private Log $log,
+        private Util $util,
         private Metadata $metadata,
         private EntityTool $entityTool,
         private EntityManager $entityManager,
         private InjectableFactory $injectableFactory,
-        private IdHelper $idHelper
+        private IdHelper $idHelper,
+        private ExportUtil $exportUtil
     ) {}
 
     public function process(Params $params, Data $data): Result
     {
-        $data->rewind();
-
         $entityType = $params->getEntityType();
 
+        $fromDate = $this->getFromDate($params, $data);
+
+        $totalCount = 0;
         $skipCount = 0;
-        $failCount = 0;
-        $successCount = 0;
+        $createdCount = 0;
+        $modifiedCount = 0;
+
+        $data->rewind();
 
         while (($initRow = $data->readRow()) !== null) {
+            $totalCount++;
+
+            $entity = null;
+
             $row = $this->prepareData($params, $initRow);
 
             $id = $this->idHelper->getEntityId($params, $row);
 
             if (!$id) {
+                $skipCount++;
+
                 continue;
             }
 
             $entity = $this->entityManager->getEntityById($entityType, $id);
 
             if (!$entity) {
+                $entity = $this->idHelper->getDeletedEntityById($entityType, $id);
+            }
+
+            if (!$entity) {
+                $skipCount++;
+
                 continue;
             }
 
@@ -94,31 +114,88 @@ class Entity implements Processor
                 }
             }
 
-            // TODO: code
+            $actualData = $this->util->getActualData($params, $entity, array_keys($row));
+
+            $diffData = $this->util->getDiffData($row, $actualData);
+
+            if (empty($diffData)) {
+                $skipCount++;
+
+                continue;
+            }
+
+            if (!$fromDate) {
+                $modifiedCount++;
+
+                $this->saveEntityData($params, $id, $diffData);
+
+                continue;
+            }
+
+            if (
+                $this->util->isModified($entity, $fromDate) ||
+                $this->util->isModifiedInStream($entity, $fromDate) ||
+                $this->util->isModifiedInActionHistory($entity, $fromDate) ||
+                $this->util->isModifiedInWorkflowLog($entity, $fromDate)
+            ) {
+                $skipCount++;
+
+                $this->saveInfoData($params, $id, $row, $actualData, $diffData);
+
+                continue;
+            }
+
+            $modifiedCount++;
+
+            $this->saveEntityData($params, $id, $diffData);
+        }
+
+        if ($fromDate && $params->isCreatedType()) {
+            $collection = $this->util->getCreatedCollection($params, $fromDate);
+
+            if ($collection) {
+                foreach ($collection as $entity) {
+                    $totalCount++;
+                    $createdCount++;
+
+                    $data = $this->exportUtil->getEntityData($params, $entity);
+
+                    $this->saveEntityData($params, $entity->getId(), $data);
+                }
+            }
         }
 
         return Result::create($entityType)
+            ->withTotalCount($totalCount)
             ->withSkipCount($skipCount)
-            ->withFailCount($failCount)
-            ->withSuccessCount($successCount);
+            ->withCreatedCount($createdCount)
+            ->withModifiedCount($modifiedCount);
     }
 
     private function prepareData(Params $params, array $initRow): array
     {
-        $attributeList = $this->entityManager
+        $entityType = $params->getEntityType();
+
+        $entityDefs = $this->entityManager
             ->getDefs()
-            ->getEntity($params->getEntityType())
-            ->getAttributeNameList();
+            ->getEntity($entityType);
 
-        $row = $initRow;
+        $row = [];
 
-        foreach ($row as $attributeName => $attributeValue) {
-
-            if (!in_array($attributeName, $attributeList)) {
-                unset($row[$attributeName]);
-
+        foreach ($initRow as $attributeName => $attributeValue) {
+            if (!$entityDefs->hasAttribute($attributeName)) {
                 continue;
             }
+
+            if ($entityDefs->getAttribute($attributeName)->isNotStorable()) {
+                continue;
+            }
+
+            if ($params->isAttributeSkipped($attributeName)) {
+                continue;
+            }
+
+            $row[$attributeName] = $attributeValue;
 
             $this->processAttribute($params, $row, $attributeName);
         }
@@ -148,5 +225,76 @@ class Entity implements Processor
         $this->injectableFactory
             ->create($className)
             ?->process($params, $row, $attributeName);
+    }
+
+    /**
+     * Get last modified datetime from initial data.
+     * This value is used as the start date for comparison.
+     */
+    private function getFromDate(Params $params, Data $data): ?DateTime
+    {
+        if ($params->getFromDate()) {
+            return $params->getFromDate();
+        }
+
+        $lastModifiedAt = null;
+
+        $data->rewind();
+
+        while (($initRow = $data->readRow()) !== null) {
+            $row = $this->prepareData($params, $initRow);
+
+            $lastModifiedAt = $this->getLastModifiedAt($lastModifiedAt, $row);
+        }
+
+        return $lastModifiedAt;
+    }
+
+    /**
+     * Compare and get last modified datetime
+     */
+    private function getLastModifiedAt(?DateTime $lastModifiedAt, array $row): ?DateTime
+    {
+        $modifiedAt = $this->getModifiedAt($row);
+
+        if (!$modifiedAt) {
+            return $lastModifiedAt;
+        }
+
+        if (!$lastModifiedAt) {
+            return $modifiedAt;
+        }
+
+        if ($modifiedAt > $lastModifiedAt) {
+            return $modifiedAt;
+        }
+
+        return $lastModifiedAt;
+    }
+
+    private function getModifiedAt(array $row): ?DateTime
+    {
+        $modifiedAt = $row['modifiedAt'] ?? null;
+
+        if (!$modifiedAt) {
+            return null;
+        }
+
+        return new DateTime($modifiedAt);
+    }
+
+    private function saveEntityData(Params $params, string $id, array $diffData): void
+    {
+        // TODO: implement
+    }
+
+    private function saveInfoData(
+        Params $params,
+        string $id,
+        array $prevData,
+        array $actualData,
+        array $diffData
+    ): void {
+        // TODO: implement
     }
 }

@@ -33,13 +33,17 @@ use Espo\Modules\ExportImport\Tools\Processor\Result as IResult;
 
 class Result implements IResult
 {
-    private $entityType;
+    private string $entityType;
 
-    private $successCount = 0;
+    private int $totalCount = 0;
 
-    private $failCount = 0;
+    private int $createdCount = 0;
 
-    private $skipCount = 0;
+    private int $modifiedCount = 0;
+
+    private int $skipCount = 0;
+
+    private string $resultPath;
 
     private ?array $warningList = null;
 
@@ -53,20 +57,29 @@ class Result implements IResult
         return new self($entityType);
     }
 
-    public function withSuccessCount(int $count): self
+    public function withCreatedCount(int $count): self
     {
         $obj = clone $this;
 
-        $obj->successCount = $count;
+        $obj->createdCount = $count;
 
         return $obj;
     }
 
-    public function withFailCount(int $count): self
+    public function withModifiedCount(int $count): self
     {
         $obj = clone $this;
 
-        $obj->failCount = $count;
+        $obj->modifiedCount = $count;
+
+        return $obj;
+    }
+
+    public function withTotalCount(int $count): self
+    {
+        $obj = clone $this;
+
+        $obj->totalCount = $count;
 
         return $obj;
     }
@@ -89,16 +102,29 @@ class Result implements IResult
         return $obj;
     }
 
+    public function withResultPath(string $path): self
+    {
+        $obj = clone $this;
+
+        $obj->resultPath = $path;
+
+        return $obj;
+    }
+
     public function getMessage(): ?string
     {
-        $message = "  Total: " . $this->successCount;
+        $message = "  Total: " . $this->totalCount;
+
+        if ($this->createdCount) {
+            $message .= ", created: " . $this->createdCount;
+        }
+
+        if ($this->modifiedCount) {
+            $message .= ", modified: " . $this->modifiedCount;
+        }
 
         if ($this->skipCount) {
             $message .= ", skipped: " . $this->skipCount;
-        }
-
-        if ($this->failCount) {
-            $message .= ", failed: " . $this->failCount;
         }
 
         return $message;
@@ -106,7 +132,7 @@ class Result implements IResult
 
     public function getGlobalMessage(): ?string
     {
-        return null;
+        return "Files saved at \"" . $this->resultPath . "\".";
     }
 
     /**
@@ -117,20 +143,25 @@ class Result implements IResult
         return $this->entityType;
     }
 
-    /**
-     * Get record count
-     */
-    public function getSuccessCount(): int
+    public function getCreatedCount(): int
     {
-        return $this->successCount;
+        return $this->createdCount;
     }
 
     /**
-     * Get record count
+     * Get modified record count
      */
-    public function getFailCount(): int
+    public function getModifiedCount(): int
     {
-        return $this->failCount;
+        return $this->modifiedCount;
+    }
+
+    /**
+     * Get total record count
+     */
+    public function getTotalCount(): int
+    {
+        return $this->totalCount;
     }
 
     /**
@@ -144,5 +175,10 @@ class Result implements IResult
     public function getWarningList(): ?array
     {
         return !empty($this-> warningList) ? $this-> warningList : null;
+    }
+
+    public function getResultPath(): ?string
+    {
+        return $this->resultPath;
     }
 }

@@ -29,8 +29,10 @@
 
 namespace Espo\Modules\ExportImport\Tools\Compare;
 
+use DateTime;
 use Espo\Core\Utils\Util;
 use Espo\Modules\ExportImport\Tools\Manifest;
+use Espo\Modules\ExportImport\Tools\Params as ToolParams;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 use Espo\Modules\ExportImport\Tools\Processor\Params as IParams;
 
@@ -59,6 +61,12 @@ class Params implements IParams
     private ?array $userSkipList;
 
     private array $idMap = [];
+
+    private ?array $skipAttributeList;
+
+    private ?DateTime $fromDate;
+
+    private string $compareType;
 
     public function __construct(string $entityType)
     {
@@ -151,11 +159,38 @@ class Params implements IParams
         return $obj;
     }
 
+    public function withCompareType(string $compareType): self
+    {
+        $obj = clone $this;
+
+        $obj->compareType = $compareType;
+
+        return $obj;
+    }
+
     public function withIdMap(array $idMap): self
     {
         $obj = clone $this;
 
         $obj->idMap = $idMap;
+
+        return $obj;
+    }
+
+    public function withSkipAttributeList(array $skipAttributeList): self
+    {
+        $obj = clone $this;
+
+        $obj->skipAttributeList = $skipAttributeList;
+
+        return $obj;
+    }
+
+    public function withFromDate(?DateTime $fromDate): self
+    {
+        $obj = clone $this;
+
+        $obj->fromDate = $fromDate;
 
         return $obj;
     }
@@ -262,5 +297,82 @@ class Params implements IParams
     public function getIdMap(): array
     {
         return $this->idMap;
+    }
+
+    /**
+     * Get a skip attribute list
+     */
+    public function getSkipAttributeList(): array
+    {
+        return $this->skipAttributeList;
+    }
+
+    /**
+     * Check if an attribute is skipped
+     */
+    public function isAttributeSkipped(string $attributeName): bool
+    {
+        return in_array($attributeName, $this->skipAttributeList);
+    }
+
+    /**
+     * Get from date
+     */
+    public function getFromDate(): ?DateTime
+    {
+        return $this->fromDate;
+    }
+
+    /**
+     * Get compare type
+     */
+    public function getCompareType(): string
+    {
+        return $this->compareType;
+    }
+
+    /**
+     * Check if a compare type is "created"
+     */
+    public function isCreatedType(): bool
+    {
+        if (in_array($this->compareType, [
+            ToolParams::COMPARE_TYPE_ALL,
+            ToolParams::COMPARE_TYPE_CREATED
+        ])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a compare type is "updated"
+     */
+    public function isUpdatedType(): bool
+    {
+        if (in_array($this->compareType, [
+            ToolParams::COMPARE_TYPE_ALL,
+            ToolParams::COMPARE_TYPE_UPDATED
+        ])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a compare type is "deleted"
+     */
+    public function isDeletedType(): bool
+    {
+        if (in_array($this->compareType, [
+            ToolParams::COMPARE_TYPE_ALL,
+            ToolParams::COMPARE_TYPE_DELETED
+        ])) {
+            return true;
+        }
+
+        return false;
     }
 }
