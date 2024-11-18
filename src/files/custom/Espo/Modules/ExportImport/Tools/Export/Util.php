@@ -45,8 +45,15 @@ class Util
     public function getEntityData(
         Params $params,
         Entity $entity,
-        array $attributeList
+        ?array $attributeList = null
     ) {
+        $attributeList = $attributeList
+            ? $attributeList
+            : $this->entityManager
+                ->getDefs()
+                ->getEntity($params->getEntityType())
+                ->getAttributeNameList();
+
         $data = [];
 
         foreach ($attributeList as $attribute) {
