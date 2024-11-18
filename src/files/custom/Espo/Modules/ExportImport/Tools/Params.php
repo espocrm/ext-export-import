@@ -66,6 +66,14 @@ class Params
 
     public const STORAGE_PATH = 'data/upload';
 
+    public const COMPARE_TYPE_CREATED = 'created';
+
+    public const COMPARE_TYPE_UPDATED = 'updated';
+
+    public const COMPARE_TYPE_DELETED = 'deleted';
+
+    public const COMPARE_TYPE_ALL = 'all';
+
     private string $action;
 
     private $format = null;
@@ -131,6 +139,8 @@ class Params
     private ?array $entityImportTypeCreateAndUpdate;
 
     private bool $allAttributes;
+
+    private string $compareType;
 
     public function __construct(string $format)
     {
@@ -271,6 +281,22 @@ class Params
         $obj->allAttributes = ToolUtils::normalizeBoolFromArray(
             $params, 'allAttributes'
         );
+
+        $compareType = $params['compareType'] ?? null;
+
+        if ($compareType && !in_array(
+            $compareType,
+            [
+                self::COMPARE_TYPE_ALL,
+                self::COMPARE_TYPE_CREATED,
+                self::COMPARE_TYPE_UPDATED,
+                self::COMPARE_TYPE_DELETED,
+            ]
+        )) {
+            throw new RuntimeException('Incorrect "compareType" option.');
+        }
+
+        $obj->compareType = $compareType ?? self::COMPARE_TYPE_ALL;
 
         return $obj;
     }
@@ -625,6 +651,30 @@ class Params
     }
 
     /**
+     * @throws RuntimeException
+     */
+    public function withCompareType(string $compareType): self
+    {
+        if (!in_array(
+            $compareType,
+            [
+                self::COMPARE_TYPE_ALL,
+                self::COMPARE_TYPE_CREATED,
+                self::COMPARE_TYPE_UPDATED,
+                self::COMPARE_TYPE_DELETED,
+            ]
+        )) {
+            throw new RuntimeException('Incorrect "compareType" option.');
+        }
+
+        $obj = clone $this;
+
+        $obj->compareType = $compareType;
+
+        return $obj;
+    }
+
+    /**
      * Get exportImport defs
      */
     public function getExportImportDefs(): array
@@ -894,5 +944,10 @@ class Params
     public function getAllAttributes(): bool
     {
         return $this->allAttributes;
+    }
+
+    public function getCompareType(): string
+    {
+        return $this->compareType ?? self::COMPARE_TYPE_ALL;
     }
 }
