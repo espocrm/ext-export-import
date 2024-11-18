@@ -170,6 +170,10 @@ class Params
 
     private ?string $logLevel = null;
 
+    private ?DateTime $fromDate;
+
+    private ?array $skipAttributeList;
+
     public function __construct(string $format)
     {
         $this->format = $format;
@@ -197,7 +201,7 @@ class Params
 
         $obj->action = $action;
         $obj->path = $params['path'] ?? null;
-        $obj->resultPath = $params['resultPath'] ?? null;
+        $obj->resultPath = $params['resultPath'] ?? $params['default']['resultPath'] ?? null;
         $obj->manifestFile = $params['manifestFile'] ?? null;
         $obj->importType = $params['importType'] ?? self::IMPORT_TYPE_CREATE_AND_UPDATE;
         $obj->exportImportDefs = $obj->normalizeExportImportDefs($params);
@@ -342,6 +346,14 @@ class Params
 
         $obj->skipWorkflowLog = ToolUtils::normalizeBoolFromArray(
             $params, 'skipWorkflowLog'
+        );
+
+        $obj->fromDate = ToolUtils::normalizeDateTime(
+            $params['fromDate'] ?? null
+        );
+
+        $obj->skipAttributeList = ToolUtils::normalizeList(
+            $params['skipAttributeList'] ?? null
         );
 
         return $obj;
@@ -1051,5 +1063,15 @@ class Params
     public function getLogLevel(): ?string
     {
         return $this->logLevel;
+    }
+
+    public function getFromDate(): ?DateTime
+    {
+        return $this->fromDate;
+    }
+
+    public function getSkipAttributeList(): ?array
+    {
+        return $this->skipAttributeList;
     }
 }
