@@ -67,8 +67,7 @@ class Entity implements Processor
     public function process(Params $params, Data $data): Result
     {
         $entityType = $params->getEntityType();
-
-        $fromDate = $this->getFromDate($params, $data);
+        $fromDate = $params->getFromDate();
 
         $fpChangedPrev = fopen('php://temp', 'w');
         $fpChangedActual = fopen('php://temp', 'w');
@@ -174,8 +173,10 @@ class Entity implements Processor
             $this->writeData($fpChangedActual, $id, $actualData);
         }
 
-        if ($fromDate && $params->isCreatedType()) {
-            $collection = $this->util->getCreatedCollection($params, $fromDate);
+        $determinedFromDate = $this->getDeterminedFromDate($params, $data);
+
+        if ($determinedFromDate && $params->isCreatedType()) {
+            $collection = $this->util->getCreatedCollection($params, $determinedFromDate);
 
             if ($collection) {
                 foreach ($collection as $entity) {
@@ -191,8 +192,11 @@ class Entity implements Processor
 
         $this->exportToFile($params, $fpChangedPrev, $params->getChangedPrevPath());
         $this->exportToFile($params, $fpChangedActual, $params->getChangedActualPath());
-        $this->exportToFile($params, $fpSkippedPrev, $params->getSkippedPrevPath());
-        $this->exportToFile($params, $fpSkippedActual, $params->getSkippedActualPath());
+
+        if ($params->isInfoLevel()) {
+            $this->exportToFile($params, $fpSkippedPrev, $params->getSkippedPrevPath());
+            $this->exportToFile($params, $fpSkippedActual, $params->getSkippedActualPath());
+        }
 
         fclose($fpChangedPrev);
         fclose($fpChangedActual);
@@ -267,7 +271,7 @@ class Entity implements Processor
      * Get last modified datetime from initial data.
      * This value is used as the start date for comparison.
      */
-    private function getFromDate(Params $params, Data $data): ?DateTime
+    private function getDeterminedFromDate(Params $params, Data $data): ?DateTime
     {
         if ($params->getFromDate()) {
             return $params->getFromDate();

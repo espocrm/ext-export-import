@@ -36,6 +36,7 @@ use Espo\Core\Exceptions\Error;
 use Espo\Core\InjectableFactory;
 use Espo\Entities\User as UserEntity;
 use Espo\Modules\ExportImport\Tools\Params;
+use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Entities\Preferences as PreferencesEntity;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 use Espo\Modules\ExportImport\Tools\Manifest\ManifestWriter;
@@ -57,13 +58,15 @@ class Compare implements Tool
         private EntityTool $entityTool,
         private EntityTypeHelper $entityTypeHelper,
         private InjectableFactory $injectableFactory,
-        private IdMappingTool $idMappingTool
+        private IdMappingTool $idMappingTool,
+        private FileManager $fileManager
     ) {}
 
     public function run(Params $params) : void
     {
         $format = $params->getFormat() ?? null;
         $path = $params->getPath() ?? null;
+        $resultPath = $params->getResultPath() ?? null;
 
         if (!$format) {
             throw new Error('Option "format" is not defined.');
@@ -73,9 +76,15 @@ class Compare implements Tool
             throw new Error('Path is not defined.');
         }
 
+        if (!$resultPath) {
+            throw new Error('Result path is not defined.');
+        }
+
         if (!file_exists($path)) {
             throw new Error("Path \"{$path}\" does not exist.");
         }
+
+        $this->clearResultDir($resultPath);
 
         $manifest = $this->injectableFactory->createWith(Manifest::class, [
             'params' => $params,
@@ -103,6 +112,19 @@ class Compare implements Tool
     private function getEntityTypeList(Params $params): array
     {
         return $this->entityTypeHelper->getNormalizedList($params);
+    }
+
+    private function clearResultDir(string $path): void
+    {
+        if (!file_exists($path)) {
+            return;
+        }
+
+        if (!is_dir($path)) {
+            throw new Error("Result path \"{$path}\" is not a directory.");
+        }
+
+        $this->fileManager->removeInDir($path);
     }
 
     private function processData(Params $params, Manifest $manifest): void
@@ -176,6 +198,7 @@ class Compare implements Tool
             'skipWorkflowLog' => $params->getSkipWorkflowLog(),
             'logLevel' => $params->getLogLevel(),
             'allAttributes' => $params->getAllAttributes(),
+            'prettyPrint' => $params->getPrettyPrint(),
             'skipAttributeList' => ProcessorUtils::getListForEntity(
                 $entityType,
                 $params->getSkipAttributeList()
@@ -225,6 +248,11 @@ class Compare implements Tool
 
         $this->createManifestForPath($params, $compareParams->getChangedPrevPath());
         $this->createManifestForPath($params, $compareParams->getChangedActualPath());
+
+        if ($params->getLogLevel() != Params::LOG_LEVEL_INFO) {
+            return;
+        }
+
         $this->createManifestForPath($params, $compareParams->getSkippedPrevPath());
         $this->createManifestForPath($params, $compareParams->getSkippedActualPath());
     }
