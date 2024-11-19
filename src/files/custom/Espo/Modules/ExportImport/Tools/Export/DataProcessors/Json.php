@@ -76,6 +76,8 @@ class Json implements Processor
     {
         $fp = fopen('php://temp', 'w');
 
+        $data->rewind();
+
         if ($data->isEmpty()) {
             return new Stream($fp);
         }

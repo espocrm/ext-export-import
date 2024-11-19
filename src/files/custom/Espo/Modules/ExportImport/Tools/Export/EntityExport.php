@@ -155,8 +155,6 @@ class EntityExport
             $successCount++;
         }
 
-        rewind($dataResource);
-
         $processorData = new ProcessorData($dataResource);
 
         $stream = $processor->process($params, $processorData);
