@@ -34,12 +34,14 @@ use Espo\Core\Utils\Log;
 use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\InjectableFactory;
+use Espo\Core\Utils\Util as CoreUtil;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\ExportImport\Tools\Compare\Util;
 use Espo\Modules\ExportImport\Tools\Compare\Params;
 use Espo\Modules\ExportImport\Tools\Compare\Result;
 use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\Compare\Processor;
+use Espo\Modules\ExportImport\Tools\Params as ToolParams;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
 use Espo\Modules\ExportImport\Tools\Export\Util as ExportUtil;
 use Espo\Modules\ExportImport\Tools\Export\Params as ExportParams;
@@ -296,8 +298,10 @@ class Entity implements Processor
         fwrite($fp, $line);
     }
 
-    private function exportToFile(Params $params, $fp, string $filePath): void
+    private function exportToFile(Params $params, $fp, string $path): void
     {
+        $basePath = CoreUtil::concatPath($path, ToolParams::PATH_ENTITIES);
+
         $processor = $this->exportProcessorFactory->create($params->getFormat());
 
         $fileExtension = $this->metadata->get([
@@ -308,9 +312,8 @@ class Entity implements Processor
 
         $exportParams = ExportParams::create($params->getEntityType())
             ->withFormat($params->getFormat())
-            ->withPath($filePath)
             ->withFileExtension($fileExtension)
-            ->withEntitiesPath($params->getEntitiesPath())
+            ->withEntitiesPath($basePath)
             ->withPrettyPrint($params->getPrettyPrint());
 
         $stream = $processor->process($exportParams, $dataObj);

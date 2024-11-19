@@ -89,6 +89,8 @@ class Params implements IParams
 
     private bool $prettyPrint;
 
+    private bool $allAttributes;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -103,6 +105,8 @@ class Params implements IParams
     {
         $format = $params['format'] ?? null;
         $entityType = $params['entityType'] ?? null;
+        $path = $params['path'] ?? null;
+        $resultPath = $params['resultPath'] ?? null;
 
         if (!$format) {
             throw new RuntimeException('Option "format" is not defined.');
@@ -112,11 +116,15 @@ class Params implements IParams
             throw new RuntimeException('Option "entityType" is not defined.');
         }
 
+        if ($path === $resultPath) {
+            throw new RuntimeException('Option "resultPath" should be different from "path".');
+        }
+
         $obj = new self($entityType);
 
         $obj->format = $format;
-        $obj->path = $params['path'] ?? null;
-        $obj->resultPath = $params['resultPath'] ?? null;
+        $obj->path = $path;
+        $obj->resultPath = $resultPath;
         $obj->exportImportDefs = $params['exportImportDefs'] ?? null;
         $obj->manifest = $params['manifest'] ?? null;
         $obj->processHookClass = $params['processHookClass'] ?? null;
@@ -134,6 +142,196 @@ class Params implements IParams
         $obj->skipWorkflowLog = $params['skipWorkflowLog'] ?? false;
         $obj->logLevel = $params['logLevel'] ?? null;
         $obj->prettyPrint = $params['prettyPrint'] ?? false;
+        $obj->allAttributes = $params['allAttributes'] ?? false;
+
+        return $obj;
+    }
+
+    public function withFormat(string $format): self
+    {
+        $obj = clone $this;
+
+        $obj->format = $format;
+
+        return $obj;
+    }
+
+    public function withPath(string $path): self
+    {
+        $obj = clone $this;
+
+        $obj->path = $path;
+
+        return $obj;
+    }
+
+    public function withResultPath(string $path): self
+    {
+        $obj = clone $this;
+
+        $obj->resultPath = $path;
+
+        return $obj;
+    }
+
+    public function withEntitiesPath(string $path): self
+    {
+        $obj = clone $this;
+
+        $obj->entitiesPath = $path;
+
+        return $obj;
+    }
+
+    public function withFilesPath(string $path): self
+    {
+        $obj = clone $this;
+
+        $obj->filesPath = $path;
+
+        return $obj;
+    }
+
+    public function withManifest(Manifest $manifest): self
+    {
+        $obj = clone $this;
+
+        $obj->manifest = $manifest;
+
+        return $obj;
+    }
+
+    public function withProcessHookClass(ProcessHook $processHookClass): self
+    {
+        $obj = clone $this;
+
+        $obj->processHookClass = $processHookClass;
+
+        return $obj;
+    }
+
+    public function withExportImportDefs(array $exportImportDefs): self
+    {
+        $obj = clone $this;
+
+        $obj->exportImportDefs = $exportImportDefs;
+
+        return $obj;
+    }
+
+    public function withUserSkipList(array $userSkipList): self
+    {
+        $obj = clone $this;
+
+        $obj->userSkipList = $userSkipList;
+
+        return $obj;
+    }
+
+    public function withIdMap(array $idMap): self
+    {
+        $obj = clone $this;
+
+        $obj->idMap = $idMap;
+
+        return $obj;
+    }
+
+    public function withSkipAttributeList(array $skipAttributeList): self
+    {
+        $obj = clone $this;
+
+        $obj->skipAttributeList = $skipAttributeList;
+
+        return $obj;
+    }
+
+    public function withSkipModifiedAt(bool $skipModifiedAt): self
+    {
+        $obj = clone $this;
+
+        $obj->skipModifiedAt = $skipModifiedAt;
+
+        return $obj;
+    }
+
+    public function withSkipStream(bool $skipStream): self
+    {
+        $obj = clone $this;
+
+        $obj->skipStream = $skipStream;
+
+        return $obj;
+    }
+
+    public function withSkipActionHistory(bool $skipActionHistory): self
+    {
+        $obj = clone $this;
+
+        $obj->skipActionHistory = $skipActionHistory;
+
+        return $obj;
+    }
+
+    public function withSkipWorkflowLog(bool $skipWorkflowLog): self
+    {
+        $obj = clone $this;
+
+        $obj->skipWorkflowLog = $skipWorkflowLog;
+
+        return $obj;
+    }
+
+    public function withLogLevel(?string $logLevel): self
+    {
+        $obj = clone $this;
+
+        $obj->logLevel = $logLevel;
+
+        return $obj;
+    }
+
+    public function withPrettyPrint(bool $prettyPrint): self
+    {
+        $obj = clone $this;
+
+        $obj->prettyPrint = $prettyPrint;
+
+        return $obj;
+    }
+
+    public function withAllAttributes(bool $allAttributes): self
+    {
+        $obj = clone $this;
+
+        $obj->allAttributes = $allAttributes;
+
+        return $obj;
+    }
+
+    public function withIsCustomEntity(bool $isCustomEntity): self
+    {
+        $obj = clone $this;
+
+        $obj->isCustomEntity = $isCustomEntity;
+
+        return $obj;
+    }
+
+    public function withCompareType(string $compareType): self
+    {
+        $obj = clone $this;
+
+        $obj->compareType = $compareType;
+
+        return $obj;
+    }
+
+    public function withFromDate(DateTime $fromDate): self
+    {
+        $obj = clone $this;
+
+        $obj->fromDate = $fromDate;
 
         return $obj;
     }
@@ -421,5 +619,10 @@ class Params implements IParams
     public function getPrettyPrint(): bool
     {
         return $this->prettyPrint ?? false;
+    }
+
+    public function getAllAttributes(): bool
+    {
+        return $this->allAttributes;
     }
 }

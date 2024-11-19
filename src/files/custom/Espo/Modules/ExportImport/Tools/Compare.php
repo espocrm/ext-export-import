@@ -169,6 +169,7 @@ class Compare implements Tool
             'skipActionHistory' => $params->getSkipActionHistory(),
             'skipWorkflowLog' => $params->getSkipWorkflowLog(),
             'logLevel' => $params->getLogLevel(),
+            'allAttributes' => $params->getAllAttributes(),
             'skipAttributeList' => ProcessorUtils::getListForEntity(
                 $entityType,
                 $params->getSkipAttributeList()
@@ -213,11 +214,8 @@ class Compare implements Tool
 
     private function createManifest(Params $params): void
     {
-        $compareParams = CompareParams::fromRaw([
-            'entityType' => 'Dummy',
-            'format' => $params->getFormat(),
-            'resultPath' => $params->getResultPath(),
-        ]);
+        $compareParams = CompareParams::create('Dummy')
+            ->withResultPath($params->getResultPath());
 
         $this->createManifestForPath($params, $compareParams->getChangedPrevPath());
         $this->createManifestForPath($params, $compareParams->getChangedActualPath());
@@ -229,13 +227,11 @@ class Compare implements Tool
     {
         $manifestFile = $this->metadata->get(['app', 'exportImport', 'manifestFile']);
 
-        $manifestWriter = $this->injectableFactory
+        $this->injectableFactory
             ->createWith(ManifestWriter::class, [
                 'params' => $params,
-            ]);
-
-        $manifestWriter->setManifestFile($path . '/' . $manifestFile);
-
-        $manifestWriter->save();
+            ])
+            ->setManifestFile($path . '/' . $manifestFile)
+            ->save();
     }
 }
