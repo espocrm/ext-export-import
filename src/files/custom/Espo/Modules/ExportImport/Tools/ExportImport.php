@@ -100,6 +100,13 @@ class ExportImport
             );
         }
 
+        if ($this->systemUtil->isEspoRootDirectory($params->getResultPath())) {
+            throw new Error(
+                'The result path "' . $params->getResultPath() . '" cannot be ' .
+                'the EspoCRM directory itself.'
+            );
+        }
+
         $tool->run($params);
     }
 
