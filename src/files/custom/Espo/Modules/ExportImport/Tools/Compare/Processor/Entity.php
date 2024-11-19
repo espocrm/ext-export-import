@@ -142,6 +142,8 @@ class Entity implements Processor
                 continue;
             }
 
+            $actualDataMin = $this->util->minifyData($actualData, array_keys($diffData));
+
             if (
                 $fromDate &&
                 (
@@ -158,7 +160,7 @@ class Entity implements Processor
                 }
 
                 $this->writeData($fpSkippedPrev, $id, $diffData);
-                $this->writeData($fpSkippedActual, $id, $actualData);
+                $this->writeData($fpSkippedActual, $id, $actualDataMin);
 
                 continue;
             }
@@ -170,7 +172,7 @@ class Entity implements Processor
             }
 
             $this->writeData($fpChangedPrev, $id, $diffData);
-            $this->writeData($fpChangedActual, $id, $actualData);
+            $this->writeData($fpChangedActual, $id, $actualDataMin);
         }
 
         $determinedFromDate = $this->getDeterminedFromDate($params, $data);

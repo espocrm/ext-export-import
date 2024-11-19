@@ -305,4 +305,9 @@ class Util
 
         return $entity->get('deleted');
     }
+
+    public function minifyData(array $array, array $keyList): array
+    {
+        return array_intersect_key($array, array_flip($keyList));
+    }
 }
