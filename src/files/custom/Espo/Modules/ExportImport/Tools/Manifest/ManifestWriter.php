@@ -37,7 +37,7 @@ use Espo\Core\Utils\File\Manager as FileManager;
 
 class ManifestWriter
 {
-    private $manifestFile;
+    private string $manifestFile;
 
     private string $id;
 
@@ -55,7 +55,7 @@ class ManifestWriter
         $this->loadData();
     }
 
-    protected function loadData(): void
+    private function loadData(): void
     {
         $this->manifestFile = $this->params->getManifestFile();
 
