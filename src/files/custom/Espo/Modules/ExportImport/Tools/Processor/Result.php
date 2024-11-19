@@ -32,6 +32,4 @@ namespace Espo\Modules\ExportImport\Tools\Processor;
 interface Result
 {
     public function getMessage(): ?string;
-
-    public function getGlobalMessage(): ?string;
 }
