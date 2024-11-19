@@ -29,7 +29,6 @@
 
 namespace Espo\Modules\ExportImport\Tools\Compare;
 
-use Espo\Core\Exceptions\Error;
 use Espo\Modules\ExportImport\Tools\Compare\Params;
 use Espo\Modules\ExportImport\Tools\Processor\Data as DataProcessor;
 use Espo\Modules\ExportImport\Tools\Compare\ProcessorFactory as Factory;
@@ -37,34 +36,16 @@ use Espo\Modules\ExportImport\Tools\Compare\Processor\Entity as EntityProcessor;
 
 class Compare
 {
-    /**
-     * @var Params
-     */
-    private $params;
-
     public function __construct(
         private Factory $factory,
         private EntityProcessor $entityProcessor
     ) {}
 
-    public function setParams(Params $params): self
-    {
-        $this->params = $params;
-
-        return $this;
-    }
-
     /**
      * Run action
      */
-    public function run(): Result
+    public function run(Params $params): Result
     {
-        if (!$this->params) {
-            throw new Error("No params set.");
-        }
-
-        $params = $this->params;
-
         $format = $params->getFormat() ?? 'json';
 
         $dataResource = fopen('php://temp', 'w');

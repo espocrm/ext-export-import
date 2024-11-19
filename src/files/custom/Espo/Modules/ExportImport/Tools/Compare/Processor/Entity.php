@@ -34,6 +34,7 @@ use Espo\Core\Utils\Log;
 use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\InjectableFactory;
+use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\ExportImport\Tools\Compare\Util;
 use Espo\Modules\ExportImport\Tools\Compare\Params;
 use Espo\Modules\ExportImport\Tools\Compare\Result;
@@ -41,8 +42,10 @@ use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\Compare\Processor;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
 use Espo\Modules\ExportImport\Tools\Export\Util as ExportUtil;
+use Espo\Modules\ExportImport\Tools\Export\Params as ExportParams;
 use Espo\Modules\ExportImport\Tools\Import\Helpers\Id as IdHelper;
 use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
+use Espo\Modules\ExportImport\Tools\Export\ProcessorFactory as ExportProcessorFactory;
 
 class Entity implements Processor
 {
@@ -54,7 +57,9 @@ class Entity implements Processor
         private EntityManager $entityManager,
         private InjectableFactory $injectableFactory,
         private IdHelper $idHelper,
-        private ExportUtil $exportUtil
+        private ExportUtil $exportUtil,
+        private FileManager $fileManager,
+        private ExportProcessorFactory $exportProcessorFactory
     ) {}
 
     public function process(Params $params, Data $data): Result
@@ -62,6 +67,11 @@ class Entity implements Processor
         $entityType = $params->getEntityType();
 
         $fromDate = $this->getFromDate($params, $data);
+
+        $fpChangedPrev = fopen('php://temp', 'w');
+        $fpChangedActual = fopen('php://temp', 'w');
+        $fpSkippedPrev = fopen('php://temp', 'w');
+        $fpSkippedActual = fopen('php://temp', 'w');
 
         $totalCount = 0;
         $skipCount = 0;
@@ -142,7 +152,12 @@ class Entity implements Processor
             ) {
                 $skipCount++;
 
-                $this->saveInfoData($params, $id, $diffData, $actualData);
+                if (!$params->isInfoLevel()) {
+                    continue;
+                }
+
+                $this->writeData($fpSkippedPrev, $id, $diffData);
+                $this->writeData($fpSkippedActual, $id, $actualData);
 
                 continue;
             }
@@ -153,7 +168,8 @@ class Entity implements Processor
                 $modifiedCount++;
             }
 
-            $this->saveEntityData($params, $id, $diffData, $actualData);
+            $this->writeData($fpChangedPrev, $id, $diffData);
+            $this->writeData($fpChangedActual, $id, $actualData);
         }
 
         if ($fromDate && $params->isCreatedType()) {
@@ -166,10 +182,20 @@ class Entity implements Processor
 
                     $data = $this->exportUtil->getEntityData($params, $entity);
 
-                    $this->saveEntityData($params, $entity->getId(), $data, []);
+                    $this->writeData($fpChangedActual, $entity->getId(), $data);
                 }
             }
         }
+
+        $this->exportToFile($params, $fpChangedPrev, $params->getChangedPrevPath());
+        $this->exportToFile($params, $fpChangedActual, $params->getChangedActualPath());
+        $this->exportToFile($params, $fpSkippedPrev, $params->getSkippedPrevPath());
+        $this->exportToFile($params, $fpSkippedActual, $params->getSkippedActualPath());
+
+        fclose($fpChangedPrev);
+        fclose($fpChangedActual);
+        fclose($fpSkippedPrev);
+        fclose($fpSkippedActual);
 
         return Result::create($entityType)
             ->withTotalCount($totalCount)
@@ -251,60 +277,48 @@ class Entity implements Processor
         while (($initRow = $data->readRow()) !== null) {
             $row = $this->prepareData($params, $initRow);
 
-            $lastModifiedAt = $this->getLastModifiedAt($lastModifiedAt, $row);
+            $lastModifiedAt = $this->util->getLastModifiedAt($lastModifiedAt, $row);
         }
 
         return $lastModifiedAt;
     }
 
-    /**
-     * Compare and get last modified datetime
-     */
-    private function getLastModifiedAt(?DateTime $lastModifiedAt, array $row): ?DateTime
+    private function writeData($fp, string $id, array $data): void
     {
-        $modifiedAt = $this->getModifiedAt($row);
-
-        if (!$modifiedAt) {
-            return $lastModifiedAt;
+        if (empty($data)) {
+            return;
         }
 
-        if (!$lastModifiedAt) {
-            return $modifiedAt;
-        }
+        $data = array_merge(['id' => $id], $data);
 
-        if ($modifiedAt > $lastModifiedAt) {
-            return $modifiedAt;
-        }
+        $line = base64_encode(serialize($data)) . \PHP_EOL;
 
-        return $lastModifiedAt;
+        fwrite($fp, $line);
     }
 
-    private function getModifiedAt(array $row): ?DateTime
+    private function exportToFile(Params $params, $fp, string $filePath): void
     {
-        $modifiedAt = $row['modifiedAt'] ?? null;
+        $processor = $this->exportProcessorFactory->create($params->getFormat());
 
-        if (!$modifiedAt) {
-            return null;
+        $fileExtension = $this->metadata->get([
+            'app', 'exportImport', 'formatDefs', $params->getFormat(), 'fileExtension'
+        ]);
+
+        $dataObj = new Data($fp);
+
+        $exportParams = ExportParams::create($params->getEntityType())
+            ->withFormat($params->getFormat())
+            ->withPath($filePath)
+            ->withFileExtension($fileExtension)
+            ->withEntitiesPath($params->getEntitiesPath())
+            ->withPrettyPrint($params->getPrettyPrint());
+
+        $stream = $processor->process($exportParams, $dataObj);
+
+        if ($stream->getSize() <= 0) {
+            return;
         }
 
-        return new DateTime($modifiedAt);
-    }
-
-    private function saveEntityData(
-        Params $params,
-        string $id,
-        array $diffData,
-        array $actualData
-    ): void {
-        // TODO: implement
-    }
-
-    private function saveInfoData(
-        Params $params,
-        string $id,
-        array $diffData,
-        array $actualData
-    ): void {
-        // TODO: implement
+        $this->fileManager->putContents($exportParams->getFile(), $stream->getContents());
     }
 }

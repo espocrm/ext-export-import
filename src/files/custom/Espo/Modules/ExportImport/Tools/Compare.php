@@ -30,18 +30,15 @@
 namespace Espo\Modules\ExportImport\Tools;
 
 use Exception;
-use Espo\ORM\Defs;
 use Espo\Core\Utils\Log;
-use Espo\Core\DataManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\InjectableFactory;
 use Espo\Entities\User as UserEntity;
 use Espo\Modules\ExportImport\Tools\Params;
-use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Entities\Preferences as PreferencesEntity;
-use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
+use Espo\Modules\ExportImport\Tools\Manifest\ManifestWriter;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
 use Espo\Modules\ExportImport\Tools\Compare\Compare as CompareTool;
 use Espo\Modules\ExportImport\Tools\Compare\Result as EntityResult;
@@ -56,12 +53,8 @@ class Compare implements Tool
 
     public function __construct(
         private Log $log,
-        private Defs $defs,
-        private UserTool $userTool,
         private Metadata $metadata,
         private EntityTool $entityTool,
-        private FileManager $fileManager,
-        private DataManager $dataManager,
         private EntityTypeHelper $entityTypeHelper,
         private InjectableFactory $injectableFactory,
         private IdMappingTool $idMappingTool
@@ -94,6 +87,8 @@ class Compare implements Tool
 
         $this->processData($params, $manifest);
 
+        $this->createManifest($params);
+
         ProcessorUtils::writeList($params, $this->warningList, "Warnings:");
 
         ProcessorUtils::writeNewLine($params);
@@ -124,7 +119,8 @@ class Compare implements Tool
 
             try {
                 $result = $this->processEntity($entityType, $params, $manifest, $idMap);
-            } catch (Exception $e) {
+            }
+            catch (Exception $e) {
                 ProcessorUtils::writeLine(
                     $params, "  Error: " . $e->getMessage()
                 );
@@ -151,24 +147,33 @@ class Compare implements Tool
         Manifest $manifest,
         array $idMap
     ): EntityResult {
-        $processHookClass = $this->getProcessHookClass($entityType);
+        $compare = $this->injectableFactory->create(CompareTool::class);
 
-        $eraseParams = CompareParams::create($entityType)
-            ->withFormat($params->getFormat())
-            ->withPath($params->getPath())
-            ->withEntitiesPath($params->getEntitiesPath())
-            ->withFilesPath($params->getFilesPath())
-            ->withExportImportDefs($params->getExportImportDefs())
-            ->withManifest($manifest)
-            ->withProcessHookClass($processHookClass)
-            ->withUserSkipList($params->getUserSkipList())
-            ->withIsCustomEntity($this->entityTool->isCustom($entityType))
-            ->withIdMap($idMap);
-
-        $import = $this->injectableFactory->create(CompareTool::class);
-        $import->setParams($eraseParams);
-
-        $result = $import->run();
+        $result = $compare->run(CompareParams::fromRaw([
+            'entityType' => $entityType,
+            'format' => $params->getFormat(),
+            'path' => $params->getPath(),
+            'resultPath' => $params->getResultPath(),
+            'exportImportDefs' => $params->getExportImportDefs(),
+            'manifest' => $manifest,
+            'processHookClass' => $this->getProcessHookClass($entityType),
+            'entitiesPath' => $params->getEntitiesPath(),
+            'filesPath' => $params->getFilesPath(),
+            'userSkipList' => $params->getUserSkipList(),
+            'isCustomEntity' => $this->entityTool->isCustom($entityType),
+            'compareType' => $params->getCompareType(),
+            'idMap' => $idMap,
+            'fromDate' => $params->getFromDate(),
+            'skipModifiedAt' => $params->getSkipModifiedAt(),
+            'skipStream' => $params->getSkipStream(),
+            'skipActionHistory' => $params->getSkipActionHistory(),
+            'skipWorkflowLog' => $params->getSkipWorkflowLog(),
+            'logLevel' => $params->getLogLevel(),
+            'skipAttributeList' => ProcessorUtils::getListForEntity(
+                $entityType,
+                $params->getSkipAttributeList()
+            ),
+        ]));
 
         ProcessorUtils::writeLine($params, $result->getMessage());
 
@@ -204,5 +209,33 @@ class Compare implements Tool
         }
 
         return $this->injectableFactory->create($processHookClassName);
+    }
+
+    private function createManifest(Params $params): void
+    {
+        $compareParams = CompareParams::fromRaw([
+            'entityType' => 'Dummy',
+            'format' => $params->getFormat(),
+            'resultPath' => $params->getResultPath(),
+        ]);
+
+        $this->createManifestForPath($params, $compareParams->getChangedPrevPath());
+        $this->createManifestForPath($params, $compareParams->getChangedActualPath());
+        $this->createManifestForPath($params, $compareParams->getSkippedPrevPath());
+        $this->createManifestForPath($params, $compareParams->getSkippedActualPath());
+    }
+
+    private function createManifestForPath(Params $params, string $path): void
+    {
+        $manifestFile = $this->metadata->get(['app', 'exportImport', 'manifestFile']);
+
+        $manifestWriter = $this->injectableFactory
+            ->createWith(ManifestWriter::class, [
+                'params' => $params,
+            ]);
+
+        $manifestWriter->setManifestFile($path . '/' . $manifestFile);
+
+        $manifestWriter->save();
     }
 }

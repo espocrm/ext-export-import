@@ -130,6 +130,39 @@ class Util
     }
 
     /**
+     * Compare and get last modified datetime
+     */
+    public function getLastModifiedAt(?DateTime $lastModifiedAt, array $row): ?DateTime
+    {
+        $modifiedAt = $this->getModifiedAt($row);
+
+        if (!$modifiedAt) {
+            return $lastModifiedAt;
+        }
+
+        if (!$lastModifiedAt) {
+            return $modifiedAt;
+        }
+
+        if ($modifiedAt > $lastModifiedAt) {
+            return $modifiedAt;
+        }
+
+        return $lastModifiedAt;
+    }
+
+    private function getModifiedAt(array $row): ?DateTime
+    {
+        $modifiedAt = $row['modifiedAt'] ?? null;
+
+        if (!$modifiedAt) {
+            return null;
+        }
+
+        return new DateTime($modifiedAt);
+    }
+
+    /**
      * Check if entity was modified by modifiedAt attribute
      */
     public function isModified(

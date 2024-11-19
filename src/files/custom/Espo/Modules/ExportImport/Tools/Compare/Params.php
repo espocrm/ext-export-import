@@ -30,6 +30,7 @@
 namespace Espo\Modules\ExportImport\Tools\Compare;
 
 use DateTime;
+use RuntimeException;
 use Espo\Core\Utils\Util;
 use Espo\Modules\ExportImport\Tools\Manifest;
 use Espo\Modules\ExportImport\Tools\Params as ToolParams;
@@ -38,23 +39,31 @@ use Espo\Modules\ExportImport\Tools\Processor\Params as IParams;
 
 class Params implements IParams
 {
-    public const FILE_JSON = 'json';
+    private const PATH_CHANGED_ACTUAL = 'changed/actual';
 
-    private $entityType;
+    private const PATH_CHANGED_PREV = 'changed/prev';
 
-    private $path = null;
+    private const PATH_SKIPPED_ACTUAL = 'skipped/actual';
 
-    private $format = null;
+    private const PATH_SKIPPED_PREV = 'skipped/prev';
 
-    private $exportImportDefs = null;
+    private string $entityType;
 
-    private $manifest = null;
+    private string $path;
 
-    private $processHookClass;
+    private string $resultPath;
 
-    private $entitiesPath;
+    private string $format;
 
-    private $filesPath;
+    private ?array $exportImportDefs;
+
+    private Manifest $manifest;
+
+    private ?ProcessHook $processHookClass;
+
+    private string $entitiesPath;
+
+    private string $filesPath;
 
     private bool $isCustomEntity = false;
 
@@ -62,7 +71,7 @@ class Params implements IParams
 
     private array $idMap = [];
 
-    private ?array $skipAttributeList;
+    private array $skipAttributeList;
 
     private ?DateTime $fromDate;
 
@@ -76,6 +85,10 @@ class Params implements IParams
 
     private bool $skipWorkflowLog;
 
+    private ?string $logLevel;
+
+    private bool $prettyPrint;
+
     public function __construct(string $entityType)
     {
         $this->entityType = $entityType;
@@ -86,155 +99,41 @@ class Params implements IParams
         return new self($entityType);
     }
 
-    public function withFormat(?string $format): self
+    public static function fromRaw(array $params): self
     {
-        $obj = clone $this;
+        $format = $params['format'] ?? null;
+        $entityType = $params['entityType'] ?? null;
+
+        if (!$format) {
+            throw new RuntimeException('Option "format" is not defined.');
+        }
+
+        if (!$entityType) {
+            throw new RuntimeException('Option "entityType" is not defined.');
+        }
+
+        $obj = new self($entityType);
 
         $obj->format = $format;
-
-        return $obj;
-    }
-
-    public function withPath(?string $path): self
-    {
-        $obj = clone $this;
-
-        $obj->path = $path;
-
-        return $obj;
-    }
-
-    public function withExportImportDefs(array $exportImportDefs): self
-    {
-        $obj = clone $this;
-
-        $obj->exportImportDefs = $exportImportDefs;
-
-        return $obj;
-    }
-
-    public function withManifest(Manifest $manifest): self
-    {
-        $obj = clone $this;
-
-        $obj->manifest = $manifest;
-
-        return $obj;
-    }
-
-    public function withProcessHookClass(?ProcessHook $processHookClass): self
-    {
-        $obj = clone $this;
-
-        $obj->processHookClass = $processHookClass;
-
-        return $obj;
-    }
-
-    public function withEntitiesPath(string $entitiesPath): self
-    {
-        $obj = clone $this;
-
-        $obj->entitiesPath = $entitiesPath;
-
-        return $obj;
-    }
-
-    public function withFilesPath(string $filesPath): self
-    {
-        $obj = clone $this;
-
-        $obj->filesPath = $filesPath;
-
-        return $obj;
-    }
-
-    public function withUserSkipList(array $list): self
-    {
-        $obj = clone $this;
-
-        $obj->userSkipList = $list;
-
-        return $obj;
-    }
-
-    public function withIsCustomEntity(bool $isCustomEntity): self
-    {
-        $obj = clone $this;
-
-        $obj->isCustomEntity = $isCustomEntity;
-
-        return $obj;
-    }
-
-    public function withCompareType(string $compareType): self
-    {
-        $obj = clone $this;
-
-        $obj->compareType = $compareType;
-
-        return $obj;
-    }
-
-    public function withIdMap(array $idMap): self
-    {
-        $obj = clone $this;
-
-        $obj->idMap = $idMap;
-
-        return $obj;
-    }
-
-    public function withSkipAttributeList(array $skipAttributeList): self
-    {
-        $obj = clone $this;
-
-        $obj->skipAttributeList = $skipAttributeList;
-
-        return $obj;
-    }
-
-    public function withFromDate(?DateTime $fromDate): self
-    {
-        $obj = clone $this;
-
-        $obj->fromDate = $fromDate;
-
-        return $obj;
-    }
-
-    public function withSkipModifiedAt(bool $skipModifiedAt): self
-    {
-        $obj = clone $this;
-
-        $obj->skipModifiedAt = $skipModifiedAt;
-
-        return $obj;
-    }
-
-    public function withSkipStream(bool $skipStream): self
-    {
-        $obj = clone $this;
-
-        $obj->skipStream = $skipStream;
-
-        return $obj;
-    }
-
-    public function withSkipActionHistory(bool $skipActionHistory): self
-    {
-        $obj = clone $this;
-
-        $obj->skipActionHistory = $skipActionHistory;
-
-        return $obj;
-    }
-
-    public function withSkipWorkflowLog(bool $skipWorkflowLog): self
-    {
-        $obj = clone $this;
-
-        $obj->skipWorkflowLog = $skipWorkflowLog;
+        $obj->path = $params['path'] ?? null;
+        $obj->resultPath = $params['resultPath'] ?? null;
+        $obj->exportImportDefs = $params['exportImportDefs'] ?? null;
+        $obj->manifest = $params['manifest'] ?? null;
+        $obj->processHookClass = $params['processHookClass'] ?? null;
+        $obj->entitiesPath = $params['entitiesPath'] ?? null;
+        $obj->filesPath = $params['filesPath'] ?? null;
+        $obj->userSkipList = $params['userSkipList'] ?? null;
+        $obj->isCustomEntity = $params['isCustomEntity'] ?? false;
+        $obj->compareType = $params['compareType'] ?? null;
+        $obj->idMap = $params['idMap'] ?? null;
+        $obj->skipAttributeList = $params['skipAttributeList'] ?? [];
+        $obj->fromDate = $params['fromDate'] ?? null;
+        $obj->skipModifiedAt = $params['skipModifiedAt'] ?? false;
+        $obj->skipStream = $params['skipStream'] ?? false;
+        $obj->skipActionHistory = $params['skipActionHistory'] ?? false;
+        $obj->skipWorkflowLog = $params['skipWorkflowLog'] ?? false;
+        $obj->logLevel = $params['logLevel'] ?? null;
+        $obj->prettyPrint = $params['prettyPrint'] ?? false;
 
         return $obj;
     }
@@ -253,6 +152,14 @@ class Params implements IParams
     public function getPath(): ?string
     {
         return $this->path;
+    }
+
+    /**
+     * Get result path.
+     */
+    public function getResultPath(): ?string
+    {
+        return $this->resultPath;
     }
 
     /**
@@ -312,6 +219,50 @@ class Params implements IParams
     public function getFilesPath(): string
     {
         return $this->filesPath;
+    }
+
+    /**
+     * Get a path for changed actual data
+     */
+    public function getChangedActualPath(): string
+    {
+        return Util::concatPath(
+            $this->resultPath,
+            self::PATH_CHANGED_ACTUAL
+        );
+    }
+
+    /**
+     * Get a path for changed previous data
+     */
+    public function getChangedPrevPath(): string
+    {
+        return Util::concatPath(
+            $this->resultPath,
+            self::PATH_CHANGED_PREV
+        );
+    }
+
+    /**
+     * Get a path for skipped previous data
+     */
+    public function getSkippedPrevPath(): string
+    {
+        return Util::concatPath(
+            $this->resultPath,
+            self::PATH_SKIPPED_PREV
+        );
+    }
+
+    /**
+     * Get a path for skipped actual data
+     */
+    public function getSkippedActualPath(): string
+    {
+        return Util::concatPath(
+            $this->resultPath,
+            self::PATH_SKIPPED_ACTUAL
+        );
     }
 
     /**
@@ -450,5 +401,25 @@ class Params implements IParams
     public function getSkipWorkflowLog(): bool
     {
         return $this->skipWorkflowLog ?? false;
+    }
+
+    public function getLogLevel(): ?string
+    {
+        return $this->logLevel;
+    }
+
+    public function isInfoLevel(): bool
+    {
+        return $this->logLevel == ToolParams::LOG_LEVEL_INFO;
+    }
+
+    public function isDebugLevel(): bool
+    {
+        return $this->logLevel == ToolParams::LOG_LEVEL_DEBUG;
+    }
+
+    public function getPrettyPrint(): bool
+    {
+        return $this->prettyPrint ?? false;
     }
 }
