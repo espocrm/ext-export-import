@@ -135,6 +135,7 @@
     "defsSource": "exportImportDefs",
 
     "path": "./data/export-import",
+    "resultPath": "./data/export-import-result",
     "manifestFile": "manifest.json",
 
     "format": "json",
