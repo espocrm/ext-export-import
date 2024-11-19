@@ -29,6 +29,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Compare;
 
+use DateTime;
 use Espo\Modules\ExportImport\Tools\Processor\Result as IResult;
 
 class Result implements IResult
@@ -45,7 +46,7 @@ class Result implements IResult
 
     private int $skipCount = 0;
 
-    private string $resultPath;
+    private ?DateTime $fromDate;
 
     private ?array $warningList = null;
 
@@ -113,11 +114,11 @@ class Result implements IResult
         return $obj;
     }
 
-    public function withResultPath(string $path): self
+    public function withFromDate(?DateTime $fromDate): self
     {
         $obj = clone $this;
 
-        $obj->resultPath = $path;
+        $obj->fromDate = $fromDate;
 
         return $obj;
     }
@@ -134,20 +135,19 @@ class Result implements IResult
             $message .= ", modified: " . $this->modifiedCount;
         }
 
+        if ($this->skipCount) {
+            $message .= ", unmodified: " . $this->skipCount;
+        }
+
         if ($this->deletedCount) {
             $message .= ", deleted: " . $this->deletedCount;
         }
 
-        if ($this->skipCount) {
-            $message .= ", skipped: " . $this->skipCount;
+        if ($this->fromDate) {
+            $message .= "\n  Data compared since: " . $this->fromDate->format('Y-m-d H:i:s');
         }
 
         return $message;
-    }
-
-    public function getGlobalMessage(): ?string
-    {
-        return "Files saved at \"" . $this->resultPath . "\".";
     }
 
     /**
@@ -200,8 +200,8 @@ class Result implements IResult
         return !empty($this-> warningList) ? $this-> warningList : null;
     }
 
-    public function getResultPath(): ?string
+    public function getFromDate(): ?DateTime
     {
-        return $this->resultPath;
+        return $this->fromDate;
     }
 }

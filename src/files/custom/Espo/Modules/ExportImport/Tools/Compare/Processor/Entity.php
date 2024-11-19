@@ -204,7 +204,8 @@ class Entity implements Processor
             ->withSkipCount($skipCount)
             ->withCreatedCount($createdCount)
             ->withModifiedCount($modifiedCount)
-            ->withDeletedCount($deletedCount);
+            ->withDeletedCount($deletedCount)
+            ->withFromDate($fromDate);
     }
 
     private function prepareData(Params $params, array $initRow): array

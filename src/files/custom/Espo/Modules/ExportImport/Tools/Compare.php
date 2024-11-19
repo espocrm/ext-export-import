@@ -92,6 +92,12 @@ class Compare implements Tool
         ProcessorUtils::writeList($params, $this->warningList, "Warnings:");
 
         ProcessorUtils::writeNewLine($params);
+
+        ProcessorUtils::writeLine(
+            $params,
+            "For more information, check the result stored " .
+            "in \"" . $params->getResultPath() ."\"."
+        );
     }
 
     private function getEntityTypeList(Params $params): array
