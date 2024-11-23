@@ -136,6 +136,19 @@ class Entity implements Processor
 
             $diffData = $this->util->getDiffData($row, $actualData);
 
+            if ($this->util->isDeleted($entity)) {
+                $deletedCount++;
+
+                $this->writeData($fpChangedPrev, $id, array_merge(['deleted' => false], $diffData));
+                $this->writeData($fpChangedActual, $id, array_merge(['deleted' => true], $actualData));
+
+                continue;
+            }
+
+            if ($params->getCompareType() === ToolParams::COMPARE_TYPE_DELETED) {
+                continue;
+            }
+
             if (empty($diffData)) {
                 $skipCount++;
 
@@ -165,11 +178,7 @@ class Entity implements Processor
                 continue;
             }
 
-            if ($this->util->isDeleted($entity)) {
-                $deletedCount++;
-            } else {
-                $modifiedCount++;
-            }
+            $modifiedCount++;
 
             $this->writeData($fpChangedPrev, $id, $diffData);
             $this->writeData($fpChangedActual, $id, $actualDataMin);
