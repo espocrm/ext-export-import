@@ -144,6 +144,10 @@ class Params implements IParams
         $obj->prettyPrint = $params['prettyPrint'] ?? false;
         $obj->allAttributes = $params['allAttributes'] ?? false;
 
+        if ($obj->skipModifiedAt) {
+            $obj->skipAttributeList[] = 'modifiedAt';
+        }
+
         return $obj;
     }
 

@@ -34,6 +34,7 @@ use Espo\Core\Utils\Log;
 use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\InjectableFactory;
+use Espo\ORM\Type\AttributeType;
 use Espo\Core\Utils\Util as CoreUtil;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\ExportImport\Tools\Compare\Util;
@@ -78,6 +79,7 @@ class Entity implements Processor
         $skipCount = 0;
         $createdCount = 0;
         $modifiedCount = 0;
+        $bothModifiedCount = 0;
         $deletedCount = 0;
 
         $data->rewind();
@@ -96,6 +98,8 @@ class Entity implements Processor
             $row = $this->prepareData($params, $initRow);
 
             $id = $this->idHelper->getEntityId($params, $row);
+
+            $this->log->debug('Compare ['. $params->getEntityType() . '.' . $id . ']');
 
             if (!$id) {
                 $skipCount++;
@@ -166,7 +170,7 @@ class Entity implements Processor
                     $this->util->isModifiedInWorkflowLog($params, $entity, $fromDate)
                 )
             ) {
-                $skipCount++;
+                $bothModifiedCount++;
 
                 if (!$params->isInfoLevel()) {
                     continue;
@@ -219,6 +223,7 @@ class Entity implements Processor
             ->withSkipCount($skipCount)
             ->withCreatedCount($createdCount)
             ->withModifiedCount($modifiedCount)
+            ->withBothModifiedCount($bothModifiedCount)
             ->withDeletedCount($deletedCount)
             ->withFromDate($fromDate);
     }
@@ -244,6 +249,18 @@ class Entity implements Processor
 
             if ($params->isAttributeSkipped($attributeName)) {
                 continue;
+            }
+
+            $type = $entityDefs->getAttribute($attributeName)->getType();
+
+            switch ($type) {
+                case AttributeType::FLOAT:
+                    $attributeValue = (float) $attributeValue;
+                    break;
+
+                case AttributeType::INT:
+                    $attributeValue = (int) $attributeValue;
+                    break;
             }
 
             $row[$attributeName] = $attributeValue;

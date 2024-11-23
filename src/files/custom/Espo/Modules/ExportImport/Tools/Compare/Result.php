@@ -42,6 +42,8 @@ class Result implements IResult
 
     private int $modifiedCount = 0;
 
+    private int $bothModifiedCount = 0;
+
     private int $deletedCount = 0;
 
     private int $skipCount = 0;
@@ -74,6 +76,15 @@ class Result implements IResult
         $obj = clone $this;
 
         $obj->modifiedCount = $count;
+
+        return $obj;
+    }
+
+    public function withBothModifiedCount(int $count): self
+    {
+        $obj = clone $this;
+
+        $obj->bothModifiedCount = $count;
 
         return $obj;
     }
@@ -135,6 +146,10 @@ class Result implements IResult
             $message .= ", modified: " . $this->modifiedCount;
         }
 
+        if ($this->bothModifiedCount) {
+            $message .= ", skipped (both modified): " . $this->bothModifiedCount;
+        }
+
         if ($this->skipCount) {
             $message .= ", unmodified: " . $this->skipCount;
         }
@@ -169,6 +184,14 @@ class Result implements IResult
     public function getModifiedCount(): int
     {
         return $this->modifiedCount;
+    }
+
+    /**
+     * Get both modified record count
+     */
+    public function getBothModifiedCount(): int
+    {
+        return $this->bothModifiedCount;
     }
 
     /**
