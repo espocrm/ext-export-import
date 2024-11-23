@@ -136,7 +136,7 @@ class Entity implements Processor
 
             $diffData = $this->util->getDiffData($row, $actualData);
 
-            if ($this->util->isDeleted($entity)) {
+            if ($params->isDeletedType() && $this->util->isDeleted($entity)) {
                 $deletedCount++;
 
                 $this->writeData($fpChangedPrev, $id, array_merge(['deleted' => false], $diffData));
