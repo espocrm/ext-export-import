@@ -31,11 +31,9 @@
 namespace Espo\Modules\ExportImport\Tools\Export;
 
 use Espo\Core\Acl;
-use Espo\ORM\Entity;
 use RuntimeException;
 use Espo\Core\Acl\Table;
 use Espo\ORM\Collection;
-use Espo\Core\Utils\Json;
 use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\FieldUtil;
@@ -43,14 +41,16 @@ use Espo\Core\Exceptions\Error;
 use Espo\Core\Select\SearchParams;
 use Espo\Core\Record\ServiceContainer;
 use Espo\Core\Select\SelectBuilderFactory;
+use Espo\Core\Select\Where\Item as WhereItem;
+use Espo\Core\Utils\DateTime as DateTimeUtil;
 use Espo\Core\FieldProcessing\ListLoadProcessor;
 use Espo\Core\Utils\File\Manager as FileManager;
+use Espo\Modules\ExportImport\Tools\Export\Util;
 use Espo\Modules\ExportImport\Tools\Export\Params;
 use Espo\Core\FieldProcessing\Loader\Params as LoaderParams;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 use Espo\Modules\ExportImport\Tools\Processor\Data as ProcessorData;
 use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
-use Espo\Modules\ExportImport\Tools\Export\Util;
 
 class EntityExport
 {
@@ -188,8 +188,26 @@ class EntityExport
 
         $entityType = $params->getEntityType();
 
+        $entityDefs = $this->entityManager
+            ->getDefs()
+            ->getEntity($entityType);
+
         $searchParams = $params->getSearchParams()
             ->withOrder(SearchParams::ORDER_ASC);
+
+        if ($params->getFromDate() && $entityDefs->hasAttribute('modifiedAt')) {
+            $after = $params->getFromDate()->format(DateTimeUtil::SYSTEM_DATE_TIME_FORMAT);
+
+            $searchParams = $searchParams
+                ->withWhereAdded(
+                    WhereItem
+                        ::createBuilder()
+                        ->setAttribute('modifiedAt')
+                        ->setType(WhereItem\Type::AFTER)
+                        ->setValue($after)
+                        ->build()
+                );
+        }
 
         $builder = $this->selectBuilderFactory
             ->create()

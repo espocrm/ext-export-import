@@ -29,6 +29,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Export;
 
+use DateTime;
 use Espo\Core\Utils\Util;
 use Espo\Core\Select\SearchParams;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
@@ -74,6 +75,8 @@ class Params implements IParams
     private ?array $userSkipList;
 
     private bool $allAttributes;
+
+    private ?DateTime $fromDate;
 
     public function __construct(string $entityType)
     {
@@ -243,6 +246,15 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->allAttributes = $value;
+
+        return $obj;
+    }
+
+    public function withFromDate(?DateTime $value): self
+    {
+        $obj = clone $this;
+
+        $obj->fromDate = $value;
 
         return $obj;
     }
@@ -417,5 +429,10 @@ class Params implements IParams
     public function getAllAttributes(): bool
     {
         return $this->allAttributes;
+    }
+
+    public function getFromDate(): ?DateTime
+    {
+        return $this->fromDate;
     }
 }

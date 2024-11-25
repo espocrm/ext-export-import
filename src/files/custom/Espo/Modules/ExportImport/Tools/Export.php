@@ -227,7 +227,8 @@ class Export implements Tool
             ->withSkipCustomization($params->getSkipCustomization())
             ->withSkipPassword($params->getSkipPassword())
             ->withUserSkipList($params->getUserSkipList())
-            ->withAllAttributes($params->getAllAttributes());
+            ->withAllAttributes($params->getAllAttributes())
+            ->withFromDate($params->getFromDate());
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);
