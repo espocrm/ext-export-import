@@ -29,13 +29,11 @@
 
 namespace Espo\Modules\ExportImport\Jobs;
 
-use Espo\Core\Cleanup\Cleanup as ICleanup;
-use Espo\Core\Utils\File\Manager as FileManager;
-
-use Espo\Modules\ExportImport\Tools\Core\Backup;
-
 use DateTime;
 use SplFileInfo;
+use Espo\Core\Cleanup\Cleanup as ICleanup;
+use Espo\Core\Utils\File\Manager as FileManager;
+use Espo\Modules\ExportImport\Tools\Backup\Params as BackupParams;
 
 class Cleanup implements ICleanup
 {
@@ -47,24 +45,24 @@ class Cleanup implements ICleanup
 
     public function process(): void
     {
-        $path = Backup::BACKUP_PATH;
+        $path = BackupParams::BACKUP_PATH;
 
         $datetime = new DateTime('-' . $this->cleanupPeriod);
 
-        $fileManager = $this->fileManager;
+        if (!$this->fileManager->exists($path)) {
+            return;
+        }
 
-        if ($fileManager->exists($path)) {
-            /** @var string[] $fileList */
-            $fileList = $fileManager->getFileList($path, false, '', false);
+        /** @var string[] $fileList */
+        $fileList = $this->fileManager->getFileList($path, false, '', false);
 
-            foreach ($fileList as $dirName) {
-                $dirPath = $path .  '/' . $dirName;
+        foreach ($fileList as $dirName) {
+            $dirPath = $path .  '/' . $dirName;
 
-                $info = new SplFileInfo($dirPath);
+            $info = new SplFileInfo($dirPath);
 
-                if ($datetime->getTimestamp() > $info->getMTime()) {
-                    $fileManager->removeInDir($dirPath, true);
-                }
+            if ($datetime->getTimestamp() > $info->getMTime()) {
+                $this->fileManager->removeInDir($dirPath, true);
             }
         }
     }
