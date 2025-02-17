@@ -22,7 +22,7 @@ For more information see the [documentation](https://docs.espocrm.com/extensions
 
 ## Development
 
-Mode information about configuring the extension for development purposes, read the https://github.com/espocrm/ext-template#readme.
+More information about configuring the extension for development purposes, read the https://github.com/espocrm/ext-template#readme.
 
 ## License
 
