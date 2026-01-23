@@ -80,19 +80,51 @@ class Util
             $array2 = [];
         }
 
-        foreach ($array1 as $key => $value) {
-            if (is_array($value)) {
-                if (!isset($array2[$key]) || !is_array($array2[$key])) {
-                    $result[$key] = $value;
-                } else {
-                    $newDiff = self::arrayDiffAssocRecursive($value, $array2[$key]);
+        // Check if both arrays are sequential (list-like)
+        $isSequential1 = array_keys($array1) === range(0, count($array1) - 1);
+        $isSequential2 = array_keys($array2) === range(0, count($array2) - 1);
 
-                    if (!empty($newDiff)) {
-                        $result[$key] = $newDiff;
+        if ($isSequential1 && $isSequential2) {
+            // For sequential arrays, compare by values, not keys
+            foreach ($array1 as $value) {
+                if (is_array($value)) {
+                    // For nested arrays in lists, we need to check if any similar array exists in array2
+                    $found = false;
+                    foreach ($array2 as $value2) {
+                        if (is_array($value2)) {
+                            $diff = self::arrayDiffAssocRecursive($value, $value2);
+                            if (empty($diff)) {
+                                $found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!$found) {
+                        $result[] = $value;
+                    }
+                } else {
+                    // For scalar values, check if the value exists in array2
+                    if (!in_array($value, $array2, true)) {
+                        $result[] = $value;
                     }
                 }
-            } else if (!array_key_exists($key, $array2) || $array2[$key] !== $value) {
-                $result[$key] = $value;
+            }
+        } else {
+            // For associative arrays, compare by keys
+            foreach ($array1 as $key => $value) {
+                if (is_array($value)) {
+                    if (!isset($array2[$key]) || !is_array($array2[$key])) {
+                        $result[$key] = $value;
+                    } else {
+                        $newDiff = self::arrayDiffAssocRecursive($value, $array2[$key]);
+
+                        if (!empty($newDiff)) {
+                            $result[$key] = $newDiff;
+                        }
+                    }
+                } else if (!array_key_exists($key, $array2) || $array2[$key] !== $value) {
+                    $result[$key] = $value;
+                }
             }
         }
 
