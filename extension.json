@@ -2,7 +2,7 @@
     "module": "ExportImport",
     "name": "Export Import",
     "description": "Data export and import tool",
-    "author": "EspoCRM",
+    "author": "EspoCRM, Inc.",
     "acceptableVersions": [
         ">=7.3.0"
     ],
