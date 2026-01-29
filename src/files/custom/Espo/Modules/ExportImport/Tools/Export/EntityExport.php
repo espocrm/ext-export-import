@@ -239,7 +239,7 @@ class EntityExport
 
         $attributeListToSkip[] = 'deleted';
 
-        $seed = $this->entityManager->getEntity($entityType);
+        $seed = $this->entityManager->getNewEntity($entityType);
 
         $initialAttributeList = $params->getAttributeList();
 

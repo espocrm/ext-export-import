@@ -106,7 +106,7 @@ class Entity implements Processor
                     continue;
                 }
 
-                $entity = $this->entityManager->getEntity($entityType);
+                $entity = $this->entityManager->getNewEntity($entityType);
             }
 
             $entity->set($row);
