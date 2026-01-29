@@ -30,9 +30,8 @@
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder;
 
 use Exception;
-use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\Log;
-
+use Espo\Core\Utils\Metadata;
 use Espo\Modules\ExportImport\Tools\Import\Params;
 use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
 use Espo\Modules\ExportImport\Tools\Import\Placeholder\Factory as PlaceholderFactory;

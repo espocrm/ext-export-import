@@ -29,14 +29,9 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import;
 
-use Espo\Core\{
-    Exceptions\Error,
-};
-
-use Espo\Modules\ExportImport\Tools\{
-    Import\Params,
-    Processor\Data as ProcessorData,
-};
+use Espo\Core\Exceptions\Error;
+use Espo\Modules\ExportImport\Tools\Import\Params;
+use Espo\Modules\ExportImport\Tools\Processor\Data as ProcessorData;
 
 class EntityImport
 {

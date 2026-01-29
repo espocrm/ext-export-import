@@ -31,7 +31,6 @@ namespace Espo\Modules\ExportImport\Tools\Import\Processor\Attributes;
 
 use Espo\Core\Utils\Log;
 use Espo\ORM\Type\AttributeType;
-
 use Espo\Modules\ExportImport\Tools\Import\Params;
 use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;

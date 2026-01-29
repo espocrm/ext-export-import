@@ -29,17 +29,12 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\ProcessHooks;
 
-use Espo\{
-    Core\Di,
-    ORM\Entity,
-};
-
-use Espo\Modules\ExportImport\Tools\{
-    Params as ToolParams,
-    Processor\Params,
-    Processor\ProcessHook,
-    Processor\Utils,
-};
+use Espo\Core\Di;
+use Espo\ORM\Entity;
+use Espo\Modules\ExportImport\Tools\Params as ToolParams;
+use Espo\Modules\ExportImport\Tools\Processor\Params;
+use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
+use Espo\Modules\ExportImport\Tools\Processor\Utils;
 
 class Attachment implements
 

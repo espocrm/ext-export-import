@@ -29,16 +29,10 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions;
 
-use Espo\Core\{
-    Exceptions\Error,
-    Utils\DateTime as DateTimeUtil,
-};
-
-use Espo\Modules\ExportImport\Tools\Import\Placeholder\{
-    Actions\Params,
-};
-
 use stdClass;
+use Espo\Core\Exceptions\Error;
+use Espo\Core\Utils\DateTime as DateTimeUtil;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Params;
 
 class Utils
 {

@@ -29,10 +29,9 @@
 
 namespace Espo\Modules\ExportImport\Tools\Export;
 
+use LogicException;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\InjectableFactory;
-
-use LogicException;
 
 class ProcessorFactory
 {

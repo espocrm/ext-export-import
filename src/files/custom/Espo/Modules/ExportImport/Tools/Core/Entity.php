@@ -30,11 +30,8 @@
 namespace Espo\Modules\ExportImport\Tools\Core;
 
 use Espo\ORM\Defs;
-use Espo\ORM\Defs\RelationDefs;
-
 use Espo\Core\Utils\Metadata;
 use Espo\Core\ORM\EntityManager;
-
 use Espo\Modules\ExportImport\Tools\Core\Relation as RelationTool;
 
 class Entity

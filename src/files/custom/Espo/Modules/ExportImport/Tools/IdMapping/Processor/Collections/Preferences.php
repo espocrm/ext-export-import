@@ -30,10 +30,8 @@
 namespace Espo\Modules\ExportImport\Tools\IdMapping\Processor\Collections;
 
 use Espo\Entities\User as UserEntity;
-
 use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\IdMapping\Params;
-
 use Espo\Modules\ExportImport\Tools\IdMapping\Util;
 use Espo\Modules\ExportImport\Tools\IdMapping\CollectionProcessor;
 

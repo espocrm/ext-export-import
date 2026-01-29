@@ -29,16 +29,12 @@
 
 namespace Espo\Modules\ExportImport\Core\Console\Commands;
 
-use Espo\Core\{
-    Utils\Log,
-    Console\IO,
-    Console\Command,
-    Console\Command\Params,
-};
-
-use Espo\Modules\ExportImport\Tools\ExportImport as Tool;
-
 use Throwable;
+use Espo\Core\Utils\Log;
+use Espo\Core\Console\IO;
+use Espo\Core\Console\Command;
+use Espo\Core\Console\Command\Params;
+use Espo\Modules\ExportImport\Tools\ExportImport as Tool;
 
 class ExportImport implements Command
 {

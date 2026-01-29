@@ -29,12 +29,10 @@
 
 namespace Espo\Modules\ExportImport\Core\DataProcessors\Json;
 
+use JsonMachine\Items;
 use Espo\Core\Utils\Log;
-
 use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\Processor\Params;
-
-use JsonMachine\Items;
 
 class Import
 {

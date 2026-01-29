@@ -29,11 +29,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import;
 
-use Espo\Modules\ExportImport\Tools\{
-    Processor\Result as IResult,
-};
-
-use const PHP_EOL;
+use Espo\Modules\ExportImport\Tools\Processor\Result as IResult;
 
 class Result implements IResult
 {

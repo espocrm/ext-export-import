@@ -30,7 +30,6 @@
 namespace Espo\Modules\ExportImport\Tools\Compare\Processor\Attributes;
 
 use Espo\ORM\EntityManager;
-
 use Espo\Modules\ExportImport\Tools\Compare\Params;
 use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 use Espo\Modules\ExportImport\Tools\Compare\ProcessorAttribute;

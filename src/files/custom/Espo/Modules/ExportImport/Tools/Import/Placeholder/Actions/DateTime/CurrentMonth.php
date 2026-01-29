@@ -29,14 +29,11 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\DateTime;
 
-use Espo\Modules\ExportImport\Tools\Import\Placeholder\{
-    Actions\Action,
-    Actions\Params,
-    Actions\Utils,
-};
-
 use DateTime;
 use DateTimeZone;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Utils;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Action;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Params;
 
 class CurrentMonth implements Action
 {

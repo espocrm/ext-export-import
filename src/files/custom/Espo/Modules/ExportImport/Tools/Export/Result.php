@@ -29,9 +29,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Export;
 
-use Espo\Modules\ExportImport\Tools\{
-    Processor\Result as IResult,
-};
+use Espo\Modules\ExportImport\Tools\Processor\Result as IResult;
 
 class Result implements IResult
 {

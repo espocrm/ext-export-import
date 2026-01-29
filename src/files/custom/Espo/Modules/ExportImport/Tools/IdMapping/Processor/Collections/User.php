@@ -30,12 +30,10 @@
 namespace Espo\Modules\ExportImport\Tools\IdMapping\Processor\Collections;
 
 use Espo\Core\Utils\Log;
-
+use Espo\Modules\ExportImport\Tools\IdMapping\Util;
 use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\IdMapping\Params;
 use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
-
-use Espo\Modules\ExportImport\Tools\IdMapping\Util;
 use Espo\Modules\ExportImport\Tools\IdMapping\CollectionProcessor;
 
 class User implements CollectionProcessor

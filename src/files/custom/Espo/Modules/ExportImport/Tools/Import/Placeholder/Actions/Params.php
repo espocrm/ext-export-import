@@ -29,9 +29,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions;
 
-use Espo\Modules\ExportImport\Tools\{
-    Manifest
-};
+use Espo\Modules\ExportImport\Tools\Manifest;
 
 class Params
 {

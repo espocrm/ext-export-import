@@ -29,13 +29,11 @@
 
 namespace Espo\Modules\ExportImport\Tools\IdMapping;
 
+use Exception;
 use Espo\Core\Utils\Json as JsonUtil;
-
 use Espo\Modules\ExportImport\Tools\Processor\Params;
 use Espo\Modules\ExportImport\Tools\Core\Relation as RelationTool;
 use Espo\Modules\ExportImport\Tools\Import\Params as ImportParams;
-
-use Exception;
 
 class IdReplacer
 {

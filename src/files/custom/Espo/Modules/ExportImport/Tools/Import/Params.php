@@ -29,15 +29,10 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import;
 
-use Espo\Core\{
-    Utils\Util,
-};
-
-use Espo\Modules\ExportImport\Tools\{
-    Manifest,
-    Processor\ProcessHook,
-    Processor\Params as IParams,
-};
+use Espo\Core\Utils\Util;
+use Espo\Modules\ExportImport\Tools\Manifest;
+use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
+use Espo\Modules\ExportImport\Tools\Processor\Params as IParams;
 
 class Params implements IParams
 {

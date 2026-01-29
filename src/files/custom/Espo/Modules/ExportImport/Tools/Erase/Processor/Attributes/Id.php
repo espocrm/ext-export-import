@@ -31,8 +31,6 @@ namespace Espo\Modules\ExportImport\Tools\Erase\Processor\Attributes;
 
 use Espo\Core\Utils\Log;
 use Espo\ORM\Type\AttributeType;
-use Espo\Entities\User as UserEntity;
-
 use Espo\Modules\ExportImport\Tools\Erase\Params;
 use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;

@@ -29,36 +29,34 @@
 
 namespace Espo\Modules\ExportImport\Tools;
 
+use Exception;
 use Espo\ORM\Defs;
 use Espo\Core\Utils\Log;
 use Espo\Core\DataManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\InjectableFactory;
-use Espo\Core\Utils\File\Manager as FileManager;
-
 use Espo\Entities\User as UserEntity;
+use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Entities\Preferences as PreferencesEntity;
 
 use Espo\Modules\ExportImport\Tools\Params;
-use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
+use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
-use Espo\Modules\ExportImport\Tools\Processor\Utils as ProcessorUtils;
-use Espo\Modules\ExportImport\Tools\Import\Helpers\EntityType as EntityTypeHelper;
-
 use Espo\Modules\ExportImport\Tools\Erase\Params as EraseParams;
-use Espo\Modules\ExportImport\Tools\Erase\Result as EntityResult;
-use Espo\Modules\ExportImport\Tools\Erase\EntityErase as EntityEraseTool;
-use Espo\Modules\ExportImport\Tools\IdMapping\Tool as IdMappingTool;
 
+use Espo\Modules\ExportImport\Tools\Erase\Result as EntityResult;
 use Espo\Modules\ExportImport\Tools\Config\Params as ConfigParams;
+use Espo\Modules\ExportImport\Tools\IdMapping\Tool as IdMappingTool;
+use Espo\Modules\ExportImport\Tools\Processor\Utils as ProcessorUtils;
+
+use Espo\Modules\ExportImport\Tools\Erase\EntityErase as EntityEraseTool;
 use Espo\Modules\ExportImport\Tools\Config\Processors\Erase as ConfigErase;
 
 use Espo\Modules\ExportImport\Tools\Customization\Params as CustomizationParams;
+use Espo\Modules\ExportImport\Tools\Import\Helpers\EntityType as EntityTypeHelper;
 use Espo\Modules\ExportImport\Tools\Customization\Processors\Erase as CustomizationErase;
-
-use Exception;
 
 class Erase implements Tool
 {

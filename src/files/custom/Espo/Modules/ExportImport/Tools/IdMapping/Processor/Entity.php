@@ -31,12 +31,10 @@ namespace Espo\Modules\ExportImport\Tools\IdMapping\Processor;
 
 use Espo\Core\Utils\Log;
 use Espo\Core\Utils\Metadata;
-use Espo\Core\InjectableFactory;
 use Espo\Core\Exceptions\Error;
-
+use Espo\Core\InjectableFactory;
 use Espo\Modules\ExportImport\Tools\Processor\Data;
 use Espo\Modules\ExportImport\Tools\IdMapping\Params;
-
 use Espo\Modules\ExportImport\Tools\IdMapping\DataProcessor;
 use Espo\Modules\ExportImport\Tools\IdMapping\CollectionProcessor;
 

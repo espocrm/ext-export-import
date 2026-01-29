@@ -30,18 +30,16 @@
 namespace Espo\Modules\ExportImport\Tools\Customization\Processors;
 
 use Espo\Core\Utils\Log;
-use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Util;
 use Espo\Core\Utils\File\Manager as FileManager;
 
 use Espo\Modules\ExportImport\Tools\Customization\Params;
+use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 use Espo\Modules\ExportImport\Tools\Customization\Service;
 use Espo\Modules\ExportImport\Tools\Customization\Processor;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
-
 use Espo\Modules\ExportImport\Tools\Import\Params as ImportParams;
-
-use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 
 class Import implements Processor
 {

@@ -29,14 +29,9 @@
 
 namespace Espo\Modules\ExportImport\Tools\Config;
 
-use Espo\Core\{
-    Utils\Util,
-};
-
-use Espo\Modules\ExportImport\Tools\{
-    Manifest,
-    Params as ToolParams,
-};
+use Espo\Core\Utils\Util;
+use Espo\Modules\ExportImport\Tools\Manifest;
+use Espo\Modules\ExportImport\Tools\Params as ToolParams;
 
 class Params
 {

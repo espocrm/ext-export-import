@@ -29,16 +29,11 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Config;
 
-use Espo\Core\{
-    Di,
-    Exceptions\Error,
-};
-
-use Espo\Modules\ExportImport\Tools\Import\{
-    Placeholder\Actions\Action,
-    Placeholder\Actions\Params,
-    Placeholder\Actions\Utils,
-};
+use Espo\Core\Di;
+use Espo\Core\Exceptions\Error;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Utils;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Action;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Params;
 
 class ObjectData implements
 

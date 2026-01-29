@@ -30,10 +30,8 @@
 namespace Espo\Modules\ExportImport\Tools\Backup;
 
 use Espo\Core\Utils\Util;
-
-use Espo\Entities\Preferences as PreferencesEntity;
-
 use Espo\Modules\ExportImport\Tools\Manifest;
+use Espo\Entities\Preferences as PreferencesEntity;
 use Espo\Modules\ExportImport\Tools\Params as ToolParams;
 
 class Params

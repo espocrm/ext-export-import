@@ -32,7 +32,6 @@ namespace Espo\Modules\ExportImport\Tools\Export;
 
 use Espo\Core\Acl;
 use RuntimeException;
-use Espo\Core\Acl\Table;
 use Espo\ORM\Collection;
 use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;

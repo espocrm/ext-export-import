@@ -30,7 +30,6 @@
 namespace Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 
 use Espo\Entities\User as UserEntity;
-
 use Espo\Modules\ExportImport\Tools\Processor\Params;
 
 class UserUtils

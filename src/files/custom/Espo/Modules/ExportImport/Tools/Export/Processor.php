@@ -30,11 +30,8 @@
 namespace Espo\Modules\ExportImport\Tools\Export;
 
 use Psr\Http\Message\StreamInterface;
-
-use Espo\Modules\ExportImport\Tools\{
-    Processor\Data,
-    Export\Params,
-};
+use Espo\Modules\ExportImport\Tools\Export\Params;
+use Espo\Modules\ExportImport\Tools\Processor\Data;
 
 interface Processor
 {

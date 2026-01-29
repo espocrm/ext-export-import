@@ -29,14 +29,11 @@
 
 namespace Espo\Modules\ExportImport\Tools\Backup\Processors;
 
+use Exception;
 use Espo\Core\Utils\File\Manager as FileManager;
-
 use Espo\Modules\ExportImport\Tools\Backup\Params;
 use Espo\Modules\ExportImport\Tools\Backup\Processor;
-
 use Espo\Modules\ExportImport\Tools\ExportImport as ExportImportTool;
-
-use Exception;
 
 class Restore implements Processor
 {

@@ -29,9 +29,7 @@
 
 namespace Espo\Modules\ExportImport\Tools\Processor;
 
-use Espo\{
-    ORM\Entity,
-};
+use Espo\ORM\Entity;
 
 interface ProcessHook
 {

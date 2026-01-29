@@ -29,12 +29,10 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import;
 
+use LogicException;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\InjectableFactory;
-
 use Espo\Modules\ExportImport\Tools\Import\Processor\Entity as ProcessorEntity;
-
-use LogicException;
 
 class ProcessorFactory
 {

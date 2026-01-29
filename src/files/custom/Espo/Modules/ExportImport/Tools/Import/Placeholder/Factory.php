@@ -29,16 +29,10 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder;
 
-use Espo\Core\{
-    InjectableFactory,
-    Utils\Metadata,
-};
-
-use Espo\Modules\ExportImport\Tools\Import\{
-    Placeholder\Actions\Action as PlaceholderAction
-};
-
 use LogicException;
+use Espo\Core\Utils\Metadata;
+use Espo\Core\InjectableFactory;
+use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Action as PlaceholderAction;
 
 class Factory
 {

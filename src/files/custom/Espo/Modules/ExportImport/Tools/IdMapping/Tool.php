@@ -29,17 +29,13 @@
 
 namespace Espo\Modules\ExportImport\Tools\IdMapping;
 
+use Exception;
 use Espo\Core\Utils\Log;
+use Espo\Core\Exceptions\Error;
 use Espo\Core\InjectableFactory;
-
 use Espo\Modules\ExportImport\Tools\Params;
-use Espo\Modules\ExportImport\Tools\Import\Params as ImportParams;
 use Espo\Modules\ExportImport\Tools\IdMapping\Params as IdMappingParams;
 use Espo\Modules\ExportImport\Tools\IdMapping\Processor\Entity as EntityProcessor;
-
-use Espo\Core\Exceptions\Error;
-
-use Exception;
 
 class Tool
 {

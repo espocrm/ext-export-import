@@ -29,10 +29,8 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import;
 
-use Espo\Modules\ExportImport\Tools\{
-    Processor\Data,
-    Import\Params,
-};
+use Espo\Modules\ExportImport\Tools\Import\Params;
+use Espo\Modules\ExportImport\Tools\Processor\Data;
 
 interface Processor
 {

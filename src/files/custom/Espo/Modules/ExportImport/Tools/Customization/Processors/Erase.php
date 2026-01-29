@@ -30,21 +30,18 @@
 namespace Espo\Modules\ExportImport\Tools\Customization\Processors;
 
 use Espo\Core\Utils\Log;
-use Espo\Core\Utils\Util;
 use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Util;
 use Espo\Core\Utils\File\Manager as FileManager;
 
 use Espo\Modules\ExportImport\Tools\Customization\Params;
+use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 use Espo\Modules\ExportImport\Tools\Customization\Service;
 use Espo\Modules\ExportImport\Tools\Customization\Processor;
-
+use Espo\Modules\ExportImport\Tools\Erase\Util as EraseUtil;
 use Espo\Modules\ExportImport\Tools\Erase\Params as EraseParams;
-
-use Espo\Modules\ExportImport\Tools\IdMapping\IdReplacer;
 use Espo\Modules\ExportImport\Tools\Backup\Params as RestoreParams;
 use Espo\Modules\ExportImport\Tools\Backup\Processors\Restore as RestoreTool;
-
-use Espo\Modules\ExportImport\Tools\Erase\Util as EraseUtil;
 
 class Erase implements Processor
 {
