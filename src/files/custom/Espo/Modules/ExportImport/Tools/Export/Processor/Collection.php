@@ -29,16 +29,11 @@
 
 namespace Espo\Modules\ExportImport\Tools\Export\Processor;
 
-use Espo\{
-    ORM\Query\Select,
-    ORM\EntityCollection
-};
-
-use Espo\Modules\ExportImport\{
-    Tools\Export\Params
-};
+use Espo\ORM\EntityCollection;
+use Espo\ORM\Query\Part\Where\AndGroupBuilder;
+use Espo\Modules\ExportImport\Tools\Export\Params;
 
 interface Collection
 {
-    public function getCollection(Params $params, Select $query): EntityCollection;
+    public function getCollection(Params $params, AndGroupBuilder $whereBuilder): EntityCollection;
 }

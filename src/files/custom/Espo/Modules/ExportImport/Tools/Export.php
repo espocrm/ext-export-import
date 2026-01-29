@@ -29,30 +29,32 @@
 
 namespace Espo\Modules\ExportImport\Tools;
 
+use Exception;
 use Espo\ORM\Defs;
 use Espo\Core\Utils\Log;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\InjectableFactory;
-use Espo\Core\Select\SearchParams;
 use Espo\Core\Utils\File\Manager as FileManager;
+
+use Espo\ORM\Query\Part\Condition;
+use Espo\ORM\Query\Part\WhereItem;
+use Espo\ORM\Query\Part\Where\AndGroupBuilder;
 
 use Espo\Modules\ExportImport\Tools\Params;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 use Espo\Modules\ExportImport\Tools\Manifest\ManifestWriter;
-use Espo\Modules\ExportImport\Tools\Export\Processor\Collection;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
-use Espo\Modules\ExportImport\Tools\Export\Result as EntityResult;
-use Espo\Modules\ExportImport\Tools\Export\Params as ExportParams;
+use Espo\Modules\ExportImport\Tools\Export\Processor\Collection;
 use Espo\Modules\ExportImport\Tools\Config\Params as ConfigParams;
+use Espo\Modules\ExportImport\Tools\Export\Params as ExportParams;
+use Espo\Modules\ExportImport\Tools\Export\Result as EntityResult;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ProcessorUtils;
 use Espo\Modules\ExportImport\Tools\Export\EntityExport as EntityExportTool;
 use Espo\Modules\ExportImport\Tools\Config\Processors\Export as ConfigExport;
 use Espo\Modules\ExportImport\Tools\Customization\Params as CustomizationParams;
 use Espo\Modules\ExportImport\Tools\Customization\Processors\Export as CustomizationExport;
-
-use Exception;
 
 class Export implements Tool
 {
@@ -209,26 +211,47 @@ class Export implements Tool
             'app', 'exportImport', 'formatDefs', $format, 'fileExtension'
         ]);
 
-        $searchParams = $this->getSearchParams($params, $entityType);
-
         $exportParams = ExportParams::create($entityType)
             ->withFormat($format)
-            ->withAccessControl(false)
-            ->withPath($params->getPath())
-            ->withEntitiesPath($params->getEntitiesPath())
-            ->withFilesPath($params->getFilesPath())
-            ->withExportImportDefs($params->getExportImportDefs())
             ->withCollectionClass($collectionClass)
             ->withFileExtension($fileExtension)
             ->withProcessHookClass($processHookClass)
-            ->withSearchParams($searchParams)
-            ->withPrettyPrint($params->getPrettyPrint())
-            ->withIsCustomEntity($this->entityTool->isCustom($entityType))
-            ->withSkipCustomization($params->getSkipCustomization())
-            ->withSkipPassword($params->getSkipPassword())
-            ->withUserSkipList($params->getUserSkipList())
-            ->withAllAttributes($params->getAllAttributes())
-            ->withFromDate($params->getFromDate());
+            ->withPath(
+                $params->getPath()
+            )
+            ->withEntitiesPath(
+                $params->getEntitiesPath()
+            )
+            ->withFilesPath(
+                $params->getFilesPath()
+            )
+            ->withExportImportDefs(
+                $params->getExportImportDefs()
+            )
+            ->withWhereItem(
+                $this->getWhereItem($params, $entityType)
+            )
+            ->withPrettyPrint(
+                $params->getPrettyPrint()
+            )
+            ->withIsCustomEntity(
+                $this->entityTool->isCustom($entityType)
+            )
+            ->withSkipCustomization(
+                $params->getSkipCustomization()
+            )
+            ->withSkipPassword(
+                $params->getSkipPassword()
+            )
+            ->withUserSkipList(
+                $params->getUserSkipList()
+            )
+            ->withAllAttributes(
+                $params->getAllAttributes()
+            )
+            ->withFromDate(
+                $params->getFromDate()
+            );
 
         $export = $this->injectableFactory->create(EntityExportTool::class);
         $export->setParams($exportParams);
@@ -333,7 +356,7 @@ class Export implements Tool
         ProcessorUtils::writeLine($params, " done");
     }
 
-    private function getSearchParams(Params $params, string $entityType): ?SearchParams
+    private function getWhereItem(Params $params, string $entityType): ?WhereItem
     {
         $skipList = $params->getExportImportDefs()[$entityType]['skipRecordList'] ?? null;
 
@@ -341,32 +364,21 @@ class Export implements Tool
             return null;
         }
 
-        $where = [];
+        $builder = new AndGroupBuilder();
 
         foreach ($skipList as $fieldName => $list) {
             if (count($list) == 0) {
-
                 continue;
             }
 
-            $where[] = [
-                'type' => 'or',
-                'value' => [
-                    [
-                        'type' => 'isNull',
-                        'attribute' => $fieldName,
-                    ],
-                    [
-                        'type' => 'notIn',
-                        'attribute' => $fieldName,
-                        'value' => $list,
-                    ],
-                ],
-            ];
+            $whereItem = Condition::or(
+                Condition::equal(Condition::column($fieldName), null),
+                Condition::notIn(Condition::column($fieldName), $list)
+            );
+
+            $builder->add($whereItem);
         }
 
-        return SearchParams::fromRaw([
-            'where' => $where
-        ]);
+        return $builder->build();
     }
 }

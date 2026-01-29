@@ -38,15 +38,15 @@ use Espo\ORM\EntityManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\FieldUtil;
 use Espo\Core\Exceptions\Error;
-use Espo\Core\Select\SearchParams;
 use Espo\Core\Record\ServiceContainer;
 use Espo\Core\Select\SelectBuilderFactory;
-use Espo\Core\Select\Where\Item as WhereItem;
 use Espo\Core\Utils\DateTime as DateTimeUtil;
+use Espo\ORM\Query\Part\Where\AndGroupBuilder;
 use Espo\Core\FieldProcessing\ListLoadProcessor;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\ExportImport\Tools\Export\Util;
 use Espo\Modules\ExportImport\Tools\Export\Params;
+use Espo\ORM\Query\Part\Condition as WhereCondition;
 use Espo\Core\FieldProcessing\Loader\Params as LoaderParams;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 use Espo\Modules\ExportImport\Tools\Processor\Data as ProcessorData;
@@ -192,44 +192,36 @@ class EntityExport
             ->getDefs()
             ->getEntity($entityType);
 
-        $searchParams = $params->getSearchParams()
-            ->withOrder(SearchParams::ORDER_ASC);
+        $builder = new AndGroupBuilder();
 
+        if ($params->getWhereItem()) {
+            $builder->add($params->getWhereItem());
+        }
+
+        // TODO: Change to Espo\Core\Name\Field::MODIFIED_AT when espo min version >= 9.0
         if ($params->getFromDate() && $entityDefs->hasAttribute('modifiedAt')) {
             $after = $params->getFromDate()->format(DateTimeUtil::SYSTEM_DATE_TIME_FORMAT);
 
-            $searchParams = $searchParams
-                ->withWhereAdded(
-                    WhereItem
-                        ::createBuilder()
-                        ->setAttribute('modifiedAt')
-                        ->setType(WhereItem\Type::AFTER)
-                        ->setValue($after)
-                        ->build()
-                );
+            $builder->add(
+                WhereCondition::greater(WhereCondition::column('modifiedAt'), $after)
+            );
         }
-
-        $builder = $this->selectBuilderFactory
-            ->create()
-            ->from($entityType)
-            ->withSearchParams($searchParams)
-            ->withDefaultOrder();
-
-        if ($params->applyAccessControl()) {
-            $builder->withStrictAccessControl();
-        }
-
-        $query = $builder->build();
 
         $collectionClass = $params->getCollectionClass();
 
         if ($collectionClass) {
-            return $collectionClass->getCollection($params, $query);
+            return $collectionClass->getCollection($params, $builder);
         }
 
-        return $this->entityManager
-            ->getRepository($entityType)
-            ->clone($query)
+        $selectBuilder = $this->entityManager
+            ->getRDBRepository($entityType)
+            ->where($builder->build());
+
+        if ($entityDefs->hasAttribute('modifiedAt')) {
+            $selectBuilder->order('modifiedAt', 'ASC');
+        }
+
+        return $selectBuilder
             ->sth()
             ->find();
     }
@@ -244,9 +236,7 @@ class EntityExport
             ->getDefs()
             ->getEntity($entityType);
 
-        $attributeListToSkip = $params->applyAccessControl() ?
-            $this->acl->getScopeForbiddenAttributeList($entityType, Table::ACTION_READ) :
-            [];
+        $attributeListToSkip = [];
 
         $attributeListToSkip[] = 'deleted';
 

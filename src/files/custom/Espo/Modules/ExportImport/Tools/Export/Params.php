@@ -31,7 +31,7 @@ namespace Espo\Modules\ExportImport\Tools\Export;
 
 use DateTime;
 use Espo\Core\Utils\Util;
-use Espo\Core\Select\SearchParams;
+use Espo\ORM\Query\Part\WhereItem;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 use Espo\Modules\ExportImport\Tools\Processor\Params as IParams;
 use Espo\Modules\ExportImport\Tools\Export\Processor\Collection as CollectionClass;
@@ -48,9 +48,7 @@ class Params implements IParams
 
     private $format = null;
 
-    private $searchParams = null;
-
-    private $applyAccessControl = true;
+    private ?WhereItem $whereItem = null;
 
     private $collectionClass = null;
 
@@ -106,11 +104,11 @@ class Params implements IParams
         return $obj;
     }
 
-    public function withSearchParams(?SearchParams $searchParams): self
+    public function withWhereItem(?WhereItem $whereItem): self
     {
         $obj = clone $this;
 
-        $obj->searchParams = $searchParams;
+        $obj->whereItem = $whereItem;
 
         return $obj;
     }
@@ -129,15 +127,6 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->attributeList = $attributeList;
-
-        return $obj;
-    }
-
-    public function withAccessControl(bool $applyAccessControl = true): self
-    {
-        $obj = clone $this;
-
-        $obj->applyAccessControl = $applyAccessControl;
 
         return $obj;
     }
@@ -260,15 +249,15 @@ class Params implements IParams
     }
 
     /**
-     * Get search params.
+     * Get where clause param
      */
-    public function getSearchParams(): SearchParams
+    public function getWhereItem(): ?WhereItem
     {
-        if (!$this->searchParams) {
-            return SearchParams::create();
+        if (!$this->whereItem) {
+            return null;
         }
 
-        return $this->searchParams;
+        return $this->whereItem;
     }
 
     /**
@@ -317,14 +306,6 @@ class Params implements IParams
     public function allFields(): bool
     {
         return $this->fieldList === null && $this->attributeList === null;
-    }
-
-    /**
-     * Whether to apply access control.
-     */
-    public function applyAccessControl(): bool
-    {
-        return $this->applyAccessControl;
     }
 
     /**

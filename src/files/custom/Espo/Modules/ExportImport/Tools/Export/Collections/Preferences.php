@@ -29,28 +29,20 @@
 
 namespace Espo\Modules\ExportImport\Tools\Export\Collections;
 
-use Espo\Core\{
-    Di,
-};
+use Espo\ORM\EntityManager;
+use Espo\ORM\EntityCollection;
+use Espo\ORM\Query\Part\Where\AndGroupBuilder;
+use Espo\Modules\ExportImport\Tools\Export\Params;
+use Espo\Entities\Preferences as PreferencesEntity;
+use Espo\Modules\ExportImport\Tools\Export\Processor\Collection;
 
-use Espo\{
-    ORM\Query\Select,
-    ORM\EntityCollection,
-};
-
-use Espo\Modules\ExportImport\{
-    Tools\Export\Params,
-    Tools\Export\Processor\Collection
-};
-
-class Preferences implements
-
-    Collection,
-    Di\EntityManagerAware
+class Preferences implements Collection
 {
-    use Di\EntityManagerSetter;
+    public function __construct(
+        private EntityManager $entityManager
+    ) {}
 
-    public function getCollection(Params $params, Select $query): EntityCollection
+    public function getCollection(Params $params, AndGroupBuilder $whereBuilder): EntityCollection
     {
         $collection = $this->entityManager
             ->getRDBRepository('User')
@@ -62,13 +54,13 @@ class Preferences implements
         $entityList = [];
 
         foreach ($collection as $user) {
-            $entityList[] = $this->entityManager->getEntity(
-                'Preferences', $user->getId()
-            );
+            $entityList[] = $this->entityManager
+                ->getEntityById(
+                    PreferencesEntity::ENTITY_TYPE, $user->getId()
+                );
         }
 
-        $obj = new EntityCollection($entityList, 'Preferences');
-
+        $obj = new EntityCollection($entityList, PreferencesEntity::ENTITY_TYPE);
         $obj->setAsFetched();
 
         return $obj;
