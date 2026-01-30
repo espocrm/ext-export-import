@@ -137,10 +137,7 @@ class Compare implements Tool
 
         $entityTypeList = $this->getEntityTypeList($params);
 
-        $idMap = $this->idMappingTool->getIdMap($params, [
-            UserEntity::ENTITY_TYPE,
-            PreferencesEntity::ENTITY_TYPE,
-        ]);
+        $idMap = $this->idMappingTool->getIdMap($params);
 
         foreach ($entityTypeList as $entityType) {
             ProcessorUtils::writeLine($params, "{$entityType}...");

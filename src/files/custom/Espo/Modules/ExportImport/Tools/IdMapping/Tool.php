@@ -31,6 +31,7 @@ namespace Espo\Modules\ExportImport\Tools\IdMapping;
 
 use Exception;
 use Espo\Core\Utils\Log;
+use Espo\Core\Utils\Metadata;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\InjectableFactory;
 use Espo\Modules\ExportImport\Tools\Params;
@@ -39,14 +40,13 @@ use Espo\Modules\ExportImport\Tools\IdMapping\Processor\Entity as EntityProcesso
 
 class Tool
 {
-    private array $warningList = [];
-
     public function __construct(
         private Log $log,
+        private Metadata $metadata,
         private InjectableFactory $injectableFactory
     ) {}
 
-    public function getIdMap(Params $params, array $entityTypeList): array
+    public function getIdMap(Params $params): array
     {
         $path = $params->getPath() ?? null;
         $format = $params->getFormat() ?? null;
@@ -63,7 +63,18 @@ class Tool
             throw new Error("Import path \"{$path}\" does not exist.");
         }
 
+        $entityTypeList = $this->getEntityTypeList($params);
+
         return $this->getEntitiesIdMap($params, $entityTypeList);
+    }
+
+    private function getEntityTypeList(Params $params): array
+    {
+        $classMap =  $this->metadata->get([
+            'app', 'exportImport', 'idMappingCollectionClassNameMap'
+        ]) ?? [];
+
+        return array_keys($classMap);
     }
 
     private function getEntitiesIdMap(Params $params, array $entityTypeList): array

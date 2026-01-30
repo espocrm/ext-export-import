@@ -139,10 +139,7 @@ class Import implements Tool
 
     private function getIdMap($params): array
     {
-        return $this->idMappingTool->getIdMap($params, [
-            UserEntity::ENTITY_TYPE,
-            PreferencesEntity::ENTITY_TYPE,
-        ]);
+        return $this->idMappingTool->getIdMap($params);
     }
 
     private function runBackup(Params $params, Manifest $manifest): void
