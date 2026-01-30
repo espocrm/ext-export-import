@@ -35,13 +35,10 @@ use Espo\Core\Utils\Log;
 use Espo\Core\DataManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Exceptions\Error;
-
 use Espo\Core\InjectableFactory;
-use Espo\Entities\User as UserEntity;
 
 use Espo\Modules\ExportImport\Tools\Params;
 use Espo\Core\Utils\File\Manager as FileManager;
-use Espo\Entities\Preferences as PreferencesEntity;
 use Espo\Modules\ExportImport\Tools\Processor\ImportType;
 use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
@@ -125,6 +122,8 @@ class Import implements Tool
         $this->importCustomization($params, $manifest);
 
         $this->importData($params, $manifest);
+
+        $this->dataManager->rebuild();
 
         ProcessorUtils::writeList($params, $this->warningList, "Warnings:");
 

@@ -36,9 +36,7 @@ use Espo\Core\DataManager;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\InjectableFactory;
-use Espo\Entities\User as UserEntity;
 use Espo\Core\Utils\File\Manager as FileManager;
-use Espo\Entities\Preferences as PreferencesEntity;
 
 use Espo\Modules\ExportImport\Tools\Params;
 use Espo\Modules\ExportImport\Tools\Core\User as UserTool;
@@ -117,6 +115,8 @@ class Erase implements Tool
         $this->processCustomization($params, $manifest);
 
         $this->processData($params, $manifest);
+
+        $this->dataManager->rebuild();
 
         ProcessorUtils::writeList($params, $this->warningList, "Warnings:");
 
