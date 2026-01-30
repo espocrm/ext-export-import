@@ -133,6 +133,15 @@ class Params
         return $obj;
     }
 
+    public function withSkipPassword(bool $skipPassword): self
+    {
+        $obj = clone $this;
+
+        $obj->skipPassword = $skipPassword;
+
+        return $obj;
+    }
+
     /**
      * Get path
      */
@@ -161,15 +170,6 @@ class Params
             $this->getConfigPath(),
             self::CONFIG_FILE
         );
-    }
-
-    public function withSkipPassword(bool $skipPassword): self
-    {
-        $obj = clone $this;
-
-        $obj->skipPassword = $skipPassword;
-
-        return $obj;
     }
 
     /**
