@@ -30,17 +30,21 @@
 namespace Espo\Modules\ExportImport\Tools\Config;
 
 use Espo\Core\Utils\Config;
+use Espo\Core\InjectableFactory;
 use Espo\Modules\ExportImport\Tools\Config\Params;
 
 class Util
 {
     public function __construct(
-        private Config $config
+        private Config $config,
+        private InjectableFactory $injectableFactory
     ) {}
 
     public function applyIgnoreList(Params $params, array $data): array
     {
         $ignoreList = $this->getAllIgnoreList($params);
+
+        $data = $this->removeStateParams($params, $data);
 
         return array_diff_key($data, array_flip($ignoreList));
     }
@@ -81,5 +85,43 @@ class Util
         }
 
         return array_values($ignoreList);
+    }
+
+    private function getInternalConfigHelper(): ?object
+    {
+        $className = '\\Espo\\Core\\Utils\\Config\\InternalConfigHelper';
+
+        if (!class_exists($className)) {
+            return null;
+        }
+
+        $helper = $this->injectableFactory->create($className);
+
+        if (!method_exists($helper, 'isParamForStateConfig')) {
+            return null;
+        }
+
+        return $helper;
+    }
+
+    /**
+     * Remove stat (data/stat.php) params from the export list
+     * TODO: refactor from espo min version >= 9.3
+     */
+    private function removeStateParams(Params $params, array $data): array
+    {
+        $helper = $this->getInternalConfigHelper();
+
+        if (!$helper) {
+            return $data;
+        }
+
+        foreach ($data as $key => $value) {
+            if ($helper->isParamForStateConfig($key)) {
+                unset($data[$key]);
+            }
+        }
+
+        return $data;
     }
 }

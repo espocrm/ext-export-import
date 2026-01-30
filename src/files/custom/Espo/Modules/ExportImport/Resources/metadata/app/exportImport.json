@@ -103,6 +103,7 @@
         "useCacheInDeveloperMode",
         "isDeveloperMode",
         "microtime",
+        "microtimeState",
         "appTimestamp",
         "cacheTimestamp",
         "systemUserAttributes",
