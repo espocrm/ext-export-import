@@ -206,4 +206,49 @@ class Entity
             ->getAttribute('id')
             ?->isAutoincrement() ?? false;
     }
+
+    /**
+     * Check if the $entityType is valid.
+     * If the entity is not properly defined in metadata, then it is not valid.
+     */
+    public function isValid(string $entityType): bool
+    {
+        $hasEntity = $this->defs->hasEntity($entityType);
+
+        if (!$hasEntity) {
+            return false;
+        }
+
+        $ignoreValidationList = $this->metadata
+            ->get(['app', 'exportImport', 'ignoreValidationEntityTypeList']) ?? [];
+
+        if (in_array($entityType, $ignoreValidationList)) {
+            return true;
+        }
+
+        $isRelationshipEntity = $this->entityManager
+            ->getDefs()
+            ->getEntity($entityType)
+            ->getParam('skipRebuild');
+
+        if ($isRelationshipEntity) {
+            return true;
+        }
+
+        $isEntity = $this->metadata->get(['scopes', $entityType, 'entity']);
+
+        if ($isEntity) {
+            return true;
+        }
+
+        $entity = $this->entityManager->getNewEntity($entityType);
+
+        // If entity class doesn't exist, then getNewEntity will return a base Entity,
+        // otherwise it will return an instance of the entity class
+        if (get_class($entity) != 'Espo\\Core\\ORM\\Entity') {
+            return true;
+        }
+
+        return false;
+    }
 }

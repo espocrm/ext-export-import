@@ -16,6 +16,8 @@
         }
     },
 
+    "ignoreValidationEntityTypeList": [],
+
     "exportDataProcessorClassNameMap": {
         "json": "Espo\\Modules\\ExportImport\\Tools\\Export\\DataProcessors\\Json"
     },

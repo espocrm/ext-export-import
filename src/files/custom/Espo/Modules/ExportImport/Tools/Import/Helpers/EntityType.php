@@ -61,7 +61,8 @@ class EntityType
 
         $list = array_unique($list);
 
-        $list = $this->filterList($params, $list);
+        $list = $this->ignoreDisabled($params, $list);
+        $list = $this->ignoreInvalid($params, $list);
 
         $list = ToolUtils::sortEntityTypeListByType($this->metadata, $list);
 
@@ -111,7 +112,7 @@ class EntityType
         return $entityTypeList;
     }
 
-    private function filterList(Params $params, array $list): array
+    private function ignoreDisabled(Params $params, array $list): array
     {
         $filteredList = [];
 
@@ -130,6 +131,21 @@ class EntityType
             }
 
             if ($this->entityTool->isCategoryTreeAdditionalTable($entityType)) {
+                continue;
+            }
+
+            $filteredList[] = $entityType;
+        }
+
+        return $filteredList;
+    }
+
+    private function ignoreInvalid(Params $params, array $list): array
+    {
+        $filteredList = [];
+
+        foreach ($list as $entityType) {
+            if (!$this->entityTool->isValid($entityType)) {
                 continue;
             }
 
