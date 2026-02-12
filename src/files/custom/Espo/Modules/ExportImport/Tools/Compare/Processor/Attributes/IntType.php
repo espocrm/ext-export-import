@@ -41,7 +41,13 @@ class IntType implements ProcessorAttribute
 
     public function process(Params $params, array &$row, string $attributeName): void
     {
-        $row[$attributeName] = (int) $row[$attributeName];
+        $value = $row[$attributeName];
+
+        if ($value === null) {
+            return;
+        }
+
+        $row[$attributeName] = (int) $value;
 
         if ($this->isAutoincrement($params, $attributeName)) {
             unset($row[$attributeName]);
