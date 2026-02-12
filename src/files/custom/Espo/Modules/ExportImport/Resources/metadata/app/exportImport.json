@@ -97,7 +97,8 @@
         "User": "Espo\\Modules\\ExportImport\\Tools\\IdMapping\\Processor\\Collections\\User",
         "Preferences": "Espo\\Modules\\ExportImport\\Tools\\IdMapping\\Processor\\Collections\\Preferences",
         "CurrencyRecord": "Espo\\Modules\\ExportImport\\Tools\\IdMapping\\Processor\\Collections\\CurrencyRecord",
-        "CurrencyRecordRate": "Espo\\Modules\\ExportImport\\Tools\\IdMapping\\Processor\\Collections\\CurrencyRecordRate"
+        "CurrencyRecordRate": "Espo\\Modules\\ExportImport\\Tools\\IdMapping\\Processor\\Collections\\CurrencyRecordRate",
+        "ScheduledJob": "Espo\\Modules\\ExportImport\\Tools\\IdMapping\\Processor\\Collections\\ScheduledJob"
     },
 
     "configIgnoreList": [
