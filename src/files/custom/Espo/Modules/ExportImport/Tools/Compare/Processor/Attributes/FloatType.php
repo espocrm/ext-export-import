@@ -36,6 +36,12 @@ class FloatType implements ProcessorAttribute
 {
     public function process(Params $params, array &$row, string $attributeName): void
     {
-        $row[$attributeName] = (float) $row[$attributeName];
+        $value = $row[$attributeName];
+
+        if ($value === null) {
+            return;
+        }
+
+        $row[$attributeName] = (float) $value;
     }
 }
