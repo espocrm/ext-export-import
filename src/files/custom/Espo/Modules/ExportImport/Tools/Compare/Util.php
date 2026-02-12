@@ -36,10 +36,13 @@ use Espo\ORM\Collection;
 use Espo\ORM\EntityManager;
 use Espo\Entities\ActionHistoryRecord;
 use Espo\Core\Utils\DateTime as DateTimeUtil;
+use Espo\ORM\Query\Part\Where\AndGroupBuilder;
+use Espo\ORM\Query\Part\Condition as WhereCondition;
 use Espo\Core\FieldProcessing\ListLoadProcessor;
 use Espo\Modules\ExportImport\Tools\Compare\Params;
 use Espo\Core\FieldProcessing\Loader\Params as LoaderParams;
 use Espo\Modules\ExportImport\Tools\Export\Util as ExportUtil;
+use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
 
 class Util
 {
@@ -48,7 +51,8 @@ class Util
     public function __construct(
         private ExportUtil $exportUtil,
         private EntityManager $entityManager,
-        private ListLoadProcessor $listLoadProcessor
+        private ListLoadProcessor $listLoadProcessor,
+        private EntityTool $entityTool
     ) {}
 
     /**
@@ -100,11 +104,23 @@ class Util
             return null;
         }
 
-         return $this->entityManager
+        $builder = new AndGroupBuilder();
+
+        $defaultWhereItem = $this->entityTool->getCollectionWhereItem($entityType);
+
+        if ($defaultWhereItem) {
+            $builder->add($defaultWhereItem);
+        }
+
+        $after = $fromDate->format(DateTimeUtil::SYSTEM_DATE_TIME_FORMAT);
+
+        $builder->add(
+            WhereCondition::greater(WhereCondition::column('createdAt'), $after)
+        );
+
+        return $this->entityManager
             ->getRDBRepository($entityType)
-            ->where([
-                'createdAt>' => $fromDate->format(DateTimeUtil::SYSTEM_DATE_TIME_FORMAT),
-            ])
+            ->where($builder->build())
             ->order('createdAt', 'ASC')
             ->find();
     }
