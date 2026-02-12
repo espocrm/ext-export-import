@@ -52,6 +52,7 @@ use Espo\Core\FieldProcessing\Loader\Params as LoaderParams;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 use Espo\Modules\ExportImport\Tools\Processor\Data as ProcessorData;
 use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
+use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
 
 class EntityExport
 {
@@ -69,7 +70,8 @@ class EntityExport
         private Metadata $metadata,
         private FileManager $fileManager,
         private ListLoadProcessor $listLoadProcessor,
-        private FieldUtil $fieldUtil
+        private FieldUtil $fieldUtil,
+        private EntityTool $entityTool
     ) {}
 
     public function setParams(Params $params): self
@@ -195,8 +197,10 @@ class EntityExport
 
         $builder = new AndGroupBuilder();
 
-        if ($params->getWhereItem()) {
-            $builder->add($params->getWhereItem());
+        $defaultWhereItem = $this->entityTool->getCollectionWhereItem($entityType);
+
+        if ($defaultWhereItem) {
+            $builder->add($defaultWhereItem);
         }
 
         // TODO: Change to Espo\Core\Name\Field::MODIFIED_AT when espo min version >= 9.0

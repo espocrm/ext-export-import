@@ -31,7 +31,6 @@ namespace Espo\Modules\ExportImport\Tools\Export;
 
 use DateTime;
 use Espo\Core\Utils\Util;
-use Espo\ORM\Query\Part\WhereItem;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 use Espo\Modules\ExportImport\Tools\Processor\Params as IParams;
 use Espo\Modules\ExportImport\Tools\Export\Processor\Collection as CollectionClass;
@@ -47,8 +46,6 @@ class Params implements IParams
     private $path = null;
 
     private $format = null;
-
-    private ?WhereItem $whereItem = null;
 
     private $collectionClass = null;
 
@@ -100,15 +97,6 @@ class Params implements IParams
         $obj = clone $this;
 
         $obj->path = $path;
-
-        return $obj;
-    }
-
-    public function withWhereItem(?WhereItem $whereItem): self
-    {
-        $obj = clone $this;
-
-        $obj->whereItem = $whereItem;
 
         return $obj;
     }
@@ -246,18 +234,6 @@ class Params implements IParams
         $obj->fromDate = $value;
 
         return $obj;
-    }
-
-    /**
-     * Get where clause param
-     */
-    public function getWhereItem(): ?WhereItem
-    {
-        if (!$this->whereItem) {
-            return null;
-        }
-
-        return $this->whereItem;
     }
 
     /**

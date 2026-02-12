@@ -38,10 +38,6 @@ use Espo\Core\Exceptions\Error;
 use Espo\Core\InjectableFactory;
 use Espo\Core\Utils\File\Manager as FileManager;
 
-use Espo\ORM\Query\Part\Condition;
-use Espo\ORM\Query\Part\WhereItem;
-use Espo\ORM\Query\Part\Where\AndGroupBuilder;
-
 use Espo\Modules\ExportImport\Tools\Params;
 use Espo\Modules\ExportImport\Tools\Processor\ProcessHook;
 use Espo\Modules\ExportImport\Tools\Manifest\ManifestWriter;
@@ -228,9 +224,6 @@ class Export implements Tool
             ->withExportImportDefs(
                 $params->getExportImportDefs()
             )
-            ->withWhereItem(
-                $this->getWhereItem($params, $entityType)
-            )
             ->withPrettyPrint(
                 $params->getPrettyPrint()
             )
@@ -354,31 +347,5 @@ class Export implements Tool
         $configExport->process($configParams);
 
         ProcessorUtils::writeLine($params, " done");
-    }
-
-    private function getWhereItem(Params $params, string $entityType): ?WhereItem
-    {
-        $skipList = $params->getExportImportDefs()[$entityType]['skipRecordList'] ?? null;
-
-        if (!$skipList || count($skipList) == 0) {
-            return null;
-        }
-
-        $builder = new AndGroupBuilder();
-
-        foreach ($skipList as $fieldName => $list) {
-            if (count($list) == 0) {
-                continue;
-            }
-
-            $whereItem = Condition::or(
-                Condition::equal(Condition::column($fieldName), null),
-                Condition::notIn(Condition::column($fieldName), $list)
-            );
-
-            $builder->add($whereItem);
-        }
-
-        return $builder->build();
     }
 }

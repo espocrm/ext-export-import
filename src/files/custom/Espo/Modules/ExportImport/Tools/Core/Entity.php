@@ -32,6 +32,9 @@ namespace Espo\Modules\ExportImport\Tools\Core;
 use Espo\ORM\Defs;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\ORM\EntityManager;
+use Espo\ORM\Query\Part\Condition;
+use Espo\ORM\Query\Part\WhereItem;
+use Espo\ORM\Query\Part\Where\AndGroupBuilder;
 use Espo\Modules\ExportImport\Tools\Core\Relation as RelationTool;
 
 class Entity
@@ -250,5 +253,35 @@ class Entity
         }
 
         return false;
+    }
+
+    /**
+     * Get where clause for entity collection with conditions to skip records
+     */
+    public function getCollectionWhereItem(string $entityType): ?WhereItem
+    {
+        $skipList = $this->metadata
+            ->get(['exportImportDefs', $entityType, 'skipRecordList']) ?? null;
+
+        if (!$skipList || count($skipList) == 0) {
+            return null;
+        }
+
+        $builder = new AndGroupBuilder();
+
+        foreach ($skipList as $fieldName => $list) {
+            if (count($list) == 0) {
+                continue;
+            }
+
+            $whereItem = Condition::or(
+                Condition::equal(Condition::column($fieldName), null),
+                Condition::notIn(Condition::column($fieldName), $list)
+            );
+
+            $builder->add($whereItem);
+        }
+
+        return $builder->build();
     }
 }
