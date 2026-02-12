@@ -45,7 +45,9 @@ use Espo\Core\FieldProcessing\ListLoadProcessor;
 use Espo\Core\Utils\File\Manager as FileManager;
 use Espo\Modules\ExportImport\Tools\Export\Util;
 use Espo\Modules\ExportImport\Tools\Export\Params;
+use Espo\Modules\ExportImport\Tools\Export\Result;
 use Espo\ORM\Query\Part\Condition as WhereCondition;
+use Espo\Modules\ExportImport\Tools\Export\ProcessorFactory;
 use Espo\Core\FieldProcessing\Loader\Params as LoaderParams;
 use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 use Espo\Modules\ExportImport\Tools\Processor\Data as ProcessorData;
@@ -237,7 +239,11 @@ class EntityExport
 
         $attributeListToSkip = [];
 
+        // TODO: Change when espo min version >= 9.0
+        // Attribute::DELETED
+        // Field::VERSION_NUMBER
         $attributeListToSkip[] = 'deleted';
+        $attributeListToSkip[] = 'versionNumber';
 
         $seed = $this->entityManager->getNewEntity($entityType);
 
