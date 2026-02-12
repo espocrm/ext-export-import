@@ -30,6 +30,7 @@
 namespace Espo\Modules\ExportImport\Tools\Compare;
 
 use Espo\Modules\ExportImport\Tools\Compare\Params;
+use Espo\Modules\ExportImport\Tools\Compare\Result;
 use Espo\Modules\ExportImport\Tools\Processor\Data as DataProcessor;
 use Espo\Modules\ExportImport\Tools\Compare\ProcessorFactory as Factory;
 use Espo\Modules\ExportImport\Tools\Compare\Processor\Entity as EntityProcessor;

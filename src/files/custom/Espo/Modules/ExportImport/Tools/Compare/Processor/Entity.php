@@ -243,7 +243,9 @@ class Entity implements Processor
                 continue;
             }
 
-            if ($entityDefs->getAttribute($attributeName)->isNotStorable()) {
+            $attributeDefs = $entityDefs->getAttribute($attributeName);
+
+            if ($attributeDefs->isNotStorable()) {
                 continue;
             }
 
@@ -251,7 +253,7 @@ class Entity implements Processor
                 continue;
             }
 
-            $type = $entityDefs->getAttribute($attributeName)->getType();
+            $type = $attributeDefs->getType();
 
             switch ($type) {
                 case AttributeType::FLOAT:
@@ -260,6 +262,10 @@ class Entity implements Processor
 
                 case AttributeType::INT:
                     $attributeValue = (int) $attributeValue;
+
+                    if ($attributeDefs->isAutoincrement()) {
+                        continue 2;
+                    }
                     break;
             }
 
