@@ -53,6 +53,7 @@ use Espo\Modules\ExportImport\Tools\Processor\Utils as ToolUtils;
 use Espo\Modules\ExportImport\Tools\Processor\Data as ProcessorData;
 use Espo\Modules\ExportImport\Tools\Processor\Exceptions\Skip as SkipException;
 use Espo\Modules\ExportImport\Tools\Core\Entity as EntityTool;
+use Espo\Modules\ExportImport\Tools\Export\Processor;
 
 class EntityExport
 {
