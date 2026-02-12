@@ -243,30 +243,12 @@ class Entity implements Processor
                 continue;
             }
 
-            $attributeDefs = $entityDefs->getAttribute($attributeName);
-
-            if ($attributeDefs->isNotStorable()) {
+            if ($entityDefs->getAttribute($attributeName)->isNotStorable()) {
                 continue;
             }
 
             if ($params->isAttributeSkipped($attributeName)) {
                 continue;
-            }
-
-            $type = $attributeDefs->getType();
-
-            switch ($type) {
-                case AttributeType::FLOAT:
-                    $attributeValue = (float) $attributeValue;
-                    break;
-
-                case AttributeType::INT:
-                    $attributeValue = (int) $attributeValue;
-
-                    if ($attributeDefs->isAutoincrement()) {
-                        continue 2;
-                    }
-                    break;
             }
 
             $row[$attributeName] = $attributeValue;

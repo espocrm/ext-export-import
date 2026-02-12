@@ -86,7 +86,9 @@
 
     "compareProcessAttributeClassNameMap": {
         "id": "Espo\\Modules\\ExportImport\\Tools\\Compare\\Processor\\Attributes\\Id",
-        "foreignId": "Espo\\Modules\\ExportImport\\Tools\\Compare\\Processor\\Attributes\\ForeignId"
+        "foreignId": "Espo\\Modules\\ExportImport\\Tools\\Compare\\Processor\\Attributes\\ForeignId",
+        "float": "Espo\\Modules\\ExportImport\\Tools\\Compare\\Processor\\Attributes\\FloatType",
+        "int": "Espo\\Modules\\ExportImport\\Tools\\Compare\\Processor\\Attributes\\IntType"
     },
 
     "idMappingDataProcessorClassNameMap": {
