@@ -46,6 +46,7 @@ class CurrentMonth implements Action
         $now = new DateTime('now', new DateTimeZone('UTC'));
 
         $fieldTime = new DateTime($actualValue, new DateTimeZone('UTC'));
+
         $fieldTime->setDate(
             $now->format('Y'),
             $now->format('m'),

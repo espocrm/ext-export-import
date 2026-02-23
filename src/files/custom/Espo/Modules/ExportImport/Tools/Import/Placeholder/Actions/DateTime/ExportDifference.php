@@ -40,7 +40,6 @@ class ExportDifference implements Action
     public function normalize(Params $params, $actualValue)
     {
         if (!$actualValue) {
-
             return $actualValue;
         }
 
