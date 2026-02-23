@@ -29,20 +29,19 @@
 
 namespace Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\DateTime;
 
-use Espo\Core\Di;
 use Espo\Core\Exceptions\Error;
+use Espo\Core\Utils\Metadata;
+use Espo\Core\InjectableFactory;
 use Espo\Modules\ExportImport\Tools\Import\Placeholder\Factory;
 use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Action;
 use Espo\Modules\ExportImport\Tools\Import\Placeholder\Actions\Params;
 
-class ExportDifferenceField implements
-
-    Action,
-    Di\MetadataAware,
-    Di\InjectableFactoryAware
+class ExportDifferenceField implements Action
 {
-    use Di\MetadataSetter;
-    use Di\InjectableFactorySetter;
+    public function __construct(
+        private Metadata $metadata,
+        private InjectableFactory $injectableFactory
+    ) {}
 
     public function normalize(Params $params, $actualValue)
     {
@@ -74,6 +73,10 @@ class ExportDifferenceField implements
             $fieldValue = $recordData[$field] ?? null;
         }
 
+        if ($fieldValue === null) {
+            return $this->getDefaultValue($params);
+        }
+
         $fieldDefs = $this->metadata->get([
             'entityDefs', $entityType, 'fields', $fieldName
         ], []);
@@ -86,5 +89,29 @@ class ExportDifferenceField implements
         $exportDifferenceAction = $placeholderFactory->get('DateTime\\ExportDifference');
 
         return $exportDifferenceAction->normalize($fieldParams, $fieldValue);
+    }
+
+    private function getDefaultValue(Params $params)
+    {
+        $placeholderData = $params->getPlaceholderDefs()['placeholderData'] ?? null;
+
+        if (!$placeholderData) {
+            return null;
+        }
+
+        if (array_key_exists('default', $placeholderData)) {
+            return $placeholderData['default'];
+        }
+
+        $action = $placeholderData['defaultAction'] ?? null;
+
+        if (!$action) {
+            return null;
+        }
+
+        return $this->injectableFactory
+            ->create(Factory::class)
+            ->get($action)
+            ->normalize($params, null);
     }
 }
